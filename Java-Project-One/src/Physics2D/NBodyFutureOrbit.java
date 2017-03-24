@@ -16,13 +16,14 @@ import Physics2D.Objects.SpaceObject;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Line;
 import World2D.World;
+import java.awt.Color;
 import java.util.Date;
 
 /**
  *
  * @author bowen
  */
-public class NBodyFutureOrbit implements Runnable, World, FutureSimulation {
+public class NBodyFutureOrbit implements Runnable, World, FutureSimulation { //TODO implement past data logging for better orbits
     private Thread thread;
     private SpaceObject[] bigObjects;
     
@@ -55,7 +56,7 @@ public class NBodyFutureOrbit implements Runnable, World, FutureSimulation {
         
         this.orbitLines = new Line[(futureTimeSteps+Math.floorDiv(futureTimeSteps, 100))*bigObjects.length];
         for (int i=0; i<orbitLines.length; i++) {
-            orbitLines[i] = new Line();
+            orbitLines[i] = new Line(Color.getHSBColor(341F/360, 50F/100, 74F/100));
         }
         
         switch(integrator) {
@@ -140,7 +141,7 @@ public class NBodyFutureOrbit implements Runnable, World, FutureSimulation {
     @Override
     public void run() {
         
-        double desiredSleepms = 1000D;
+        double desiredSleepms = 1000D/1;
         
         long startTime;
         long endTime;

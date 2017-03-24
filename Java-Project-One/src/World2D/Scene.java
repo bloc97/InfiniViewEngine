@@ -57,7 +57,7 @@ public class Scene extends JPanel implements Runnable {
         
         this.setLayout(null);
         this.setVisible(true);
-        this.setBackground(Color.black);
+        this.setBackground(Color.getHSBColor(298F/360, 1F/100, 22F/100));
         
         thread = new Thread(this);
         

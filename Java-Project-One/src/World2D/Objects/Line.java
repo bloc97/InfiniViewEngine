@@ -51,9 +51,9 @@ public class Line implements DisplayObject {
         yscroffset = camera.getyScrOffset();
         
         dix0 = (int)(((x0-xoffset)*scaleoffset)+xscroffset+0.5);
-        diy0 = (int)(((y0-yoffset)*scaleoffset)+yscroffset+0.5);
+        diy0 = -(int)(((y0+yoffset)*scaleoffset)-yscroffset+0.5);
         dix1 = (int)(((x1-xoffset)*scaleoffset)+xscroffset+0.5);
-        diy1 = (int)(((y1-yoffset)*scaleoffset)+yscroffset+0.5);
+        diy1 = -(int)(((y1+yoffset)*scaleoffset)-yscroffset+0.5);
     }
 
     @Override

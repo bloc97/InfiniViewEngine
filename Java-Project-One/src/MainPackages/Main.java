@@ -24,9 +24,9 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-        static double AU = 1.496e+11; //AU/m
-        static double DAY = 86400D;
-        static NBodySimulation mainsimulation;
+    static double AU = 1.496e+11; //AU/m
+    static double DAY = 86400D;
+    static NBodySimulation mainsimulation;
     public static void main(String[] args) {
         
         
@@ -50,7 +50,7 @@ public class Main {
         double[] orbitalPeriods = new double[orbitalPeriodsInDays.length];
         
         for (int i=0; i<orbitalPeriods.length; i++) {
-            orbitalPeriods[i] = orbitalPeriodsInDays[i] * 86400 ;
+            orbitalPeriods[i] = orbitalPeriodsInDays[i] * 86400;
         }
         
         SpaceObject[] allObjects = new SpaceObject[bigObjects.length + smallObjects.length];
@@ -63,9 +63,9 @@ public class Main {
         }
         
         
-        NBodyFuturePath futureIntegrator = new NBodyFuturePath(IntegratorType.SYMPLECTIC1, 1E8, 200, 1, smallObjects, bigObjects);
+        NBodyFuturePath futureIntegrator = new NBodyFuturePath(IntegratorType.SYMPLECTIC4, 1E8, 200, 1, smallObjects, bigObjects);
         NBodyFutureOrbit orbitIntegrator = new NBodyFutureOrbit(IntegratorType.SYMPLECTIC4, 100, bigObjects, orbitalPeriods);
-        NBodySimulation space = new NBodySimulation(IntegratorType.SYMPLECTIC4, 1E5, 30, 1, futureIntegrator, orbitIntegrator, initialDate, allObjects);
+        NBodySimulation space = new NBodySimulation(IntegratorType.SYMPLECTIC4, 1E6, 30, 1, futureIntegrator, orbitIntegrator, initialDate, allObjects);
         
         Scene scene = new Scene(60, 1920, 1080, space);
         Viewport viewport = new Viewport(1920, 1080, scene);

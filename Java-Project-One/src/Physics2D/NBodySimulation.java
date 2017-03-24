@@ -29,6 +29,7 @@ public class NBodySimulation implements Runnable, World, Simulation {
     private FutureSimulation futureIntegrator;
     private NBodyFutureOrbit orbitIntegrator;
     
+    
     private double updatesPerSecond; //How many "Big steps" per second
     private int miniSteps; //How many "Small Steps" per Big step
     private double secondsPerMiniStep; //How many seconds pass in each "Small Steps"
@@ -213,12 +214,6 @@ public class NBodySimulation implements Runnable, World, Simulation {
         DisplayObject[] displayObjects = new DisplayObject[objectsCount];
         int objectsIndex = 0;
         
-        for (SpaceObject object : objects) {
-            if (!object.displayComponent.isHidden()) {
-                displayObjects[objectsIndex] = object.displayComponent;
-                objectsIndex++;
-            }
-        }
         for (DisplayObject orbit : orbits) {
             if (!orbit.isHidden()) {
                 displayObjects[objectsIndex] = orbit;
@@ -228,6 +223,12 @@ public class NBodySimulation implements Runnable, World, Simulation {
         for (DisplayObject line : lines) {
             if (!line.isHidden()) {
                 displayObjects[objectsIndex] = line;
+                objectsIndex++;
+            }
+        }
+        for (SpaceObject object : objects) {
+            if (!object.displayComponent.isHidden()) {
+                displayObjects[objectsIndex] = object.displayComponent;
                 objectsIndex++;
             }
         }

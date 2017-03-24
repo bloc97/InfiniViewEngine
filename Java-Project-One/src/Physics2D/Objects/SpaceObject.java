@@ -18,23 +18,25 @@ public class SpaceObject extends PointBody {
     
     public Circle displayComponent;
     
+    final private static Color color = Color.getHSBColor(16F/360, 33F/100, 100F/100);
+    
     private double orbitalPeriod;
     
     public SpaceObject(String name, double mass) {
         super(mass);
-        displayComponent = new Circle(name, Math.log10(mass)+10);
+        displayComponent = new Circle(name, color, Math.log10(mass)+10);
         update();
     }
 
     public SpaceObject(String name, Vector2 position, double mass) {
         super(position, mass);
-        displayComponent = new Circle(name, Math.log10(mass)+10);
+        displayComponent = new Circle(name, color, Math.log10(mass)+10);
         update();
     }
 
     public SpaceObject(String name, Vector2 position, Vector2 velocity, double mass) {
         super(position, velocity, mass);
-        displayComponent = new Circle(name, Math.log10(mass)+10);
+        displayComponent = new Circle(name, color, Math.log10(mass)+10);
         update();
     }
     @Override

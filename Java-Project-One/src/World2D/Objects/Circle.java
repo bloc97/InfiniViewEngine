@@ -72,7 +72,7 @@ public class Circle implements DisplayObject, Interpolable {
         double ipy = y + stepsWithoutUpdate * idt * vy;
         
         dix = (int)(((ipx-xoffset)*scaleoffset)+xscroffset-r+0.5);
-        diy = (int)(((ipy-yoffset)*scaleoffset)+yscroffset-r+0.5);
+        diy = -(int)(((ipy+yoffset)*scaleoffset)-yscroffset+r+0.5);
         stepsWithoutUpdate++;
     }
     public void setColor(Color color) {
