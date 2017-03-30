@@ -14,29 +14,30 @@ import java.awt.Color;
  *
  * @author bowen
  */
-public class SpaceObject extends PointBody {
+public class Planet extends PointBody {
     
     public PlanetDisplay displayComponent;
-    
+    private double radius;
     final private static Color color = Color.getHSBColor(16F/360, 33F/100, 100F/100);
     
-    private double orbitalPeriod;
-    
-    public SpaceObject(String name, double mass) {
+    public Planet(String name, double mass, double radius) {
         super(mass);
-        displayComponent = new PlanetDisplay(name, color, Math.log10(mass)+10);
+        this.radius = radius;
+        displayComponent = new PlanetDisplay(name, color, radius);
         update();
     }
 
-    public SpaceObject(String name, Vector2 position, double mass) {
+    public Planet(String name, Vector2 position, double mass, double radius) {
         super(position, mass);
-        displayComponent = new PlanetDisplay(name, color, Math.log10(mass)+10);
+        this.radius = radius;
+        displayComponent = new PlanetDisplay(name, color, radius);
         update();
     }
 
-    public SpaceObject(String name, Vector2 position, Vector2 velocity, double mass) {
+    public Planet(String name, Vector2 position, Vector2 velocity, double mass, double radius) {
         super(position, velocity, mass);
-        displayComponent = new PlanetDisplay(name, color, Math.log10(mass)+10);
+        this.radius = radius;
+        displayComponent = new PlanetDisplay(name, color, radius);
         update();
     }
     @Override
@@ -52,8 +53,8 @@ public class SpaceObject extends PointBody {
         return displayComponent;
     }
     @Override
-    public SpaceObject clone() {
-        SpaceObject newTestObject = new SpaceObject("Clone", this.position(), this.velocity(), this.mass());
+    public Planet clone() {
+        Planet newTestObject = new Planet("Clone", this.position(), this.velocity(), this.mass(), this.radius);
         return newTestObject;
     }
 }

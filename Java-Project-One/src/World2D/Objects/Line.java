@@ -6,8 +6,12 @@
 package World2D.Objects;
 
 import World2D.Camera;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.geom.Line2D;
 
 /**
  *
@@ -84,8 +88,14 @@ public class Line implements DisplayObject {
     }
 
     @Override
-    public void render(Graphics2D g, Camera camera) {
-        
+    public void render(Graphics2D g2, Camera camera) {
+        g2.setColor(color);
+        //Stroke lastStroke = g2.getStroke();
+        Line2D.Double line = new Line2D.Double(x0, y0, x1, y1);
+        //g2.setStroke(new BasicStroke((float)(1/camera.getScale())));
+        g2.draw(line);
+        //g2.drawLine(getDix0(), getDiy0(), getDix1(), getDiy1());
+        //g2.setStroke(lastStroke);
     }
     
 }

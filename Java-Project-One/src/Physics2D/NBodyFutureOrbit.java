@@ -12,7 +12,7 @@ import Physics.Integrators.Integrator.IntegratorType;
 import Physics.Integrators.Symplectic1;
 import Physics.Integrators.Symplectic4;
 import Physics.Simulation;
-import Physics2D.Objects.SpaceObject;
+import Physics2D.Objects.Planet;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Line;
 import World2D.World;
@@ -25,7 +25,7 @@ import java.util.Date;
  */
 public class NBodyFutureOrbit implements Runnable, World, FutureSimulation { //TODO implement past data logging for better orbits
     private Thread thread;
-    private SpaceObject[] bigObjects;
+    private Planet[] bigObjects;
     
     private double[] orbitalPeriods;
     
@@ -44,7 +44,7 @@ public class NBodyFutureOrbit implements Runnable, World, FutureSimulation { //T
     private boolean isPaused;
     
     
-    public NBodyFutureOrbit(IntegratorType integrator, int futureTimeSteps, SpaceObject[] bigObjects, double[] orbitalPeriods) {
+    public NBodyFutureOrbit(IntegratorType integrator, int futureTimeSteps, Planet[] bigObjects, double[] orbitalPeriods) {
         this.isPaused = true;
         this.futureTimeSteps = futureTimeSteps;
         
@@ -140,7 +140,6 @@ public class NBodyFutureOrbit implements Runnable, World, FutureSimulation { //T
     }
     @Override
     public void run() {
-        
         double desiredSleepms = 1000D/1;
         
         long startTime;
@@ -214,7 +213,7 @@ public class NBodyFutureOrbit implements Runnable, World, FutureSimulation { //T
     }
 
     @Override
-    public void setBodies(SpaceObject[] bodies) {
+    public void setBodies(Planet[] bodies) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -6,7 +6,7 @@
 package World2D;
 
 import MainPackages.Main;
-import World2D.Objects.Planet;
+import World2D.Objects.PlanetDisplay;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Interpolable;
 import World2D.Objects.Line;
@@ -17,6 +17,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.AffineTransform;
 import javax.swing.JPanel;
 
 /**
@@ -205,6 +206,7 @@ public class Scene extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D)g;
         g.drawString(worlds[0].getSimulation().getDate().toGMTString(), 10, 20);
         g.drawString(secondsToText(worlds[0].getSimulation().getSpeed()), 10, 40);
+        g.drawString("Current Scale: " + camera.getScale(), 10, 60);
         
         /*g.setColor(Color.RED);
         g.drawRect(150,10,100,20);  
@@ -216,8 +218,18 @@ public class Scene extends JPanel implements Runnable {
     }
     
     private void drawAllObjects(Graphics g) {
+        
+        Graphics2D g2 = (Graphics2D)g;
+        AffineTransform originalTransform = g2.getTransform();
+        AffineTransform transform = new AffineTransform();
+        double scale = camera.getScale();
+        transform.scale(scale, -scale);
+        transform.translate(-camera.getxPos(), camera.getyPos());
+        g2.translate(camera.getxScrOffset(), camera.getyScrOffset());
+        g2.transform(transform);
+        
         for (int i=0; i<displayObjects.length; i++) {
-            displayObjects[i].render((Graphics2D)g, camera);
+            displayObjects[i].render(g2, camera);
             //if (displayObjects[i].isInView(-50, -50, 1920+50, 1080+50) && !displayObjects[i].isHidden()) {
             /*
             if (!displayObjects[i].isHidden()) {
@@ -234,6 +246,15 @@ public class Scene extends JPanel implements Runnable {
             }*/
             
         }
+        g2.setTransform(originalTransform);
+        
+        for (int i=0; i<displayObjects.length; i++) {
+            if (displayObjects[i] instanceof PlanetDisplay) {
+                PlanetDisplay planet = (PlanetDisplay) displayObjects[i];
+                planet.renderName(g2, camera);
+            }
+        }
+        
     }
     /*
     private void drawCircle(Graphics g, Circle circle) {

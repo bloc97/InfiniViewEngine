@@ -12,7 +12,7 @@ import Physics.Integrators.Integrator;
 import Physics.Integrators.Integrator.IntegratorType;
 import Physics.Integrators.Symplectic1;
 import Physics.Integrators.Symplectic4;
-import Physics2D.Objects.SpaceObject;
+import Physics2D.Objects.Planet;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Line;
 import World2D.World;
@@ -24,7 +24,7 @@ import java.util.Date;
  */
 public class NBodySimulation implements Runnable, World, Simulation {
     private Thread thread;
-    private SpaceObject[] objects;
+    private Planet[] objects;
     private Integrator integrator;
     private FutureSimulation futureIntegrator;
     private NBodyFutureOrbit orbitIntegrator;
@@ -45,7 +45,7 @@ public class NBodySimulation implements Runnable, World, Simulation {
     public NBodySimulation(IntegratorType integrator, double ratio, double updatesPerSecond, int miniSteps, SpaceObject... objects) {
         this(integrator, ratio, updatesPerSecond, miniSteps, new NBodyFuturePath(integrator, ratio, 100, updatesPerSecond/2, objects), objects);
     }*/
-    public NBodySimulation(IntegratorType integrator, double ratio, double updatesPerSecond, int miniSteps, FutureSimulation futureSimulation, NBodyFutureOrbit futureOrbit, Date date, SpaceObject... objects) {
+    public NBodySimulation(IntegratorType integrator, double ratio, double updatesPerSecond, int miniSteps, FutureSimulation futureSimulation, NBodyFutureOrbit futureOrbit, Date date, Planet... objects) {
         this.isPaused = true;
         
         this.date = date;
@@ -145,7 +145,7 @@ public class NBodySimulation implements Runnable, World, Simulation {
         long sleepTime;
         
         int orbitIters = 0;
-        final int orbitTimer = 1000;
+        final int orbitTimer = 1;
         
         double realLagRatio;
         
@@ -196,7 +196,7 @@ public class NBodySimulation implements Runnable, World, Simulation {
         
         int objectsCount = 0;
         
-        for (SpaceObject object : objects) {
+        for (Planet object : objects) {
             if (!object.displayComponent.isHidden()) {
                 objectsCount++;
             }
@@ -226,7 +226,7 @@ public class NBodySimulation implements Runnable, World, Simulation {
                 objectsIndex++;
             }
         }
-        for (SpaceObject object : objects) {
+        for (Planet object : objects) {
             if (!object.displayComponent.isHidden()) {
                 displayObjects[objectsIndex] = object.displayComponent;
                 objectsIndex++;

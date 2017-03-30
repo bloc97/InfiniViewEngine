@@ -8,19 +8,14 @@ package World2D.Objects;
 import World2D.Camera;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import javafx.scene.shape.Ellipse;
 
 /**
  *
  * @author bowen
  */
-public class Planet implements DisplayObject, Interpolable {
+public class PlanetDisplay implements DisplayObject, Interpolable {
 
     private double x;
     private double y;
@@ -33,30 +28,24 @@ public class Planet implements DisplayObject, Interpolable {
     private double dst;
     private double dft;
     
-    private double xoffset;
-    private double yoffset;
-    private double scaleoffset;
     
-    private double xscroffset;
-    private double yscroffset;
-    
-    private int dix;
-    private int diy;
+    private double lastUpdateTime;
     
     private boolean isHidden;
     
     private String name;
     private Color color;
     
-    public Planet(String name, double r) {
+    public PlanetDisplay(String name, double r) {
         this(name, Color.WHITE, r);
     }
-    public Planet(String name, Color color, double r) {
+    public PlanetDisplay(String name, Color color, double r) {
         //this.setSize(r*2, r*2);
         this.isHidden = false;
         this.name = name;
         this.radius = r;
         this.color = color;
+        this.lastUpdateTime = 0;
     }
     /*
     @Override
@@ -69,22 +58,11 @@ public class Planet implements DisplayObject, Interpolable {
         g.fillOval(0, 0, r*2, r*2);
         this.setLocation(dispx, dispy);
     }*/
-    private void interpolationStep() {
-        int r = (int)(this.radius*(scaleoffset/1000)+5);
-        double idt = dst * dft;
-        
-        
-        double ipx = x + stepsWithoutUpdate * idt * vx;
-        double ipy = y + stepsWithoutUpdate * idt * vy;
-        
-        dix = (int)(((ipx-xoffset)*scaleoffset)+xscroffset-r+0.5);
-        diy = -(int)(((ipy+yoffset)*scaleoffset)-yscroffset+r+0.5);
-        stepsWithoutUpdate++;
-    }
     public void setColor(Color color) {
         this.color = color;
     }
     @Override
+    @Deprecated
     public void setInterpolationFrameTime(double dft) {
         this.dft = dft;
     }
@@ -98,8 +76,9 @@ public class Planet implements DisplayObject, Interpolable {
         return this;
     }*/
 
+    @Deprecated
     public int getRadius() {
-        return (int)(radius*(scaleoffset/1000)+5);
+        return (int)radius;
     }
     public String getName() {
         return name;
@@ -113,7 +92,7 @@ public class Planet implements DisplayObject, Interpolable {
 
     @Override
     public void setVel(double vx, double vy) {
-        stepsWithoutUpdate = 0;
+        this.lastUpdateTime = System.currentTimeMillis();
         this.vx = vx;
         this.vy = vy;
     }
@@ -134,24 +113,41 @@ public class Planet implements DisplayObject, Interpolable {
 
     @Override
     public void render(Graphics2D g2, Camera camera) {
-        AffineTransform originalTransform = g2.getTransform();
-        AffineTransform transform = new AffineTransform();
-        double scale = camera.getScale();
-        transform.scale(scale, -scale);
-        transform.translate(-camera.getxPos(), camera.getyPos());
-        double r = (radius-25)/scale;
-        g2.translate(camera.getxScrOffset(), camera.getyScrOffset());
-        g2.transform(transform);
+        
+        double rOut = (Math.log10(radius)-6)*3;
+        double rIn = radius;
+        double r = (rIn*camera.getScale() > rOut) ? rIn : rOut/camera.getScale();
         g2.setColor(color);
         //System.out.println(scale);
         //System.out.println((int)(r*2/scale));
         //g2.fillOval(0, 0, (int)(r*2/scale), (int)(r*2/scale));
         //g2.fillOval((int)x, (int)y, r*2, r*2);
-        Ellipse2D.Double circle = new Ellipse2D.Double(x-r, y-r, r*2, r*2);
+        
+        double realTime = (System.currentTimeMillis() - lastUpdateTime)/1000;
+        double simulatedTime = dst * realTime;
+        double ix = x + vx * simulatedTime;
+        double iy = y + vy * simulatedTime;
+        Ellipse2D.Double circle = new Ellipse2D.Double(ix-r, iy-r, r*2, r*2);
         g2.fill(circle);
         //Rectangle2D.Double rectangle = new Rectangle2D.Double(1E7, 1E7, r, r);
         //g2.fill(rectangle);
-        g2.setTransform(originalTransform);
+    }
+    public void renderName(Graphics2D g2, Camera camera) {
+        double rOut = (Math.log10(radius)-6)*3;
+        double rIn = radius*camera.getScale();
+        double r = (rIn > rOut) ? rIn : rOut;
+        
+        double realTime = (System.currentTimeMillis() - lastUpdateTime)/1000;
+        double simulatedTime = dst * realTime;
+        double ix = x + vx * simulatedTime;
+        double iy = y + vy * simulatedTime;
+        float idx = (float)((ix - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
+        float idy = (float)((iy + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
+        
+        g2.setColor(color);
+        g2.drawString(name, idx+(float)r+4, idy+5);
+        
+        
     }
     
     

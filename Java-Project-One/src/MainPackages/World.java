@@ -5,7 +5,7 @@
  */
 package MainPackages;
 
-import Physics2D.Objects.SpaceObject;
+import Physics2D.Objects.Planet;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JPanel;

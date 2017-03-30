@@ -12,7 +12,7 @@ import Physics.Integrators.Integrator.IntegratorType;
 import Physics.Integrators.Symplectic1;
 import Physics.Integrators.Symplectic4;
 import Physics.Simulation;
-import Physics2D.Objects.SpaceObject;
+import Physics2D.Objects.Planet;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Line;
 import World2D.World;
@@ -24,9 +24,9 @@ import java.util.Date;
  */
 public class NBodyFuturePath implements Runnable, World, FutureSimulation {
     private Thread thread;
-    private SpaceObject[] objects;
-    private SpaceObject[] smallObjects;
-    private SpaceObject[] bigObjects;
+    private Planet[] objects;
+    private Planet[] smallObjects;
+    private Planet[] bigObjects;
     
     private Line[] pathLines;
     private Integrator integrator;
@@ -44,7 +44,7 @@ public class NBodyFuturePath implements Runnable, World, FutureSimulation {
     private boolean isPaused;
     
     
-    public NBodyFuturePath(IntegratorType integrator, double totalFutureTime, int futureTimeSteps, double updatesPerSecond, SpaceObject[] smallObjects, SpaceObject[] bigObjects) {
+    public NBodyFuturePath(IntegratorType integrator, double totalFutureTime, int futureTimeSteps, double updatesPerSecond, Planet[] smallObjects, Planet[] bigObjects) {
         this.isPaused = true;
         this.futureTimeSteps = futureTimeSteps;
         this.updatesPerSecond = updatesPerSecond;
@@ -57,7 +57,7 @@ public class NBodyFuturePath implements Runnable, World, FutureSimulation {
         this.updateOrbits = false;
         //this.smallestOrbitalPeriod = orbitalPeriods[1];
         
-        this.objects = new SpaceObject[bigObjects.length + smallObjects.length];
+        this.objects = new Planet[bigObjects.length + smallObjects.length];
         for (int i=0; i<objects.length; i++) {
             if (i < smallObjects.length) {
                 objects[i] = smallObjects[i];
@@ -220,7 +220,7 @@ public class NBodyFuturePath implements Runnable, World, FutureSimulation {
     }
 
     @Override
-    public void setBodies(SpaceObject[] bodies) {
+    public void setBodies(Planet[] bodies) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
