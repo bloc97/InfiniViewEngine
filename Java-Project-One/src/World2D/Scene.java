@@ -6,7 +6,7 @@
 package World2D;
 
 import MainPackages.Main;
-import World2D.Objects.Circle;
+import World2D.Objects.Planet;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Interpolable;
 import World2D.Objects.Line;
@@ -74,6 +74,7 @@ public class Scene extends JPanel implements Runnable {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+                System.out.println(e.getKeyChar());
                  switch(e.getKeyCode()) {
                     case KeyEvent.VK_W :
                         keyW = true;
@@ -149,13 +150,6 @@ public class Scene extends JPanel implements Runnable {
             //this.add(displayObjects[i].getJComponent());
         }
     }
-    private void updateCameraToObjects() {
-        for (int i=0; i<displayObjects.length; i++) {
-            if (!displayObjects[i].isHidden()) {
-                this.displayObjects[i].update(camera);
-            }
-        }
-    }
     
     public void deactivate() {
         isActive = false;
@@ -223,7 +217,9 @@ public class Scene extends JPanel implements Runnable {
     
     private void drawAllObjects(Graphics g) {
         for (int i=0; i<displayObjects.length; i++) {
+            displayObjects[i].render((Graphics2D)g, camera);
             //if (displayObjects[i].isInView(-50, -50, 1920+50, 1080+50) && !displayObjects[i].isHidden()) {
+            /*
             if (!displayObjects[i].isHidden()) {
                 switch(displayObjects[i].getType()) {
                     case Circle:
@@ -235,10 +231,11 @@ public class Scene extends JPanel implements Runnable {
                     default:
                         break;
                 }
-            }
+            }*/
+            
         }
     }
-    
+    /*
     private void drawCircle(Graphics g, Circle circle) {
         int r = circle.getRadius();
         g.setColor(circle.getColor());
@@ -248,7 +245,7 @@ public class Scene extends JPanel implements Runnable {
     private void drawLine(Graphics g, Line line) {
         g.setColor(line.getColor());
         g.drawLine(line.getDix0(), line.getDiy0(), line.getDix1(), line.getDiy1());
-    }
+    }*/
     
     @Override
     public void run() {
@@ -263,7 +260,7 @@ public class Scene extends JPanel implements Runnable {
             if (isActive) {
                 
                 startTime = System.nanoTime();
-                updateCameraToObjects();
+                //updateCameraToObjects();
                 //invalidate();
                 repaint();
                 checkKeys();

@@ -6,7 +6,7 @@
 package Physics2D.Objects;
 
 import Physics2D.Vector2;
-import World2D.Objects.Circle;
+import World2D.Objects.Planet;
 import World2D.Objects.DisplayObject;
 import java.awt.Color;
 
@@ -16,7 +16,7 @@ import java.awt.Color;
  */
 public class SpaceObject extends PointBody {
     
-    public Circle displayComponent;
+    public Planet displayComponent;
     
     final private static Color color = Color.getHSBColor(16F/360, 33F/100, 100F/100);
     
@@ -24,19 +24,19 @@ public class SpaceObject extends PointBody {
     
     public SpaceObject(String name, double mass) {
         super(mass);
-        displayComponent = new Circle(name, color, Math.log10(mass)+10);
+        displayComponent = new Planet(name, color, Math.log10(mass)+10);
         update();
     }
 
     public SpaceObject(String name, Vector2 position, double mass) {
         super(position, mass);
-        displayComponent = new Circle(name, color, Math.log10(mass)+10);
+        displayComponent = new Planet(name, color, Math.log10(mass)+10);
         update();
     }
 
     public SpaceObject(String name, Vector2 position, Vector2 velocity, double mass) {
         super(position, velocity, mass);
-        displayComponent = new Circle(name, color, Math.log10(mass)+10);
+        displayComponent = new Planet(name, color, Math.log10(mass)+10);
         update();
     }
     @Override

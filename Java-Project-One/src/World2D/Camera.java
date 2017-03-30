@@ -71,6 +71,7 @@ public class Camera {
         this.xPos += x*(1/scale);
     }
     public void addyPos(double y) {
+        System.out.println(yPos);
         this.yPos += y*(1/scale);
     }
     public void addScale(int n) {

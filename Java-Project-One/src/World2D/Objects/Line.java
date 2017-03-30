@@ -7,6 +7,7 @@ package World2D.Objects;
 
 import World2D.Camera;
 import java.awt.Color;
+import java.awt.Graphics2D;
 
 /**
  *
@@ -42,29 +43,6 @@ public class Line implements DisplayObject {
         this.color = color;
         this.isHidden = false;
     }
-    @Override
-    public void update(Camera camera) {
-        xoffset = camera.getxPos();
-        yoffset = camera.getyPos();
-        scaleoffset = camera.getScale();
-        xscroffset = camera.getxScrOffset();
-        yscroffset = camera.getyScrOffset();
-        
-        dix0 = (int)(((x0-xoffset)*scaleoffset)+xscroffset+0.5);
-        diy0 = -(int)(((y0+yoffset)*scaleoffset)-yscroffset+0.5);
-        dix1 = (int)(((x1-xoffset)*scaleoffset)+xscroffset+0.5);
-        diy1 = -(int)(((y1+yoffset)*scaleoffset)-yscroffset+0.5);
-    }
-
-    @Override
-    public DisplayObjectType getType() {
-        return DisplayObjectType.Line;
-    }
-
-    @Override
-    public boolean isInView(int x0, int y0, int x1, int y1) {
-        return (((dix0 >= x0 && dix0 <= x1) || (dix1 >= x0 && dix1 <= x1)) && ((diy0 >= y0 && diy0 <= y1) || (diy1 >= y0 && diy1 <= y1)));
-    }
 
     @Override
     public void setPos(double x, double y) {
@@ -91,21 +69,6 @@ public class Line implements DisplayObject {
     }
 
     @Override
-    public int getDix() {
-        throw new UnsupportedOperationException("Can't get only one position of a line, use Dix0 and Dix1.");
-    }
-
-    @Override
-    public int getDiy() {
-        throw new UnsupportedOperationException("Can't get only one position of a line, use Diy0 and Diy1.");
-    }
-
-    @Override
-    public Color getColor() {
-        return color;
-    }
-
-    @Override
     public void hide() {
         isHidden = true;
     }
@@ -118,6 +81,11 @@ public class Line implements DisplayObject {
     @Override
     public boolean isHidden() {
         return isHidden;
+    }
+
+    @Override
+    public void render(Graphics2D g, Camera camera) {
+        
     }
     
 }

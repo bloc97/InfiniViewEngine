@@ -1,0 +1,12 @@
+Implement sub AI character that "controls" display, gui units conversion, sensor interpretation, motion integration (future) 
+(allows user to choose integration type, duration and precision, which uses different amounts of CPU time). 
+This uses CPU time, which in turns uses negligeable amounts of power.
+If cpu time is unavailable, some features are turned off (or kept at last value by choice)
+
+
+
+
+
+
+
+

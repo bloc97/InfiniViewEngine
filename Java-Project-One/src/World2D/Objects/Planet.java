@@ -7,14 +7,20 @@ package World2D.Objects;
 
 import World2D.Camera;
 import java.awt.Color;
-import java.awt.Graphics;
-import javax.swing.JComponent;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  *
  * @author bowen
  */
-public class Circle implements DisplayObject, Interpolable {
+public class Planet implements DisplayObject, Interpolable {
 
     private double x;
     private double y;
@@ -42,10 +48,10 @@ public class Circle implements DisplayObject, Interpolable {
     private String name;
     private Color color;
     
-    public Circle(String name, double r) {
+    public Planet(String name, double r) {
         this(name, Color.WHITE, r);
     }
-    public Circle(String name, Color color, double r) {
+    public Planet(String name, Color color, double r) {
         //this.setSize(r*2, r*2);
         this.isHidden = false;
         this.name = name;
@@ -92,42 +98,11 @@ public class Circle implements DisplayObject, Interpolable {
         return this;
     }*/
 
-    @Override
-    public void update(Camera camera) {
-        xoffset = camera.getxPos();
-        yoffset = camera.getyPos();
-        scaleoffset = camera.getScale();
-        interpolationStep();
-        xscroffset = camera.getxScrOffset();
-        yscroffset = camera.getyScrOffset();
-    }
-
-    @Override
-    public DisplayObjectType getType() {
-        return DisplayObjectType.Circle;
-    }
-    @Override
-    public int getDix() {
-        return dix;
-    }
-    @Override
-    public int getDiy() {
-        return diy;
-    }
     public int getRadius() {
         return (int)(radius*(scaleoffset/1000)+5);
     }
-    @Override
-    public Color getColor() {
-        return color;
-    }
     public String getName() {
         return name;
-    }
-
-    @Override
-    public boolean isInView(int x0, int y0, int x1, int y1) {
-        return (dix >= x0 && dix <= x1 && diy >= y0 && diy <= y1);
     }
 
     @Override
@@ -155,6 +130,28 @@ public class Circle implements DisplayObject, Interpolable {
     @Override
     public boolean isHidden() {
         return isHidden;
+    }
+
+    @Override
+    public void render(Graphics2D g2, Camera camera) {
+        AffineTransform originalTransform = g2.getTransform();
+        AffineTransform transform = new AffineTransform();
+        double scale = camera.getScale();
+        transform.scale(scale, -scale);
+        transform.translate(-camera.getxPos(), camera.getyPos());
+        double r = (radius-25)/scale;
+        g2.translate(camera.getxScrOffset(), camera.getyScrOffset());
+        g2.transform(transform);
+        g2.setColor(color);
+        //System.out.println(scale);
+        //System.out.println((int)(r*2/scale));
+        //g2.fillOval(0, 0, (int)(r*2/scale), (int)(r*2/scale));
+        //g2.fillOval((int)x, (int)y, r*2, r*2);
+        Ellipse2D.Double circle = new Ellipse2D.Double(x-r, y-r, r*2, r*2);
+        g2.fill(circle);
+        //Rectangle2D.Double rectangle = new Rectangle2D.Double(1E7, 1E7, r, r);
+        //g2.fill(rectangle);
+        g2.setTransform(originalTransform);
     }
     
     
