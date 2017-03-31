@@ -38,4 +38,8 @@ public class Symplectic1 implements Integrator {
     public IntegratorType type() {
         return IntegratorType.SYMPLECTIC1;
     }
+    @Override
+    public void reset() {
+        accelerations = null;
+    }
 }

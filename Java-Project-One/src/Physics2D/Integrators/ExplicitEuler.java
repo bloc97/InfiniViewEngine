@@ -36,5 +36,9 @@ public class ExplicitEuler implements Integrator {
     public IntegratorType type() {
         return IntegratorType.EXPLICITEULER;
     }
+    @Override
+    public void reset() {
+        accelerations = null;
+    }
 
 }

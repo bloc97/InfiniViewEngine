@@ -76,14 +76,23 @@ public class Camera {
     public void addScale(int n) {
         if (n > 0) {
             for (int i=0; i<n; i++) {
-                scale /= 2;
+                divideScale();
             }
         } else {
             n = -n;
             for (int i=0; i<n; i++) {
-                scale *= 2;
+                multiplyScale();
             }
         }
     }
-    
+    private void multiplyScale() {
+        if (scale < 1E29) {
+            scale *= 2;
+        }
+    }
+    private void divideScale() {
+        if (scale > 1E-29) {
+            scale /= 2;
+        }
+    }
 }

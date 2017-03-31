@@ -5,15 +5,8 @@
  */
 package SpaceGame;
 
-import Physics2D.Integrators.Integrator.IntegratorType;
-import Physics2D.NBodyFutureOrbit;
-import Physics2D.NBodyFuturePath;
-import Physics2D.Objects.Planet;
-import Physics2D.NBodySimulation;
-import Physics2D.Vector2;
 import World2D.Scene;
 import World2D.Viewport;
-import java.util.Date;
 /**
  *
  * @author Lin-Li

@@ -7,14 +7,10 @@ package SpaceGame;
 
 import Physics.Simulation;
 import Physics2D.Integrators.Integrator;
-import Physics2D.NBodyFutureOrbit;
-import Physics2D.NBodyFuturePath;
 import Physics2D.NBodySimulation;
 import Physics2D.Objects.Planet;
 import Physics2D.Vector2;
 import World2D.Objects.DisplayObject;
-import World2D.Scene;
-import World2D.Viewport;
 import World2D.World;
 import java.util.Date;
 

@@ -22,6 +22,7 @@ public interface Integrator {
     //public PointBody[] get(PointBody[] bodies, double dt, int steps);
     //public Vector2[][] getFuture(PointBody[] bodies, double dt, int steps);
     public IntegratorType type();
+    public void reset();
     
     public static PointBody[] get(PointBody[] bodies, Integrator integrator, double dt, int steps) {
         PointBody[] bodiesClone = new PointBody[bodies.length];

@@ -16,21 +16,21 @@ import Physics2D.Vectors2;
 public class Symplectic4 implements Integrator {
     
     private Vector2[] accelerations;
+    double a1 = 0.5153528374311229364D;
+    double a2 =-0.0857820194129736460D;
+    double a3 = 0.4415830236164665242D;
+    double a4 = 0.1288461583653841854D;
+
+    double b1 = 0.1344961992774310892D;
+    double b2 =-0.2248198030794208058D;
+    double b3 = 0.7562300005156682911D;
+    double b4 = 0.3340036032863214255D;
+
+    double[] c = new double[] {a4, a3, a2, a1};
+    double[] d = new double[] {b4, b3, b2, b1};
     
     @Override
     public void apply(PointBody[] bodies, double dt) {
-        double a1 = 0.5153528374311229364D;
-        double a2 =-0.0857820194129736460D;
-        double a3 = 0.4415830236164665242D;
-        double a4 = 0.1288461583653841854D;
-        
-        double b1 = 0.1344961992774310892D;
-        double b2 =-0.2248198030794208058D;
-        double b3 = 0.7562300005156682911D;
-        double b4 = 0.3340036032863214255D;
-        
-        double[] c = new double[] {a4, a3, a2, a1};
-        double[] d = new double[] {b4, b3, b2, b1};
         
         if (dt > 0) {
             for (int i=0; i<4; i++) {
@@ -53,5 +53,9 @@ public class Symplectic4 implements Integrator {
     @Override
     public IntegratorType type() {
         return IntegratorType.SYMPLECTIC4;
+    }
+    @Override
+    public void reset() {
+        accelerations = null;
     }
 }

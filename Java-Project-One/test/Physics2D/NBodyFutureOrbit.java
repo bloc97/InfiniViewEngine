@@ -12,6 +12,7 @@ import Physics2D.Integrators.Integrator.IntegratorType;
 import Physics2D.Integrators.Symplectic1;
 import Physics2D.Integrators.Symplectic4;
 import Physics2D.Objects.Planet;
+import Physics2D.Vector2;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Line;
 import java.awt.Color;
@@ -21,11 +22,9 @@ import java.util.Date;
  *
  * @author bowen
  */
-public class NBodyFutureOrbit1 implements Runnable, FutureSimulation { //TODO implement past data logging for better orbits
+public class NBodyFutureOrbit implements Runnable, FutureSimulation { //TODO implement past data logging for better orbits
     private Thread thread;
     private Planet[] bigObjects;
-    
-    private double[] orbitalPeriods;
     
     private Line[] orbitLines;
     private Integrator integrator;
@@ -41,13 +40,13 @@ public class NBodyFutureOrbit1 implements Runnable, FutureSimulation { //TODO im
     private boolean isPaused;
     
     
-    public NBodyFutureOrbit1(IntegratorType integrator, int futureTimeSteps, Planet[] bigObjects, double[] orbitalPeriods) {
+    public NBodyFutureOrbit(IntegratorType integrator, int futureTimeSteps, Planet[] bigObjects, double[] orbitalPeriods) {
         this.isPaused = true;
         this.futureTimeSteps = futureTimeSteps;
         
         this.bigObjects = bigObjects;
         
-        this.orbitalPeriods = orbitalPeriods;
+        //this.orbitalPeriods = orbitalPeriods;
         this.updateOrbits = false;
         //this.smallestOrbitalPeriod = orbitalPeriods[1];
         
@@ -83,7 +82,7 @@ public class NBodyFutureOrbit1 implements Runnable, FutureSimulation { //TODO im
         
         Vector2[][] positionTime = new Vector2[bigObjects.length][futureTimeSteps];
         for (int i=0; i<bigObjects.length; i++) {
-            positionTime[i] = Integrator.getFutureSingle(bigObjects, i, this.integrator, orbitalPeriods[i]/futureTimeSteps, futureTimeSteps+Math.floorDiv(futureTimeSteps, 100));
+            //positionTime[i] = Integrator.getFutureSingle(bigObjects, i, this.integrator, orbitalPeriods[i]/futureTimeSteps, futureTimeSteps+Math.floorDiv(futureTimeSteps, 100));
         }
         int linei = 0;
         

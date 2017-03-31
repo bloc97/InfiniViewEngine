@@ -21,8 +21,8 @@ import java.awt.geom.Path2D;
 public class FutureOrbit implements DisplayObject {
     
     private Vector2[] path;
-    private double per;
-    private double ratio;
+    //private double per;
+    //private double ratio;
     
     @Override
     public void renderTransform(Graphics2D g2, Camera camera) {
@@ -41,26 +41,41 @@ public class FutureOrbit implements DisplayObject {
         for (int i=1; i<path.length; i++) {
             double ix = getIx(path[i].get(0), camera);
             double iy = getIy(path[i].get(1), camera);
-            orbit.lineTo(ix, iy);
+                orbit.lineTo(ix, iy);
+            /*
+            int maxX = camera.getxScrOffset() * 2;
+            int maxY = camera.getyScrOffset() * 2;
             
-            //System.out.println(ratio/2 + " " + per);
-            
-            if (i*(ratio) > per/3) {
-                //System.out.println("True");
-                break;
+            if (ix > 0 && ix < maxX && iy > 0 && iy < maxY) {
+                orbit.lineTo(ix, iy);
             }
+            
+            //System.out.println(i + " " + Math.random());
+            
+            //if (i*(ratio) > per/3) {
+                //System.out.println("True");
+                //break;
+            //}
             
             //if (i>20 && isWithinThreshold(ix0, iy0, ix, iy, 100)) {
                 //break;
             //}
+            */
             
         }
+        float dashScale = 1E9f * (float)camera.getScale();
+        //if (dashScale < 10) {
+            //dashScale *= 10;
+        //}
+        while (dashScale < 5) {
+            dashScale *= 5;
+        }
         g2.setStroke(new BasicStroke(1.0f,                      // Width
-                           BasicStroke.CAP_ROUND,    // End cap
-                           BasicStroke.JOIN_ROUND,    // Join style
-                           100.0f,                     // Miter limit
-                           new float[] {10f,10f}, // Dash pattern
-                           0));
+                           BasicStroke.CAP_SQUARE,    // End cap
+                           BasicStroke.JOIN_BEVEL,    // Join style
+                           1000.0f,                     // Miter limit
+                           new float[] {dashScale, dashScale}, // Dash pattern
+                           0.5f));
         g2.draw(orbit);
         g2.setStroke(originalStroke);
         
@@ -90,10 +105,10 @@ public class FutureOrbit implements DisplayObject {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void setOrbitPath(Vector2[] paths, double cyc, double ratio) {
+    public void setOrbitPath(Vector2[] paths) {//, double cyc, double ratio) {
         path = paths;
-        per = cyc;
-        this.ratio = ratio;
+        //per = cyc;
+        //this.ratio = ratio;
     }
 
     

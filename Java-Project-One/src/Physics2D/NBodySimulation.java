@@ -10,6 +10,7 @@ import Physics.Simulation;
 import Physics2D.Integrators.ExplicitEuler;
 import Physics2D.Integrators.Integrator;
 import Physics2D.Integrators.Integrator.IntegratorType;
+import Physics2D.Integrators.LeapFrog;
 import Physics2D.Integrators.NBody;
 import Physics2D.Integrators.Symplectic1;
 import Physics2D.Integrators.Symplectic4;
@@ -32,6 +33,7 @@ public class NBodySimulation implements Runnable, Simulation {
     private FutureOrbit[] futureOrbits;
     
     private Integrator integrator;
+    private Integrator integrator2;
     
     private double updatesPerSecond; //How many "Big steps" per second
     private int miniSteps; //How many "Small Steps" per Big step
@@ -77,6 +79,7 @@ public class NBodySimulation implements Runnable, Simulation {
                 this.integrator = new Symplectic1();
                 break;
         }
+        this.integrator2 = new Symplectic1();
         this.thread = new Thread(this);
         
         futureOrbitPos = new Vector2[bodies.length][0];
@@ -103,26 +106,33 @@ public class NBodySimulation implements Runnable, Simulation {
         fCount++;
     }
     public void reCalculateOrbits() {
-            futureOrbitPos = Integrator.getFuture(bodies, integrator, ratio*4, 50);
-            
-            double[] vels = new double[bodies.length];
-            double[] pers = new double[bodies.length];
-            
-            for (int i=0; i<vels.length; i++) {
-                vels[i] = bodies[i].velocity().norm();
-            }
-            
-            double G = NBody.G;
-            double M0 = bodies[0].mass();
-            double c0 = G*G*M0*M0;
-            
-            for (int i=0; i<vels.length; i++) {
-                pers[i] = 2 * Math.PI * Math.sqrt(c0/Math.pow(vels[i], 6));
-            }
+        //double futureSimRatio = ratio/4;
+        //futureOrbitPos = Integrator.getFuture(bodies, integrator2, futureSimRatio, 500);
+        //integrator2.reset();
 
-            for (int i=0; i<futureOrbits.length; i++) {
-                futureOrbits[i].setOrbitPath(futureOrbitPos[i], pers[i], ratio*4);
-            }
+        double[] vels = new double[bodies.length];
+        double[] pers = new double[bodies.length];
+
+        for (int i=0; i<vels.length; i++) {
+            vels[i] = bodies[i].velocity().norm();
+        }
+        double G = NBody.G;
+        double M0 = bodies[0].mass();
+        double c0 = G*G*M0*M0;
+
+        for (int i=0; i<vels.length; i++) {
+            pers[i] = 2 * Math.PI * Math.sqrt(c0/Math.pow(vels[i], 6));
+        }
+        pers[0] = 1E9;
+
+        for (int i=0; i<futureOrbits.length; i++) {
+            //System.out.println((pers[i]/10/5));
+            futureOrbitPos[i] = Integrator.getFutureSingle(bodies, i, integrator2, (pers[i]/50/4), 50);
+        }
+
+        for (int i=0; i<futureOrbits.length; i++) {
+            futureOrbits[i].setOrbitPath(futureOrbitPos[i]);
+        }
     }
     private void updateSpatialPositions() {
         //Vector2[] currentAccelerations = integrator.getCurrentAccelerations();
