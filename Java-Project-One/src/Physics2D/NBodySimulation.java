@@ -22,7 +22,7 @@ import java.util.Date;
  *
  * @author bowen
  */
-public class NBodySimulation implements Runnable, World, Simulation {
+public class NBodySimulation implements Runnable, Simulation {
     private Thread thread;
     private Planet[] objects;
     private Integrator integrator;
@@ -191,8 +191,6 @@ public class NBodySimulation implements Runnable, World, Simulation {
 
     @Override
     public DisplayObject[] getDisplayObjects() {
-        DisplayObject[] orbits = this.orbitIntegrator.getDisplayObjects();
-        DisplayObject[] lines = this.futureIntegrator.getDisplayObjects();
         
         int objectsCount = 0;
         
@@ -201,31 +199,9 @@ public class NBodySimulation implements Runnable, World, Simulation {
                 objectsCount++;
             }
         }
-        for (DisplayObject orbit : orbits) {
-            if (!orbit.isHidden()) {
-                objectsCount++;
-            }
-        }
-        for (DisplayObject line : lines) {
-            if (!line.isHidden()) {
-                objectsCount++;
-            }
-        }
         DisplayObject[] displayObjects = new DisplayObject[objectsCount];
         int objectsIndex = 0;
         
-        for (DisplayObject orbit : orbits) {
-            if (!orbit.isHidden()) {
-                displayObjects[objectsIndex] = orbit;
-                objectsIndex++;
-            }
-        }
-        for (DisplayObject line : lines) {
-            if (!line.isHidden()) {
-                displayObjects[objectsIndex] = line;
-                objectsIndex++;
-            }
-        }
         for (Planet object : objects) {
             if (!object.displayComponent.isHidden()) {
                 displayObjects[objectsIndex] = object.displayComponent;
@@ -234,16 +210,16 @@ public class NBodySimulation implements Runnable, World, Simulation {
         }
         return displayObjects;
     }
+    @Override
+    public int getObjectsNumber() {
+        return objects.length;
+    }
 
     @Override
     public long getTicks() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public Simulation getSimulation() {
-        return this;
-    }
 
     @Override
     public Date getDate() {

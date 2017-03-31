@@ -88,7 +88,7 @@ public class Line implements DisplayObject {
     }
 
     @Override
-    public void render(Graphics2D g2, Camera camera) {
+    public void renderTransform(Graphics2D g2, Camera camera) {
         g2.setColor(color);
         //Stroke lastStroke = g2.getStroke();
         Line2D.Double line = new Line2D.Double(x0, y0, x1, y1);
@@ -96,6 +96,11 @@ public class Line implements DisplayObject {
         g2.draw(line);
         //g2.drawLine(getDix0(), getDiy0(), getDix1(), getDiy1());
         //g2.setStroke(lastStroke);
+    }
+
+    @Override
+    public void renderNoTransform(Graphics2D g, Camera camera) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

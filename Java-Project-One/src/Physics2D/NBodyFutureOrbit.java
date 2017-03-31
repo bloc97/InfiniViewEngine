@@ -23,7 +23,7 @@ import java.util.Date;
  *
  * @author bowen
  */
-public class NBodyFutureOrbit implements Runnable, World, FutureSimulation { //TODO implement past data logging for better orbits
+public class NBodyFutureOrbit implements Runnable, FutureSimulation { //TODO implement past data logging for better orbits
     private Thread thread;
     private Planet[] bigObjects;
     
@@ -182,10 +182,6 @@ public class NBodyFutureOrbit implements Runnable, World, FutureSimulation { //T
         return orbitLines;
     }
 
-    @Override
-    public Simulation getSimulation() {
-        return this;
-    }
 
     @Override
     public long getTicks() {
@@ -220,6 +216,11 @@ public class NBodyFutureOrbit implements Runnable, World, FutureSimulation { //T
     @Override
     public Date getDate() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getObjectsNumber() {
+        return orbitLines.length;
     }
     
 }

@@ -6,7 +6,6 @@
 package MainPackages;
 
 import SkillPackages.FishingSkill;
-import MainPackages.Movable;
 
 /**
  *

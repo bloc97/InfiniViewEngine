@@ -22,7 +22,7 @@ import java.util.Date;
  *
  * @author bowen
  */
-public class NBodyFuturePath implements Runnable, World, FutureSimulation {
+public class NBodyFuturePath implements Runnable, FutureSimulation {
     private Thread thread;
     private Planet[] objects;
     private Planet[] smallObjects;
@@ -188,11 +188,11 @@ public class NBodyFuturePath implements Runnable, World, FutureSimulation {
         DisplayObject[] displayObjects = pathLines;
         return displayObjects;
     }
-
     @Override
-    public Simulation getSimulation() {
-        return this;
+    public int getObjectsNumber() {
+        return pathLines.length;
     }
+
 
     @Override
     public long getTicks() {
@@ -228,5 +228,6 @@ public class NBodyFuturePath implements Runnable, World, FutureSimulation {
     public Date getDate() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
     
 }

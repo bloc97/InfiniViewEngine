@@ -14,5 +14,5 @@ import World2D.Objects.DisplayObject;
  */
 public interface World { //Interfaces for world objects to be passed to Scene. Contains DisplayObjects and optionally a Simulation.
     public DisplayObject[] getDisplayObjects();
-    public Simulation getSimulation();
+    public Simulation[] getSimulations();
 }

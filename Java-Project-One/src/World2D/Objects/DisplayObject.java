@@ -16,7 +16,8 @@ public interface DisplayObject {
     public enum DisplayObjectType {
         Circle, Line
     }
-    public void render(Graphics2D g, Camera camera);
+    public void renderTransform(Graphics2D g, Camera camera); //part of the rendering requiring affine transforms
+    public void renderNoTransform(Graphics2D g, Camera camera); //part of the rendering without transforms (per pixel)
     
     public void setPos(double x, double y);
     

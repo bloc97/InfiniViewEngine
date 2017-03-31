@@ -14,7 +14,7 @@ import java.util.Date;
  *
  * @author bowen
  */
-public class NBodyTrails implements Runnable, Simulation, World {
+public class NBodyTrails implements Runnable, Simulation {
 
     @Override
     public void run() {
@@ -72,7 +72,7 @@ public class NBodyTrails implements Runnable, Simulation, World {
     }
 
     @Override
-    public Simulation getSimulation() {
+    public int getObjectsNumber() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

@@ -13,10 +13,10 @@ import javax.swing.JFrame;
  */
 public class Viewport extends JFrame {
     private Scene scene;
-    
+    /*
     public Viewport(int xsize, int ysize, World world) {
         this(xsize, ysize, new Scene(xsize, ysize, world));
-    }
+    }*/
     public Viewport(int xsize, int ysize, Scene scene) {
         this.setTitle("Space!");
         this.setSize(xsize, ysize);

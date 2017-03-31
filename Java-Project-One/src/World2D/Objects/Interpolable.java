@@ -11,6 +11,7 @@ package World2D.Objects;
  */
 public interface Interpolable {
     public void setInterpolationSimulationTime(double dst);
+    @Deprecated
     public void setInterpolationFrameTime(double dft);
     public void setVel(double vx, double vy);
 }

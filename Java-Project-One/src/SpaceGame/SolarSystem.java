@@ -3,31 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package MainPackages;
+package SpaceGame;
 
-import Physics2D.Integrators.Integrator.IntegratorType;
+import Physics.Simulation;
+import Physics2D.Integrators.Integrator;
 import Physics2D.NBodyFutureOrbit;
 import Physics2D.NBodyFuturePath;
-import Physics2D.Objects.Planet;
 import Physics2D.NBodySimulation;
+import Physics2D.Objects.Planet;
 import Physics2D.Vector2;
+import World2D.Objects.DisplayObject;
 import World2D.Scene;
 import World2D.Viewport;
-import java.text.DateFormat;
+import World2D.World;
 import java.util.Date;
+
 /**
  *
- * @author Lin-Li
+ * @author bowen
  */
-public class Main {
+public class SolarSystem implements World {
+    
+    private static double AU = 1.496e+11; //AU/m
+    private static double DAY = 86400D;
+    private Simulation[] simulations;
 
-    /**
-     * @param args the command line arguments
-     */
-    static double AU = 1.496e+11; //AU/m
-    static double DAY = 86400D;
-    static NBodySimulation mainsimulation;
-    public static void main(String[] args) {
+    public SolarSystem() {
         
         
         Planet sun = generateBody("Sun", 0, 0, 0, 0, 1.989E30, 695000);
@@ -64,20 +65,12 @@ public class Main {
         }
         
         
-        NBodyFuturePath futureIntegrator = new NBodyFuturePath(IntegratorType.SYMPLECTIC4, 1E8, 200, 1, smallObjects, bigObjects);
-        NBodyFutureOrbit orbitIntegrator = new NBodyFutureOrbit(IntegratorType.SYMPLECTIC4, 20, bigObjects, orbitalPeriods);
-        NBodySimulation space = new NBodySimulation(IntegratorType.SYMPLECTIC4, 1E6, 30, 1, futureIntegrator, orbitIntegrator, initialDate, allObjects);
+        NBodyFuturePath futureIntegrator = new NBodyFuturePath(Integrator.IntegratorType.SYMPLECTIC4, 1E8, 200, 1, smallObjects, bigObjects);
+        NBodyFutureOrbit orbitIntegrator = new NBodyFutureOrbit(Integrator.IntegratorType.SYMPLECTIC4, 20, bigObjects, orbitalPeriods);
+        NBodySimulation space = new NBodySimulation(Integrator.IntegratorType.SYMPLECTIC4, 1E6, 30, 1, futureIntegrator, orbitIntegrator, initialDate, allObjects);
         
-        Scene scene = new Scene(60, 1920, 1080, space);
-        Viewport viewport = new Viewport(1920, 1080, scene);
-        
-        
-        scene.setDisplayObjects(space.getDisplayObjects());
-        
-        scene.start();
         space.start();
-        
-        mainsimulation = space;
+        simulations = new Simulation[] {space, orbitIntegrator, futureIntegrator};
         
     }
     
@@ -85,6 +78,79 @@ public class Main {
         Vector2 pos = new Vector2(new double[]{xAU*AU, yAU*AU});
         Vector2 vel = new Vector2(new double[]{vxAUDay*AU/DAY, vyAUDay*AU/DAY});
         return new Planet(name, pos, vel, massKg, radiusKm*1000);
+    }
+    
+    @Override
+    public DisplayObject[] getDisplayObjects() {
+        
+        int objectsCount = 0;
+        for (int i=0; i<simulations.length; i++) {
+            objectsCount += simulations[i].getObjectsNumber();
+        }
+        
+        DisplayObject[] displayObjects = new DisplayObject[objectsCount];
+        int objectsIndex = 0;
+        
+        for (int i=0; i<simulations.length; i++) {
+            DisplayObject[] objects = simulations[i].getDisplayObjects();
+            for (DisplayObject object : objects) {
+                displayObjects[objectsIndex] = object;
+                objectsIndex++;
+            }
+        }
+        return displayObjects;
+    }
+    /*
+    @Override
+    public DisplayObject[] getDisplayObjects() {
+        DisplayObject[] planets = simulations[0].getDisplayObjects();
+        DisplayObject[] orbits = simulations[1].getDisplayObjects();
+        DisplayObject[] lines = simulations[2].getDisplayObjects();
+        
+        int objectsCount = 0;
+        
+        for (DisplayObject planet : planets) {
+            if (!planet.isHidden()) {
+                objectsCount++;
+            }
+        }
+        for (DisplayObject orbit : orbits) {
+            if (!orbit.isHidden()) {
+                objectsCount++;
+            }
+        }
+        for (DisplayObject line : lines) {
+            if (!line.isHidden()) {
+                objectsCount++;
+            }
+        }
+        DisplayObject[] displayObjects = new DisplayObject[objectsCount];
+        int objectsIndex = 0;
+        
+        for (DisplayObject orbit : orbits) {
+            if (!orbit.isHidden()) {
+                displayObjects[objectsIndex] = orbit;
+                objectsIndex++;
+            }
+        }
+        for (DisplayObject line : lines) {
+            if (!line.isHidden()) {
+                displayObjects[objectsIndex] = line;
+                objectsIndex++;
+            }
+        }
+        for (DisplayObject planet : planets) {
+            if (!planet.isHidden()) {
+                displayObjects[objectsIndex] = planet;
+                objectsIndex++;
+            }
+        }
+        return displayObjects;
+    }*/
+
+    @Override
+    public Simulation[] getSimulations() {
+        return simulations;
     }
     
 }

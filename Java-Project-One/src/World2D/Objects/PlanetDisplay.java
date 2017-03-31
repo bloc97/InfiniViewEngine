@@ -112,7 +112,7 @@ public class PlanetDisplay implements DisplayObject, Interpolable {
     }
 
     @Override
-    public void render(Graphics2D g2, Camera camera) {
+    public void renderTransform(Graphics2D g2, Camera camera) {
         
         double rOut = (Math.log10(radius)-6)*3;
         double rIn = radius;
@@ -132,7 +132,8 @@ public class PlanetDisplay implements DisplayObject, Interpolable {
         //Rectangle2D.Double rectangle = new Rectangle2D.Double(1E7, 1E7, r, r);
         //g2.fill(rectangle);
     }
-    public void renderName(Graphics2D g2, Camera camera) {
+    @Override
+    public void renderNoTransform(Graphics2D g2, Camera camera) {
         double rOut = (Math.log10(radius)-6)*3;
         double rIn = radius*camera.getScale();
         double r = (rIn > rOut) ? rIn : rOut;
