@@ -5,7 +5,7 @@
  */
 package MainPackages;
 
-import Physics.Integrators.Integrator.IntegratorType;
+import Physics2D.Integrators.Integrator.IntegratorType;
 import Physics2D.NBodyFutureOrbit;
 import Physics2D.NBodyFuturePath;
 import Physics2D.Objects.Planet;

@@ -75,7 +75,7 @@ public class Scene extends JPanel implements Runnable {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                System.out.println(e.getKeyChar());
+                //System.out.println(e.getKeyChar());
                  switch(e.getKeyCode()) {
                     case KeyEvent.VK_W :
                         keyW = true;

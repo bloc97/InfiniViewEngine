@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Physics.Integrators;
+package Physics2D.Integrators;
 
 import Physics2D.Objects.PointBody;
 import Physics2D.Vector2;

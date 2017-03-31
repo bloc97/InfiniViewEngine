@@ -6,11 +6,11 @@
 package Physics2D;
 
 import Physics.FutureSimulation;
-import Physics.Integrators.ExplicitEuler;
-import Physics.Integrators.Integrator;
-import Physics.Integrators.Integrator.IntegratorType;
-import Physics.Integrators.Symplectic1;
-import Physics.Integrators.Symplectic4;
+import Physics2D.Integrators.ExplicitEuler;
+import Physics2D.Integrators.Integrator;
+import Physics2D.Integrators.Integrator.IntegratorType;
+import Physics2D.Integrators.Symplectic1;
+import Physics2D.Integrators.Symplectic4;
 import Physics.Simulation;
 import Physics2D.Objects.Planet;
 import World2D.Objects.DisplayObject;

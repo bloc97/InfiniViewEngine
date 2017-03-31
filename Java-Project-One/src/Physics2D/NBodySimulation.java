@@ -7,11 +7,11 @@ package Physics2D;
 
 import Physics.FutureSimulation;
 import Physics.Simulation;
-import Physics.Integrators.ExplicitEuler;
-import Physics.Integrators.Integrator;
-import Physics.Integrators.Integrator.IntegratorType;
-import Physics.Integrators.Symplectic1;
-import Physics.Integrators.Symplectic4;
+import Physics2D.Integrators.ExplicitEuler;
+import Physics2D.Integrators.Integrator;
+import Physics2D.Integrators.Integrator.IntegratorType;
+import Physics2D.Integrators.Symplectic1;
+import Physics2D.Integrators.Symplectic4;
 import Physics2D.Objects.Planet;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Line;
@@ -85,7 +85,7 @@ public class NBodySimulation implements Runnable, World, Simulation {
         }
     }
     private void updateSpatialPositions() {
-        Vector2[] currentAccelerations = integrator.getCurrentAccelerations();
+        //Vector2[] currentAccelerations = integrator.getCurrentAccelerations();
         for (int i=0; i<objects.length; i++) {
             objects[i].update();
         }
@@ -97,7 +97,7 @@ public class NBodySimulation implements Runnable, World, Simulation {
     }
     @Override
     public void speedUp() {
-        if (accel < 10E6) {
+        if (accel < 1E3) {
             accel *= 2;
             ratio = initialRatio * accel;
         }

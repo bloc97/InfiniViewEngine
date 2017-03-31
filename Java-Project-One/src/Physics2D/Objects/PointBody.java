@@ -5,11 +5,7 @@
  */
 package Physics2D.Objects;
 
-import MathExt.Algebra.Tensor;
-import MathExt.Algebra.Tensors;
-import MathExt.Algebra.Vectors;
 import Physics2D.Vector2;
-import Physics2D.Vectors2;
 import World2D.Objects.DisplayObject;
 
 /**
@@ -25,38 +21,33 @@ public class PointBody implements LinearMotion {
         position = new Vector2(0);
         velocity = new Vector2(0);
         mass = 1;
-        
     }
     public PointBody(double mass) {
         position = new Vector2(0);
         velocity = new Vector2(0);
         this.mass = mass;
-        
     }
     public PointBody(Vector2 position, double mass) {
         this.position = position.clone();
         velocity = new Vector2(0);
         this.mass = mass;
-        
     }
     public PointBody(Vector2 position, Vector2 velocity, double mass) {
         this.position = position.clone();
         this.velocity = velocity.clone();
         this.mass = mass;
-        
     }
     
     @Override
     public Vector2 position() {
         return position;
     }
-
+    
     @Override
     public Vector2 velocity() {
         return velocity;
     }
-
-
+    
     @Override
     public double momentum(int i) {
         return velocity.get(i) * mass;
