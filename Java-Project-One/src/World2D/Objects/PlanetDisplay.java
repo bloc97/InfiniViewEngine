@@ -128,6 +128,7 @@ public class PlanetDisplay implements DisplayObject, Interpolable {
         double ix = x + vx * simulatedTime;
         double iy = y + vy * simulatedTime;
         Ellipse2D.Double circle = new Ellipse2D.Double(ix-r, iy-r, r*2, r*2);
+        
         g2.fill(circle);
         //Rectangle2D.Double rectangle = new Rectangle2D.Double(1E7, 1E7, r, r);
         //g2.fill(rectangle);

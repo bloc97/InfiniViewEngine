@@ -5,6 +5,7 @@
  */
 package SpaceGame;
 
+import Physics2D.NBodySimulation;
 import World2D.Objects.PlanetDisplay;
 import World2D.Scene;
 import World2D.World;
@@ -68,9 +69,11 @@ public class MainView extends Scene {
                         break;
                     case KeyEvent.VK_E :
                         worlds[0].getSimulations()[0].speedUp();
+                        ((NBodySimulation)(worlds[0].getSimulations()[0])).reCalculateOrbits();
                         break;
                     case KeyEvent.VK_Q :
                         worlds[0].getSimulations()[0].speedDown();
+                        ((NBodySimulation)(worlds[0].getSimulations()[0])).reCalculateOrbits();
                         break;
                     default :
                         break;
@@ -162,10 +165,7 @@ public class MainView extends Scene {
         g2.setTransform(originalTransform);
         
         for (int i=0; i<displayObjects.length; i++) {
-            if (displayObjects[i] instanceof PlanetDisplay) {
-                PlanetDisplay planet = (PlanetDisplay) displayObjects[i];
-                planet.renderNoTransform(g2, camera);
-            }
+                displayObjects[i].renderNoTransform(g2, camera);
         }
         
     }
