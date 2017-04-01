@@ -106,33 +106,6 @@ public class NBodySimulation implements Runnable, Simulation {
         fCount++;
     }
     public void reCalculateOrbits() {
-        //double futureSimRatio = ratio/4;
-        //futureOrbitPos = Integrator.getFuture(bodies, integrator2, futureSimRatio, 500);
-        //integrator2.reset();
-
-        double[] vels = new double[bodies.length];
-        double[] pers = new double[bodies.length];
-
-        for (int i=0; i<vels.length; i++) {
-            vels[i] = bodies[i].velocity().norm();
-        }
-        double G = NBody.G;
-        double M0 = bodies[0].mass();
-        double c0 = G*G*M0*M0;
-
-        for (int i=0; i<vels.length; i++) {
-            pers[i] = 2 * Math.PI * Math.sqrt(c0/Math.pow(vels[i], 6));
-        }
-        pers[0] = 1E9;
-
-        for (int i=0; i<futureOrbits.length; i++) {
-            //System.out.println((pers[i]/10/5));
-            futureOrbitPos[i] = Integrator.getFutureSingle(bodies, i, integrator2, (pers[i]/50/4), 50);
-        }
-
-        for (int i=0; i<futureOrbits.length; i++) {
-            futureOrbits[i].setOrbitPath(futureOrbitPos[i]);
-        }
     }
     private void updateSpatialPositions() {
         //Vector2[] currentAccelerations = integrator.getCurrentAccelerations();
@@ -295,7 +268,7 @@ public class NBodySimulation implements Runnable, Simulation {
                 objectsIndex++;
             }
         }
-        return concat(displayObjects, futureOrbits);
+        return displayObjects;
     }
     private DisplayObject[] concat(DisplayObject[] a, DisplayObject[] b) {
         int aLen = a.length;
@@ -307,7 +280,7 @@ public class NBodySimulation implements Runnable, Simulation {
      }
     @Override
     public int getObjectsNumber() {
-        return bodies.length + futureOrbits.length;
+        return bodies.length;
     }
 
     @Override

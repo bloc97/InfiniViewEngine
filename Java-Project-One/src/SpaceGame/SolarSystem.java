@@ -47,7 +47,17 @@ public class SolarSystem implements World {
         
         Date initialDate = new Date(1489636800000l);
         
-        Planet[] bigObjects = new Planet[] {sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune};//, proximaCentauri, galacticCenter, andromeda};
+        //Planet[] bigObjects = new Planet[] {sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune};//, proximaCentauri, galacticCenter, andromeda};
+        Planet[] bigObjects = new Planet[100];
+        for (int i=0; i<100; i++) {
+            double xreg = Math.random()/5;
+            double yreg = Math.random()/5;
+            
+            double xv = Math.random()/4000;
+            double yv = Math.random()/4000;
+            bigObjects[i] = generateBody("", xreg, yreg, xv, yv, 1E24, 6000);
+        }
+        
         Planet[] smallObjects = new Planet[] {};
         /*
         double[] orbitalPeriodsInDays = new double[] {1E4, 87.97, 224.7, 365.26, 686.98, 4332.82, 10755.7, 30687.15, 60190.03};
@@ -71,7 +81,7 @@ public class SolarSystem implements World {
         
         //NBodyFuturePath futureIntegrator = new NBodyFuturePath(Integrator.IntegratorType.SYMPLECTIC4, 1E8, 200, 1, smallObjects, bigObjects);
         //NBodyFutureOrbit orbitIntegrator = new NBodyFutureOrbit(Integrator.IntegratorType.SYMPLECTIC4, 20, bigObjects, orbitalPeriods);
-        NBodySimulation space = new NBodySimulation(Integrator.IntegratorType.SYMPLECTIC4, 1E5, 30, 1, initialDate, allObjects);
+        NBodySimulation space = new NBodySimulation(Integrator.IntegratorType.SYMPLECTIC1, 1E5, 30, 1, initialDate, bigObjects);
         
         space.start();
         simulations = new Simulation[] {space};//, orbitIntegrator, futureIntegrator};
