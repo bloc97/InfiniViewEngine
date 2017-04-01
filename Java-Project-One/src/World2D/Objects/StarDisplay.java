@@ -9,13 +9,12 @@ import World2D.Camera;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
-import javafx.scene.shape.Ellipse;
 
 /**
  *
  * @author bowen
  */
-public class PlanetDisplay implements DisplayObject, Interpolable {
+public class StarDisplay implements DisplayObject, Interpolable {
 
     private double x;
     private double y;
@@ -36,10 +35,10 @@ public class PlanetDisplay implements DisplayObject, Interpolable {
     private String name;
     private Color color;
     
-    public PlanetDisplay(String name, double r) {
+    public StarDisplay(String name, double r) {
         this(name, Color.WHITE, r);
     }
-    public PlanetDisplay(String name, Color color, double r) {
+    public StarDisplay(String name, Color color, double r) {
         //this.setSize(r*2, r*2);
         this.isHidden = false;
         this.name = name;
@@ -47,34 +46,18 @@ public class PlanetDisplay implements DisplayObject, Interpolable {
         this.color = color;
         this.lastUpdateTime = 0;
     }
-    /*
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.setColor(color);
-        
-        int r = (int)this.radius;
-        
-        g.fillOval(0, 0, r*2, r*2);
-        this.setLocation(dispx, dispy);
-    }*/
+    
     public void setColor(Color color) {
         this.color = color;
     }
     @Override
     @Deprecated
     public void setInterpolationFrameTime(double dft) {
-        this.dft = dft;
     }
     @Override
     public void setInterpolationSimulationTime(double dst) {
         this.dst = dst;
     }
-    /*
-    @Override
-    public JComponent getJComponent() {
-        return this;
-    }*/
 
     @Deprecated
     public int getRadius() {
@@ -110,47 +93,6 @@ public class PlanetDisplay implements DisplayObject, Interpolable {
     public boolean isHidden() {
         return isHidden;
     }
-/*
-    @Override
-    public void renderTransform(Graphics2D g2, Camera camera) {
-        
-        double rOut = (Math.log10(radius)-6)*3;
-        double rIn = radius;
-        double r = (rIn*camera.getScale() > rOut) ? rIn : rOut/camera.getScale();
-        g2.setColor(color);
-        //System.out.println(scale);
-        //System.out.println((int)(r*2/scale));
-        //g2.fillOval(0, 0, (int)(r*2/scale), (int)(r*2/scale));
-        //g2.fillOval((int)x, (int)y, r*2, r*2);
-        
-        double realTime = (System.currentTimeMillis() - lastUpdateTime)/1000;
-        double simulatedTime = dst * realTime;
-        double ix = x + vx * simulatedTime;
-        double iy = y + vy * simulatedTime;
-        Ellipse2D.Double circle = new Ellipse2D.Double(ix-r, iy-r, r*2, r*2);
-        
-        g2.fill(circle);
-        //Rectangle2D.Double rectangle = new Rectangle2D.Double(1E7, 1E7, r, r);
-        //g2.fill(rectangle);
-    }
-    @Override
-    public void renderNoTransform(Graphics2D g2, Camera camera) {
-        double rOut = (Math.log10(radius)-6)*3;
-        double rIn = radius*camera.getScale();
-        double r = (rIn > rOut) ? rIn : rOut;
-        
-        double realTime = (System.currentTimeMillis() - lastUpdateTime)/1000;
-        double simulatedTime = dst * realTime;
-        double ix = x + vx * simulatedTime;
-        double iy = y + vy * simulatedTime;
-        float idx = (float)((ix - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
-        float idy = (float)((iy + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
-        
-        g2.setColor(color);
-        g2.drawString(name, idx+(float)r+4, idy+5);
-        
-        
-    }*/
     
     @Override
     public void renderTransform(Graphics2D g2, Camera camera) {

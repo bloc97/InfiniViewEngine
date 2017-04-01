@@ -20,7 +20,12 @@ import java.util.Date;
  */
 public class SolarSystem implements World {
     
-    private static double AU = 1.496e+11; //AU/m
+    private static double AU = 1.496e+11D; //AU/m
+    private static double LY = 9460730472580800D; //LY/m
+    
+    private static double M0 = 1.98855e+30D; //M0/kg
+    private static double R0 = 6.957e+5D * 1000D; //R0/m
+    
     private static double DAY = 86400D;
     private Simulation[] simulations;
 
@@ -36,12 +41,15 @@ public class SolarSystem implements World {
         Planet saturn = generateBody("Saturn", -1.480710269996489E+00, -9.935855469617195E+00, 5.212138334313683E-03, -8.394219517928074E-04, 5.683E26, 60268);
         Planet uranus = generateBody("Uranus", 1.822435404251011E+01, 8.083455869795067E+00, -1.623364621989834E-03, 3.411947644480543E-03, 8.681E25, 25559);
         Planet neptune = generateBody("Neptune", 2.841221822673949E+01, -9.468008842306654E+00, 9.711403807320941E-04, 2.996820640231039E-03, 1.024E26, 24766);
+        Planet proximaCentauri = generateStar("Proxima Centauri", 0.2, 0.1, 0.123, 0.141);
+        Planet galacticCenter = generateStar("Galactic Centre", 15000, 10000, 4000, 20);
+        Planet andromeda = generateStar("Andromeda Galaxy", -2.5E6, 0, 8000, 20);
         
         Date initialDate = new Date(1489636800000l);
         
-        Planet[] bigObjects = new Planet[] {sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune};
+        Planet[] bigObjects = new Planet[] {sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune};//, proximaCentauri, galacticCenter, andromeda};
         Planet[] smallObjects = new Planet[] {};
-        
+        /*
         double[] orbitalPeriodsInDays = new double[] {1E4, 87.97, 224.7, 365.26, 686.98, 4332.82, 10755.7, 30687.15, 60190.03};
         
         double[] orbitalPeriods = new double[orbitalPeriodsInDays.length];
@@ -49,7 +57,7 @@ public class SolarSystem implements World {
         for (int i=0; i<orbitalPeriods.length; i++) {
             orbitalPeriods[i] = orbitalPeriodsInDays[i] * 86400;
             orbitalPeriods[i] = orbitalPeriods[i] / 2;
-        }
+        }*/
         
         Planet[] allObjects = new Planet[bigObjects.length + smallObjects.length];
         for (int i=0; i<allObjects.length; i++) {
@@ -74,6 +82,11 @@ public class SolarSystem implements World {
         Vector2 pos = new Vector2(new double[]{xAU*AU, yAU*AU});
         Vector2 vel = new Vector2(new double[]{vxAUDay*AU/DAY, vyAUDay*AU/DAY});
         return new Planet(name, pos, vel, massKg, radiusKm*1000);
+    }
+    public static Planet generateStar(String name, double xLy, double yLy, double massM0, double radiusR0) {
+        Vector2 pos = new Vector2(new double[]{xLy*LY, yLy*LY});
+        Vector2 vel = new Vector2(new double[]{0, 0});
+        return new Planet(name, pos, vel, massM0*M0, radiusR0*R0);
     }
     
     @Override

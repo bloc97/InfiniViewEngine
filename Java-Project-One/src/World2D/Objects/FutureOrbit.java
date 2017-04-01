@@ -30,6 +30,11 @@ public class FutureOrbit implements DisplayObject {
 
     @Override
     public void renderNoTransform(Graphics2D g2, Camera camera) {
+        
+        if (camera.getScale() < 6E-12) {
+            return;
+        }
+        
         Stroke originalStroke = g2.getStroke();
         Path2D.Double orbit = new Path2D.Double();
         
@@ -37,11 +42,13 @@ public class FutureOrbit implements DisplayObject {
         double iy0 = getIy(path[0].get(1), camera);
         
         orbit.moveTo(ix0, iy0);
+        
             
         for (int i=1; i<path.length; i++) {
             double ix = getIx(path[i].get(0), camera);
             double iy = getIy(path[i].get(1), camera);
-                orbit.lineTo(ix, iy);
+            
+            orbit.lineTo(ix, iy);
             /*
             int maxX = camera.getxScrOffset() * 2;
             int maxY = camera.getyScrOffset() * 2;
