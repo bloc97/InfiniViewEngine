@@ -15,4 +15,5 @@ import java.util.Date;
 public interface FuturePath {
     public void setOrbitPath(Vector2[] paths, Vector2[] vels, long[] timeStamps, Date date);
     public void setCurrentDate(Date date);
+    public Vector2[] getOrbitPath();
 }

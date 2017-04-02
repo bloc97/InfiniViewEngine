@@ -39,7 +39,7 @@ public class MainView extends Scene {
     
     private DisplayObject trackedObject;
     
-    //private OurSolarSystem spaceWorld = new OurSolarSystem();
+    private OurSolarSystem spaceWorld = new OurSolarSystem();
     
     public MainView(int xsize, int ysize) {
         this(60, xsize, ysize);
@@ -265,8 +265,8 @@ public class MainView extends Scene {
             if (displayObjects[i] == trackedObject) {
                 focusCamera();
             }
-            if (displayObjects[i] instanceof FuturePath) {
-                ((FuturePath)displayObjects[i]).setOrbitReferencePath(trackedObject.paths);
+            if (displayObjects[i] instanceof FuturePath && trackedObject instanceof FuturePath) {
+                ((FuturePath)displayObjects[i]).setOrbitReferencePath(((FuturePath)trackedObject).getOrbitPath());
             }
             displayObjects[i].renderNoTransform(g2, camera);
         }
