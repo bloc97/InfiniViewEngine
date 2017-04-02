@@ -26,6 +26,7 @@ import java.util.Date;
  */
 public class SpaceNatural extends RoundBody implements DisplayObject, Interpolable, FuturePath {
 
+
     
     public enum SpaceNaturalType {
         Massive, Big, Medium, Small, Tiny, Particle
@@ -46,6 +47,7 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
     
     
     private Vector2[] path;
+    private Vector2[] pathRef;
     private Vector2[] vel;
     private long[] pathTime;
     private Date currentDate;
@@ -231,6 +233,15 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         g2.setStroke(originalStroke);
     }
     
+    @Override
+    public void setOrbitReferencePath(Vector2[] paths) {
+        pathRef = paths;
+    }
+
+    @Override
+    public Vector2[] getOrbitPath() {
+        return path;
+    }
     @Override
     public double getIx() {
         if (isPaused) {
