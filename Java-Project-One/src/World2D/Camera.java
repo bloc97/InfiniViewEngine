@@ -29,7 +29,7 @@ public class Camera {
         scale = s;
         screenOffsetx = xsize/2;
         screenOffsety = ysize/2;
-        System.out.println(screenOffsetx);
+        //System.out.println(screenOffsetx);
     }
     
     public Scene scene() {
@@ -37,6 +37,10 @@ public class Camera {
     }
     public void setScene(Scene scene) {
         currentScene = scene;
+    }
+    public void setScreenSize(int xsize, int ysize) {
+        screenOffsetx = xsize/2;
+        screenOffsety = ysize/2;
     }
 
     public double getxPos() {
@@ -86,12 +90,12 @@ public class Camera {
         }
     }
     private void multiplyScale() {
-        if (scale < 1E29) {
+        if (scale < 2E20) {
             scale *= 2;
         }
     }
     private void divideScale() {
-        if (scale > 1E-29) {
+        if (scale > 2E-20) {
             scale /= 2;
         }
     }

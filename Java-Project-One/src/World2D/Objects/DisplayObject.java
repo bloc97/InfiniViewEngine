@@ -21,11 +21,15 @@ public interface DisplayObject {
     
     //public void setPos(double x, double y);
     
-    public boolean isHidden();
+    public boolean isVisible(double scale);
     
     public void hide();
     public void show();
     
+    public double getSx(Camera camera);
+    public double getSy(Camera camera);
+    public double getSr(Camera camera);
+            
     public static double getIx(double x, Camera camera) {
         return ((x - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
     }

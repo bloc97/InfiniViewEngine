@@ -5,6 +5,8 @@
  */
 package World2D.Objects;
 
+import World2D.Camera;
+
 /**
  *
  * @author bowen
@@ -12,5 +14,7 @@ package World2D.Objects;
 public interface Interpolable {
     public void setInterpolationSimulationTime(double dst);
     public void registerUpdate();
+    public double getIx();
+    public double getIy();
     //public void setVel(double vx, double vy);
 }

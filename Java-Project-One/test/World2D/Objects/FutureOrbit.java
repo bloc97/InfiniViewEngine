@@ -9,14 +9,16 @@ import Physics2D.Vector2;
 import Physics2D.Vectors2;
 import World2D.Camera;
 import World2D.Objects.DisplayObject;
-import static World2D.Objects.DisplayObject.getIx;
-import static World2D.Objects.DisplayObject.getIy;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.util.Date;
+import static World2D.Objects.DisplayObject.getSx;
+import static World2D.Objects.DisplayObject.getIx;
+import static World2D.Objects.DisplayObject.getSy;
+import static World2D.Objects.DisplayObject.getIy;
 
 /**
  *

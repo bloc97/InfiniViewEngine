@@ -128,6 +128,9 @@ public abstract class Scene extends JPanel implements Runnable {
         }
         
     }
-
+    
+    public Camera getCamera() {
+        return camera;
+    }
 
 }

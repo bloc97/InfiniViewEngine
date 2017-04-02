@@ -11,8 +11,6 @@ import Physics2D.Objects.RoundBody;
 import Physics2D.Vector2;
 import World2D.Camera;
 import World2D.Objects.DisplayObject;
-import static World2D.Objects.DisplayObject.getIx;
-import static World2D.Objects.DisplayObject.getIy;
 import World2D.Objects.Interpolable;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -27,6 +25,13 @@ import java.util.Date;
  * @author bowen
  */
 public class SpaceNatural extends RoundBody implements DisplayObject, Interpolable, FuturePath {
+
+    
+    public enum SpaceNaturalType {
+        Massive, Big, Medium, Small, Tiny, Particle
+    }// Superbig, Star, Planet, Moon, Asteroid, Rings
+    
+    final private SpaceNaturalType type;
     
     final private static Color color = Color.getHSBColor(16F/360, 33F/100, 100F/100);
     final private String name;
@@ -38,6 +43,9 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
     private double y;
     private double vx;
     private double vy;
+    
+    private double ix;
+    private double iy;
     
     private Vector2[] path;
     private Vector2[] vel;
@@ -52,7 +60,26 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
     public SpaceNatural(String name, Vector2 position, Vector2 velocity, double mass, double angPos, double angVel, double radius) {
         super(position, velocity, mass, angPos, angVel, radius);
         this.name = name;
-    }/*
+        this.type = computeType(mass);
+    }
+    
+    public static SpaceNaturalType computeType(double mass) {
+        if (mass > 1E32d) {
+            return SpaceNaturalType.Massive;
+        } else if (mass > 1.791e+29d) {
+            return SpaceNaturalType.Big;
+        } else if (mass > 5e+25d) {
+            return SpaceNaturalType.Medium;
+        } else if (mass > 3e+23d) {
+            return SpaceNaturalType.Small;
+        } else if (mass > 4e+19d) {
+            return SpaceNaturalType.Tiny;
+        } else {
+            return SpaceNaturalType.Particle;
+        }
+    }
+    
+    /*
     @Override
     public final void update() {
         displayComponent.setPos(position().get(0), position().get(1));
@@ -78,12 +105,12 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
 
     @Override
     public void renderNoTransform(Graphics2D g2, Camera camera) {
-        final double radius = radius();
         
+        if (!SpaceRender.canRenderNaturalObjectByScale(type, camera.getScale())) {
+            return;
+        }
         
-        double rOut = (Math.log10(radius)-6)*3;
-        double rIn = radius*camera.getScale();
-        double r = (rIn > rOut) ? rIn : rOut;
+        double r = getSr(camera);
         
         double realTimeDiff = (System.currentTimeMillis() - lastUpdateTime)/1000;
         //double simulatedTimeDiff = 0;
@@ -97,8 +124,8 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
             //simulatedTimeDiff = lastTimeDiff;
         }*/
         
-        double ix = x + vx * simulatedTimeDiff;
-        double iy = y + vy * simulatedTimeDiff;
+        ix = x + vx * simulatedTimeDiff;
+        iy = y + vy * simulatedTimeDiff;
         double idx = ((ix - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
         double idy = ((iy + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
         
@@ -113,11 +140,17 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
             return;
         }
         
-        renderFutureOrbit(g2, camera, ix, iy, simulatedTimeDiff);
         
-        if ((radius>10000000 && camera.getScale() > 3E-11) || camera.getScale() > 3E-10) {
+        //if ((radius>10000000 && camera.getScale() > 3E-11) || camera.getScale() > 3E-10) {
+        
+        if (SpaceRender.canRenderNaturalPathByScale(type, camera.getScale())) {
+            renderFutureOrbit(g2, camera, ix, iy, simulatedTimeDiff);
+        }
+        
+        if (SpaceRender.canRenderNaturalNameByScale(type, camera.getScale())) {
             g2.drawString(name, (float)(idx+r+4), (float)(idy+5));
         }
+        
         
         Ellipse2D.Double circle = new Ellipse2D.Double(idx-r, idy-r, r*2, r*2);
         g2.fill(circle);
@@ -150,16 +183,16 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         
         //double ix0 = getIx(path[initiali].get(0), camera);
         //double iy0 = getIy(path[initiali].get(1), camera);
-        double ix0 = getIx(cx, camera);
-        double iy0 = getIy(cy, camera);
+        double ix0 = DisplayObject.getIx(cx, camera);
+        double iy0 = DisplayObject.getIy(cy, camera);
         
         orbit.moveTo(ix0, iy0);
         
             
         for (int i=initiali+1; i<path.length; i++) {
             
-            double ix = getIx(path[i].get(0), camera);
-            double iy = getIy(path[i].get(1), camera);
+            double ix = DisplayObject.getIx(path[i].get(0), camera);
+            double iy = DisplayObject.getIy(path[i].get(1), camera);
             orbit.lineTo(ix, iy);
             
         }
@@ -176,10 +209,35 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         g2.draw(orbit);
         g2.setStroke(originalStroke);
     }
+    
+    @Override
+    public double getIx() {
+        return ix;
+    }
+    @Override
+    public double getIy() {
+        return iy;
+    }
+    @Override
+    public double getSx(Camera camera) {
+        return ((x - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
+    }
+    @Override
+    public double getSy(Camera camera) {
+        return ((y + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
+    }
+    @Override
+    public double getSr(Camera camera) {
+        double rOut = (Math.log10(radius())-6)*3;
+        double rIn = radius()*camera.getScale();
+        double r = (rIn > rOut) ? rIn : rOut;
+        return r;
+    }
+    
 
     @Override
-    public boolean isHidden() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean isVisible(double scale) {
+        return SpaceRender.canRenderNaturalObjectByScale(type, scale);
     }
 
     @Override

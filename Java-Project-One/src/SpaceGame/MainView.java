@@ -5,14 +5,24 @@
  */
 package SpaceGame;
 
+import MathExt.Ext;
+import Physics2D.Objects.LinearMotion;
+import World2D.Camera;
+import World2D.Objects.DisplayObject;
+import World2D.Objects.Interpolable;
 import World2D.Scene;
 import World2D.World;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 
 /**
@@ -26,6 +36,8 @@ public class MainView extends Scene {
     private Boolean keyA = false;
     private Boolean keyD = false;
     
+    private DisplayObject trackedObject;
+    
     public MainView(int xsize, int ysize) {
         this(60, xsize, ysize);
     }
@@ -37,8 +49,18 @@ public class MainView extends Scene {
         
         this.setDisplayObjects(worlds);
         
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                Rectangle r = e.getComponent().getBounds();
+                int h = r.height;
+                int w = r.width;
+                Camera thisCamera = ((Scene)(e.getComponent())).getCamera();
+                thisCamera.setScreenSize(w, h);
+            }
+        });
+        
         this.addMouseWheelListener(new MouseAdapter() {
-            
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 int notches = e.getWheelRotation();
@@ -54,15 +76,19 @@ public class MainView extends Scene {
                  switch(e.getKeyCode()) {
                     case KeyEvent.VK_W :
                         keyW = true;
+                        releaseFocus();
                         break;
                     case KeyEvent.VK_S :
                         keyS = true;
+                        releaseFocus();
                         break;
                     case KeyEvent.VK_A :
                         keyA = true;
+                        releaseFocus();
                         break;
                     case KeyEvent.VK_D :
                         keyD = true;
+                        releaseFocus();
                         break;
                     case KeyEvent.VK_E :
                         worlds[0].getSimulations()[0].speedUp();
@@ -97,6 +123,67 @@ public class MainView extends Scene {
             }
         });
         
+        this.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent me) {
+                System.out.println("Click");
+                System.out.println(me);
+                int x = me.getX();
+                int y = me.getY();
+                System.out.println(x + " " + y);
+                checkClickFocus(x, y);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent me) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent me) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent me) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent me) {
+            }
+        });
+        
+    }
+    
+    public void checkClickFocus(int x, int y) {
+        for (int i=0; i<displayObjects.length; i++) {
+            
+            DisplayObject currentObject = displayObjects[i];
+            
+            double tx = currentObject.getSx(camera);
+            double ty = currentObject.getSy(camera);
+            double tr = currentObject.getSr(camera);
+            
+            if (tr < 10) tr = 10;
+            
+            //if (tx >= 0 && ty >= 0 && tx <= camera.getxScrOffset()*2 && ty <= camera.getyScrOffset()) {
+            if (currentObject.isVisible(camera.getScale())) {
+                if (x > tx-tr && x < tx+tr && y > ty-tr && y < ty+tr) {
+                    trackedObject = currentObject;
+                    return;
+                }
+            }
+        }
+        releaseFocus();
+    }
+    public void releaseFocus() {
+        trackedObject = null;
+    }
+    
+    public void focusCamera() {
+        if (trackedObject instanceof Interpolable) {
+            Interpolable centerObject = (Interpolable)trackedObject;
+            camera.setxPos(centerObject.getIx());
+            camera.setyPos(-centerObject.getIy());
+        }
     }
     
     
@@ -133,10 +220,11 @@ public class MainView extends Scene {
     @Override
     protected void drawAllObjects(Graphics g) {
         g.setColor(Color.YELLOW);
+        /*
         g.drawLine(0, 0, 0, 1080);
         g.drawLine(0, 0, 1920, 0);
         g.drawLine(1920, 0, 1920, 1080);
-        g.drawLine(0, 1080, 1920, 1080);
+        g.drawLine(0, 1080, 1920, 1080);*/
         
         g.drawString(worlds[0].getSimulations()[0].getDate().toGMTString(), 10, 20);
         g.drawString(secondsToText(worlds[0].getSimulations()[0].getSpeed()), 10, 40);
@@ -169,6 +257,7 @@ public class MainView extends Scene {
     @Override
     protected void tick() {
         checkKeys();
+        focusCamera();
     }
     
 
