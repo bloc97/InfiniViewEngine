@@ -11,8 +11,10 @@ import Physics2D.Integrators.Integrator.IntegratorType;
 import Physics2D.Integrators.NBody;
 import Physics2D.Integrators.Symplectic1;
 import Physics2D.Integrators.Symplectic4;
-import Physics2D.Objects.Planet;
+import Physics2D.Objects.FuturePath;
+import Physics2D.Objects.PointBody;
 import World2D.Objects.DisplayObject;
+import World2D.Objects.Interpolable;
 import java.util.Date;
 
 /**
@@ -22,7 +24,7 @@ import java.util.Date;
 public class NBodySimulation implements Runnable, Simulation {
     private Thread thread;
     
-    private Planet[] bodies;
+    private PointBody[] bodies;
     private Vector2[][] futureOrbitPos;
     private Vector2[][] futureOrbitVel;
     private long[][] futureOrbitTime;
@@ -50,7 +52,7 @@ public class NBodySimulation implements Runnable, Simulation {
     public NBodySimulation(IntegratorType integrator, double ratio, double updatesPerSecond, int miniSteps, SpaceObject... objects) {
         this(integrator, ratio, updatesPerSecond, miniSteps, new NBodyFuturePath(integrator, ratio, 100, updatesPerSecond/2, objects), objects);
     }*/
-    public NBodySimulation(IntegratorType integrator, double ratio, double updatesPerSecond, int miniSteps, Date date, Planet... bodies) {
+    public NBodySimulation(IntegratorType integrator, double ratio, double updatesPerSecond, int miniSteps, Date date, PointBody... bodies) {
         this.isPaused = true;
         
         this.date = date;
@@ -97,7 +99,12 @@ public class NBodySimulation implements Runnable, Simulation {
         fCount++;
         
         for (int i=0; i<bodies.length; i++) {
-            bodies[i].displayComponent.setCurrentDate(date);
+            if (bodies[i] instanceof FuturePath) {
+                ((FuturePath)(bodies[i])).setCurrentDate(date);
+            }
+            if (bodies[i] instanceof Interpolable) {
+                ((Interpolable)(bodies[i])).registerUpdate();
+            }
         }
     }
     public void reCalculateOrbits() {
@@ -130,18 +137,22 @@ public class NBodySimulation implements Runnable, Simulation {
         }
 
         for (int i=0; i<bodies.length; i++) {
-            bodies[i].displayComponent.setOrbitPath(futureOrbitPos[i], futureOrbitVel[i], futureOrbitTime[i]);
+            if (bodies[i] instanceof FuturePath) {
+                ((FuturePath)(bodies[i])).setOrbitPath(futureOrbitPos[i], futureOrbitVel[i], futureOrbitTime[i], date);
+            }
         }
-    }
+    }/*
     private void updateSpatialPositions() {
         //Vector2[] currentAccelerations = integrator.getCurrentAccelerations();
         for (int i=0; i<bodies.length; i++) {
             bodies[i].update();
         }
-    }
+    }*/
     private void updateInterpolationSimulationTime(double time) { //Total time to interpolate before next physics Big Step
         for (int i=0; i<bodies.length; i++) {
-            bodies[i].displayComponent.setInterpolationSimulationTime(time);
+            if (bodies[i] instanceof Interpolable) {
+                ((Interpolable)(bodies[i])).setInterpolationSimulationTime(time);
+            }
         }
     }
     @Override
@@ -224,7 +235,6 @@ public class NBodySimulation implements Runnable, Simulation {
                 startTime = System.nanoTime();
                 
                 forward(miniSteps*accel);
-                updateSpatialPositions();
                 
                 endTime = System.nanoTime();
                 
@@ -280,17 +290,17 @@ public class NBodySimulation implements Runnable, Simulation {
         
         int objectsCount = 0;
         
-        for (Planet object : bodies) {
-            if (!object.displayComponent.isHidden()) {
+        for (PointBody object : bodies) {
+            if (object instanceof DisplayObject) {
                 objectsCount++;
             }
         }
         DisplayObject[] displayObjects = new DisplayObject[objectsCount];
         int objectsIndex = 0;
         
-        for (Planet object : bodies) {
-            if (!object.displayComponent.isHidden()) {
-                displayObjects[objectsIndex] = object.displayComponent;
+        for (PointBody object : bodies) {
+            if (object instanceof DisplayObject) {
+                displayObjects[objectsIndex] = (DisplayObject)object;
                 objectsIndex++;
             }
         }

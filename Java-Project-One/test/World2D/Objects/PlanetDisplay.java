@@ -5,8 +5,11 @@
  */
 package World2D.Objects;
 
+import Physics2D.Objects.FuturePath;
 import Physics2D.Vector2;
 import World2D.Camera;
+import World2D.Objects.DisplayObject;
+import World2D.Objects.Interpolable;
 import static World2D.Objects.DisplayObject.getIx;
 import static World2D.Objects.DisplayObject.getIy;
 import java.awt.BasicStroke;
@@ -22,7 +25,7 @@ import javafx.scene.shape.Ellipse;
  *
  * @author bowen
  */
-public class PlanetDisplay implements DisplayObject, Interpolable {
+public class PlanetDisplay implements DisplayObject, Interpolable, FuturePath {
 
     private double x;
     private double y;
@@ -72,7 +75,7 @@ public class PlanetDisplay implements DisplayObject, Interpolable {
     public void setColor(Color color) {
         this.color = color;
     }
-    @Override
+    //@Override
     @Deprecated
     public void setInterpolationFrameTime(double dft) {
         this.dft = dft;
@@ -95,13 +98,13 @@ public class PlanetDisplay implements DisplayObject, Interpolable {
         return name;
     }
 
-    @Override
+    //@Override
     public void setPos(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    @Override
+    //@Override
     public void setVel(double vx, double vy) {
         this.lastUpdateTime = System.currentTimeMillis();
         this.vx = vx;
@@ -258,6 +261,11 @@ public class PlanetDisplay implements DisplayObject, Interpolable {
     @Override
     public void setCurrentDate(Date date) {
         currentDate = date;
+    }
+
+    @Override
+    public void registerUpdate() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

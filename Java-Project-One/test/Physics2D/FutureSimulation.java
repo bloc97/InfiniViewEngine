@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Physics;
+package Physics2D;
 
+import Physics.Simulation;
 import Physics2D.Objects.Planet;
 
 /**

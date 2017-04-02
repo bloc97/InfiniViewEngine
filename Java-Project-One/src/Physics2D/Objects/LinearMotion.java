@@ -27,5 +27,5 @@ public interface LinearMotion {
     void addVelocity(Vector2 velocity);
     //void setForce(Vector2 vector2);
     //void revert();
-    void update();
+    //void update();
 }

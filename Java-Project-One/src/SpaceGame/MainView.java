@@ -5,8 +5,6 @@
  */
 package SpaceGame;
 
-import Physics2D.NBodySimulation;
-import World2D.Objects.PlanetDisplay;
 import World2D.Scene;
 import World2D.World;
 import java.awt.Color;
@@ -16,7 +14,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
-import java.awt.geom.AffineTransform;
 
 /**
  *
