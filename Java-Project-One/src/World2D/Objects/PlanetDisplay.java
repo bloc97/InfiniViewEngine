@@ -180,7 +180,12 @@ public class PlanetDisplay implements DisplayObject, Interpolable {
             return;
         }
         
-        g2.drawString(name, (float)(idx+r+4), (float)(idy+5));
+        if ((radius>10000000 && camera.getScale() > 3E-11) || camera.getScale() > 3E-10) {
+            g2.drawString(name, (float)(idx+r+4), (float)(idy+5));
+        }
+        
+        
+        
         Ellipse2D.Double circle = new Ellipse2D.Double(idx-r, idy-r, r*2, r*2);
         g2.fill(circle);
         

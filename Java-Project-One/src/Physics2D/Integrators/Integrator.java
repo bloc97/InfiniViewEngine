@@ -5,8 +5,14 @@
  */
 package Physics2D.Integrators;
 
+import Physics2D.Objects.Moon;
+import Physics2D.Objects.Particle;
+import Physics2D.Objects.Planet;
 import Physics2D.Objects.PointBody;
+import Physics2D.Objects.Spacecraft;
+import Physics2D.Objects.Star;
 import Physics2D.Vector2;
+import java.util.Date;
 
 /**
  *
@@ -18,6 +24,7 @@ public interface Integrator {
         SYMPLECTIC1, SYMPLECTIC2, SYMPLECTIC3, SYMPLECTIC4
     }
     public void apply(PointBody[] bodies, double dt);
+    public void applyByPart(Star[] stars, Planet[] planets, Moon[] moons, Particle[] particles, Spacecraft[] spacecrafts);
     public Vector2[] getCurrentAccelerations();
     //public PointBody[] get(PointBody[] bodies, double dt, int steps);
     //public Vector2[][] getFuture(PointBody[] bodies, double dt, int steps);
@@ -74,6 +81,32 @@ public interface Integrator {
             positionTime[i] = bodiesClone[k].position().clone();
         }
         return positionTime;
+    }
+    public static Vector2[][] getFutureSingleWithVel(PointBody[] bodies, int k, Integrator integrator, double dt, int steps) {
+        PointBody[] bodiesClone = new PointBody[bodies.length];
+        
+        for (int i=0; i<bodies.length; i++) {
+            bodiesClone[i] = bodies[i].clone();
+        }
+        
+        Vector2[][] positionTime = new Vector2[2][steps];
+        
+        positionTime[0][0] = bodiesClone[k].position().clone();
+        positionTime[1][0] = bodiesClone[k].velocity().clone();
+        for (int i=1; i<steps; i++) {
+            integrator.apply(bodiesClone, dt);
+            positionTime[0][i] = bodiesClone[k].position().clone();
+            positionTime[1][i] = bodiesClone[k].velocity().clone();
+        }
+        return positionTime;
+    }
+    public static long[] getFutureSingleTimeStamps(Date date, double dt, int steps) {
+        long time = date.getTime();
+        long[] timeStamps = new long[steps];
+        for (int i=0; i<steps; i++) {
+            timeStamps[i] = time + (long)((dt*i)*1000);
+        }
+        return timeStamps;
     }
     
 }

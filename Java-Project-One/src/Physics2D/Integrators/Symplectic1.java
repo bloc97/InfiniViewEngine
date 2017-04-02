@@ -5,7 +5,12 @@
  */
 package Physics2D.Integrators;
 
+import Physics2D.Objects.Moon;
+import Physics2D.Objects.Particle;
+import Physics2D.Objects.Planet;
 import Physics2D.Objects.PointBody;
+import Physics2D.Objects.Spacecraft;
+import Physics2D.Objects.Star;
 import Physics2D.Vector2;
 import Physics2D.Vectors2;
 
@@ -41,5 +46,10 @@ public class Symplectic1 implements Integrator {
     @Override
     public void reset() {
         accelerations = null;
+    }
+
+    @Override
+    public void applyByPart(Star[] stars, Planet[] planets, Moon[] moons, Particle[] particles, Spacecraft[] spacecrafts) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

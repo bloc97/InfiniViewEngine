@@ -34,7 +34,7 @@ public class MainView extends Scene {
     }
     
     public MainView(int desiredFPS, int xsize, int ysize) {
-        super(desiredFPS, xsize, ysize, new World[] {new SolarSystem()});
+        super(desiredFPS, xsize, ysize, new World[] {new OurSolarSystem()});
         
         this.setBackground(Color.getHSBColor(298F/360, 1F/100, 22F/100));
         
@@ -69,11 +69,11 @@ public class MainView extends Scene {
                         break;
                     case KeyEvent.VK_E :
                         worlds[0].getSimulations()[0].speedUp();
-                        ((NBodySimulation)(worlds[0].getSimulations()[0])).reCalculateOrbits();
+                        //((NBodySimulation)(worlds[0].getSimulations()[0])).reCalculateOrbits();
                         break;
                     case KeyEvent.VK_Q :
                         worlds[0].getSimulations()[0].speedDown();
-                        ((NBodySimulation)(worlds[0].getSimulations()[0])).reCalculateOrbits();
+                        //((NBodySimulation)(worlds[0].getSimulations()[0])).reCalculateOrbits();
                         break;
                     default :
                         break;
@@ -147,7 +147,7 @@ public class MainView extends Scene {
         
         
         Graphics2D g2 = (Graphics2D)g;
-        
+        /*
         AffineTransform originalTransform = g2.getTransform();
         AffineTransform transform = new AffineTransform();
         
@@ -163,7 +163,7 @@ public class MainView extends Scene {
             displayObjects[i].renderTransform(g2, camera);
         }
         g2.setTransform(originalTransform);
-        
+        */
         for (int i=0; i<displayObjects.length; i++) {
                 displayObjects[i].renderNoTransform(g2, camera);
         }

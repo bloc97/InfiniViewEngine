@@ -18,7 +18,7 @@ import java.util.Date;
  *
  * @author bowen
  */
-public class SolarSystem implements World {
+public class OurSolarSystem implements World {
     
     private static double AU = 1.496e+11D; //AU/m
     private static double LY = 9460730472580800D; //LY/m
@@ -29,7 +29,7 @@ public class SolarSystem implements World {
     private static double DAY = 86400D;
     private Simulation[] simulations;
 
-    public SolarSystem() {
+    public OurSolarSystem() {
         
         
         Planet sun = generateBody("Sun", 0, 0, 0, 0, 1.989E30, 695000);
@@ -47,7 +47,7 @@ public class SolarSystem implements World {
         
         Date initialDate = new Date(1489636800000l);
         
-        Planet[] bigObjects = new Planet[] {sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune};//, proximaCentauri, galacticCenter, andromeda};
+        Planet[] bigObjects = new Planet[] {sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, proximaCentauri};//, galacticCenter, andromeda};
         Planet[] smallObjects = new Planet[] {};
         /*
         double[] orbitalPeriodsInDays = new double[] {1E4, 87.97, 224.7, 365.26, 686.98, 4332.82, 10755.7, 30687.15, 60190.03};
