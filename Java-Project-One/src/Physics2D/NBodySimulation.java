@@ -217,6 +217,14 @@ public class NBodySimulation implements Runnable, Simulation {
         this.isPaused = false;
     }
     @Override
+    public void togglePause() {
+        if (isPaused) {
+            unpause();
+        } else {
+            pause();
+        }
+    }
+    @Override
     public void run() {
         
         double desiredSleepms = 1000D/updatesPerSecond; //Desired sleep time in miliseconds
@@ -230,11 +238,13 @@ public class NBodySimulation implements Runnable, Simulation {
         double realLagRatio;
         
         while (true) {
-            if (!isPaused) {
-                
                 startTime = System.nanoTime();
                 
-                forward(miniSteps*accel);
+                
+                if (!isPaused) {
+                    forward(miniSteps*accel);
+                }
+                
                 
                 endTime = System.nanoTime();
                 
@@ -259,8 +269,6 @@ public class NBodySimulation implements Runnable, Simulation {
                     }
                     //updateInterpolationSimulationTime(0);
                 }
-                
-            }
         }
     }
     /*

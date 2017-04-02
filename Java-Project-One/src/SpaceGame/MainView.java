@@ -7,6 +7,7 @@ package SpaceGame;
 
 import MathExt.Ext;
 import Physics2D.Objects.LinearMotion;
+import SpaceGame.Objects.SpaceNatural;
 import World2D.Camera;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Interpolable;
@@ -98,6 +99,9 @@ public class MainView extends Scene {
                         worlds[0].getSimulations()[0].speedDown();
                         //((NBodySimulation)(worlds[0].getSimulations()[0])).reCalculateOrbits();
                         break;
+                    case KeyEvent.VK_SPACE:
+                        togglePause();
+                        break;
                     default :
                         break;
                  }
@@ -126,11 +130,8 @@ public class MainView extends Scene {
         this.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent me) {
-                System.out.println("Click");
-                System.out.println(me);
                 int x = me.getX();
                 int y = me.getY();
-                System.out.println(x + " " + y);
                 checkClickFocus(x, y);
             }
 
@@ -151,6 +152,15 @@ public class MainView extends Scene {
             }
         });
         
+    }
+    
+    public void togglePause() {
+        worlds[0].getSimulations()[0].togglePause();
+        for (int i=0; i<displayObjects.length; i++) {
+            if (displayObjects[i] instanceof Interpolable) {
+                ((Interpolable)(displayObjects[i])).togglePause();
+            }
+        }
     }
     
     public void checkClickFocus(int x, int y) {
@@ -250,14 +260,16 @@ public class MainView extends Scene {
         g2.setTransform(originalTransform);
         */
         for (int i=0; i<displayObjects.length; i++) {
-                displayObjects[i].renderNoTransform(g2, camera);
+            if (displayObjects[i] == trackedObject) {
+                focusCamera();
+            }
+            displayObjects[i].renderNoTransform(g2, camera);
         }
         
     }
     @Override
     protected void tick() {
         checkKeys();
-        focusCamera();
     }
     
 

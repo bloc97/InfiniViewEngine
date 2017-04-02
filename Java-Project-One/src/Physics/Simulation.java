@@ -20,6 +20,7 @@ public interface Simulation { //Any collection of objects that are simulable
     public void start();
     public void pause();
     public void unpause();
+    public void togglePause();
     
     public void step();
     public void speedUp();

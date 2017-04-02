@@ -16,5 +16,12 @@ public interface Interpolable {
     public void registerUpdate();
     public double getIx();
     public double getIy();
+    
+    
+    public void pause();
+    public void unpause();
+    public void togglePause();
+    
     //public void setVel(double vx, double vy);
+    
 }

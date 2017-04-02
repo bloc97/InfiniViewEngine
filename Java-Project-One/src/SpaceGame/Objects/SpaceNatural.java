@@ -44,8 +44,6 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
     private double vx;
     private double vy;
     
-    private double ix;
-    private double iy;
     
     private Vector2[] path;
     private Vector2[] vel;
@@ -53,6 +51,27 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
     private Date currentDate;
     
     private double dst;
+    
+    public boolean isPaused = false;
+    
+    @Override
+    public void pause() {
+        isPaused = true;
+    }
+    @Override
+    public void unpause() {
+        vx = 0;
+        vy = 0;
+        isPaused = false;
+    }
+    @Override
+    public void togglePause() {
+        if (isPaused) {
+            unpause();
+        } else {
+            pause();
+        }
+    }
     
     //private double lastTimeDiff = 0;
     
@@ -111,21 +130,17 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         }
         
         double r = getSr(camera);
-        
         double realTimeDiff = (System.currentTimeMillis() - lastUpdateTime)/1000;
-        //double simulatedTimeDiff = 0;
-        
         double simulatedTimeDiff = dst * realTimeDiff;
-        /*
-        System.out.println(simulatedTimeDiff);
-        if (lastTimeDiff < simulatedTimeDiff) {
-            lastTimeDiff = simulatedTimeDiff;
-        } else {
-            //simulatedTimeDiff = lastTimeDiff;
-        }*/
         
-        ix = x + vx * simulatedTimeDiff;
-        iy = y + vy * simulatedTimeDiff;
+        double ix = x + vx * simulatedTimeDiff;
+        double iy = y + vy * simulatedTimeDiff;
+        
+        if (isPaused) {
+            ix = x;
+            iy = y;
+        }
+        
         double idx = ((ix - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
         double idy = ((iy + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
         
@@ -164,7 +179,13 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         Path2D.Double orbit = new Path2D.Double();
         
         int initiali = -1;
+        
         long currentTime = currentDate.getTime() + (long)(dt * 1000);
+        
+        if (isPaused) {
+            currentTime = currentDate.getTime();
+        }
+        
         
         if (path == null) {
             return;
@@ -212,11 +233,23 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
     
     @Override
     public double getIx() {
-        return ix;
+        if (isPaused) {
+            return x;
+        }
+        double realTimeDiff = (System.currentTimeMillis() - lastUpdateTime)/1000;
+        double simulatedTimeDiff = dst * realTimeDiff;
+        
+        return x + vx * simulatedTimeDiff;
     }
     @Override
     public double getIy() {
-        return iy;
+        if (isPaused) {
+            return y;
+        }
+        double realTimeDiff = (System.currentTimeMillis() - lastUpdateTime)/1000;
+        double simulatedTimeDiff = dst * realTimeDiff;
+        
+        return y + vy * simulatedTimeDiff;
     }
     @Override
     public double getSx(Camera camera) {
