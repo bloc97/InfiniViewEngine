@@ -70,4 +70,7 @@ public class Vectors2 {
         }
         return newVector2;
     }
+    public static Vector2 zeroVector2() {
+        return new Vector2(0);
+    }
 }

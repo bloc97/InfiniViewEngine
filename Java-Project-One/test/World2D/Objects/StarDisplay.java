@@ -5,8 +5,11 @@
  */
 package World2D.Objects;
 
+import Physics2D.Objects.FuturePath;
 import Physics2D.Vector2;
 import World2D.Camera;
+import World2D.Objects.DisplayObject;
+import World2D.Objects.Interpolable;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
@@ -16,7 +19,7 @@ import java.util.Date;
  *
  * @author bowen
  */
-public class StarDisplay implements DisplayObject, Interpolable {
+public class StarDisplay implements DisplayObject, Interpolable, FuturePath {
 
     private double x;
     private double y;
@@ -52,7 +55,6 @@ public class StarDisplay implements DisplayObject, Interpolable {
     public void setColor(Color color) {
         this.color = color;
     }
-    @Override
     @Deprecated
     public void setInterpolationFrameTime(double dft) {
     }
@@ -69,13 +71,13 @@ public class StarDisplay implements DisplayObject, Interpolable {
         return name;
     }
 
-    @Override
+    //@Override
     public void setPos(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    @Override
+    //@Override
     public void setVel(double vx, double vy) {
         this.lastUpdateTime = System.currentTimeMillis();
         this.vx = vx;
@@ -138,6 +140,11 @@ public class StarDisplay implements DisplayObject, Interpolable {
 
     @Override
     public void setCurrentDate(Date date) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void registerUpdate() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

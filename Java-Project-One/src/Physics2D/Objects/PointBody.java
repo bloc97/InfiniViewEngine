@@ -17,21 +17,6 @@ public class PointBody implements LinearMotion {
     private Vector2 velocity;
     final private double mass;
     
-    public PointBody() {
-        position = new Vector2(0);
-        velocity = new Vector2(0);
-        mass = 1;
-    }
-    public PointBody(double mass) {
-        position = new Vector2(0);
-        velocity = new Vector2(0);
-        this.mass = mass;
-    }
-    public PointBody(Vector2 position, double mass) {
-        this.position = position.clone();
-        velocity = new Vector2(0);
-        this.mass = mass;
-    }
     public PointBody(Vector2 position, Vector2 velocity, double mass) {
         this.position = position.clone();
         this.velocity = velocity.clone();
@@ -63,7 +48,7 @@ public class PointBody implements LinearMotion {
     }
 
     @Override
-    public double mass() {
+    final public double mass() {
         return mass;
     }
     
@@ -89,13 +74,5 @@ public class PointBody implements LinearMotion {
     @Override
     public PointBody clone() {
         return new PointBody(position, velocity, mass);
-    }
-
-    public void update() {
-        throw new UnsupportedOperationException("No graphic component to update.");
-    }
-    
-    public DisplayObject getDisplayObject() {
-        throw new UnsupportedOperationException("No graphic component to display.");
     }
 }

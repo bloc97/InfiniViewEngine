@@ -15,21 +15,16 @@ import java.util.Date;
  * @author bowen
  */
 public interface DisplayObject {
-    public enum DisplayObjectType {
-        Circle, Line
-    }
+    
     public void renderTransform(Graphics2D g2, Camera camera); //part of the rendering requiring affine transforms
     public void renderNoTransform(Graphics2D g2, Camera camera); //part of the rendering without transforms (per pixel)
     
-    public void setPos(double x, double y);
+    //public void setPos(double x, double y);
     
     public boolean isHidden();
     
     public void hide();
     public void show();
-    
-    public void setOrbitPath(Vector2[] paths, Vector2[] vels, long[] timeStamps);
-    public void setCurrentDate(Date date);
     
     public static double getIx(double x, Camera camera) {
         return ((x - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());

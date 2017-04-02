@@ -5,7 +5,6 @@
  */
 package Physics2D;
 
-import Physics.FutureSimulation;
 import Physics2D.Integrators.ExplicitEuler;
 import Physics2D.Integrators.Integrator;
 import Physics2D.Integrators.Integrator.IntegratorType;

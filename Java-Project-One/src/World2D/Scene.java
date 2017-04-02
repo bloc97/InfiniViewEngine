@@ -59,9 +59,6 @@ public abstract class Scene extends JPanel implements Runnable {
             for (int i=0; i<displayObjects.length; i++) {
                 this.displayObjects[i] = nDisplayObjects[i];
                 
-                if (this.displayObjects[i] instanceof Interpolable) {
-                    ((Interpolable)this.displayObjects[i]).setInterpolationFrameTime(1D/desiredUPS); //TODO Calculate FPS to interpolate when frametime changes
-                }
                 //this.add(displayObjects[i].getJComponent());
             }
         }
@@ -71,9 +68,6 @@ public abstract class Scene extends JPanel implements Runnable {
         for (int i=0; i<displayObjects.length; i++) {
             this.displayObjects[i] = displayObjects[i];
             
-                if (this.displayObjects[i] instanceof Interpolable) {
-                    ((Interpolable)this.displayObjects[i]).setInterpolationFrameTime(1D/desiredUPS); //TODO Calculate FPS to interpolate when frametime changes
-                }
             //this.add(displayObjects[i].getJComponent());
         }
     }

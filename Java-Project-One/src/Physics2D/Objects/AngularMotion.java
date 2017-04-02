@@ -12,15 +12,23 @@ import Physics2D.Vector2;
  * @author bowen
  */
 public interface AngularMotion {
+    double radius();
     double angle();
     double angVelocity();
-    double angAcceleration();
-    double torque();
+    //double angAcceleration();
+    //double torque();
     
     double angMomentum();
     double angMass();
     
-    void setTorque(double c);
-    void update(double time);
-    void revert();
+    
+    void setAngle(double angle);
+    void setAngVelocity(double angVel);
+    
+    void addAngle(double angle);
+    void addAngVelocity(double angVel);
+    
+    //void setTorque(double c);
+    //void update(double time);
+    //void revert();
 }

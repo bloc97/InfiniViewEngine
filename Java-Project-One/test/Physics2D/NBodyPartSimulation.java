@@ -14,8 +14,9 @@ import Physics2D.Integrators.Symplectic4;
 import Physics2D.Objects.Moon;
 import Physics2D.Objects.Particle;
 import Physics2D.Objects.Planet;
-import Physics2D.Objects.Spacecraft;
+import SpaceGame.Objects.SpaceArtificial;
 import Physics2D.Objects.Star;
+import Physics2D.Vector2;
 import World2D.Objects.DisplayObject;
 import java.util.Date;
 
@@ -30,7 +31,7 @@ public class NBodyPartSimulation implements Runnable, Simulation {
     private Planet[] planets;
     private Moon[] moons;
     private Particle[] particles;
-    private Spacecraft[] spacecrafts;
+    private SpaceArtificial[] spacecrafts;
     
     private Vector2[][] futureOrbitPos;
     private Vector2[][] futureOrbitVel;
@@ -59,7 +60,7 @@ public class NBodyPartSimulation implements Runnable, Simulation {
     public NBodySimulation(IntegratorType integrator, double ratio, double updatesPerSecond, int miniSteps, SpaceObject... objects) {
         this(integrator, ratio, updatesPerSecond, miniSteps, new NBodyFuturePath(integrator, ratio, 100, updatesPerSecond/2, objects), objects);
     }*/
-    public NBodyPartSimulation(IntegratorType integrator, double ratio, double updatesPerSecond, int miniSteps, Date date, Star[] stars, Planet[] planets, Moon[] moons, Particle[] particles, Spacecraft[] spacecrafts) {
+    public NBodyPartSimulation(IntegratorType integrator, double ratio, double updatesPerSecond, int miniSteps, Date date, Star[] stars, Planet[] planets, Moon[] moons, Particle[] particles, SpaceArtificial[] spacecrafts) {
         this.isPaused = true;
         
         this.date = date;

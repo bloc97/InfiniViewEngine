@@ -5,12 +5,8 @@
  */
 package Physics2D.Integrators;
 
-import Physics2D.Objects.Moon;
-import Physics2D.Objects.Particle;
-import Physics2D.Objects.Planet;
 import Physics2D.Objects.PointBody;
-import Physics2D.Objects.Spacecraft;
-import Physics2D.Objects.Star;
+import SpaceGame.Objects.SpaceArtificial;
 import Physics2D.Vector2;
 import java.util.Date;
 
@@ -24,7 +20,7 @@ public interface Integrator {
         SYMPLECTIC1, SYMPLECTIC2, SYMPLECTIC3, SYMPLECTIC4
     }
     public void apply(PointBody[] bodies, double dt);
-    public void applyByPart(Star[] stars, Planet[] planets, Moon[] moons, Particle[] particles, Spacecraft[] spacecrafts);
+    public void applyByPart(PointBody[] bodies, double dt); //Check for mass to categorise all different bodies
     public Vector2[] getCurrentAccelerations();
     //public PointBody[] get(PointBody[] bodies, double dt, int steps);
     //public Vector2[][] getFuture(PointBody[] bodies, double dt, int steps);
