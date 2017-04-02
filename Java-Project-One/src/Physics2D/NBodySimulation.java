@@ -24,28 +24,28 @@ import java.util.Date;
 public class NBodySimulation implements Runnable, Simulation {
     private Thread thread;
     
-    protected PointBody[] bodies;
-    protected Vector2[][] futureOrbitPos;
-    protected Vector2[][] futureOrbitVel;
-    protected long[][] futureOrbitTime;
+    private PointBody[] bodies;
+    private Vector2[][] futureOrbitPos;
+    private Vector2[][] futureOrbitVel;
+    private long[][] futureOrbitTime;
     
-    protected Integrator integrator;
-    protected Integrator integrator2;
+    private Integrator integrator;
+    private Integrator integrator2;
     
-    protected double updatesPerSecond; //How many "Big steps" per second
-    protected int miniSteps; //How many "Small Steps" per Big step
-    protected double secondsPerMiniStep; //How many in game seconds pass in each "Small Steps"
-    protected double initialRatio; //Initial ratio
-    protected double ratio; //Ratio between simulated time and real time, higher is faster (In game seconds/real seconds)
+    private double updatesPerSecond; //How many "Big steps" per second
+    private int miniSteps; //How many "Small Steps" per Big step
+    private double secondsPerMiniStep; //How many in game seconds pass in each "Small Steps"
+    private double initialRatio; //Initial ratio
+    private double ratio; //Ratio between simulated time and real time, higher is faster (In game seconds/real seconds)
     
-    protected int accel = 1;
-    protected boolean isAccel = true;
-    protected int deccel = 1;
+    private int accel = 1;
+    private boolean isAccel = true;
+    private int deccel = 1;
     
-    protected short fCount = 120;
-    protected short fWait = 120;
+    private short fCount = 120;
+    private short fWait = 120;
     
-    protected Date date;
+    private Date date;
     
     private boolean isPaused;
     /*

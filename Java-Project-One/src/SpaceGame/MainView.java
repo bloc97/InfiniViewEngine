@@ -6,9 +6,7 @@
 package SpaceGame;
 
 import MathExt.Ext;
-import Physics2D.Objects.FuturePath;
 import Physics2D.Objects.LinearMotion;
-import Physics2D.Objects.PointBody;
 import SpaceGame.Objects.SpaceNatural;
 import World2D.Camera;
 import World2D.Objects.DisplayObject;
@@ -41,16 +39,15 @@ public class MainView extends Scene {
     
     private DisplayObject trackedObject;
     
-    //private OurSolarSystem spaceWorld = new OurSolarSystem();
-    
     public MainView(int xsize, int ysize) {
         this(60, xsize, ysize);
     }
     
     public MainView(int desiredFPS, int xsize, int ysize) {
-        super(desiredFPS, xsize, ysize);
+        super(desiredFPS, xsize, ysize, new World[] {new OurSolarSystem()});
+        
         this.setBackground(Color.getHSBColor(298F/360, 1F/100, 22F/100));
-        this.worlds = new World[] {spaceWorld};
+        
         this.setDisplayObjects(worlds);
         
         this.addComponentListener(new ComponentAdapter() {
@@ -181,9 +178,6 @@ public class MainView extends Scene {
             if (currentObject.isVisible(camera.getScale())) {
                 if (x > tx-tr && x < tx+tr && y > ty-tr && y < ty+tr) {
                     trackedObject = currentObject;
-                    //if (trackedObject instanceof FuturePath && trackedObject instanceof PointBody) {
-                        //((SpaceSimulation)(spaceWorld.getSimulations()[0])).setFocus((PointBody)trackedObject);
-                    //}
                     return;
                 }
             }
@@ -192,7 +186,6 @@ public class MainView extends Scene {
     }
     public void releaseFocus() {
         trackedObject = null;
-        //((SpaceSimulation)(spaceWorld.getSimulations()[0])).setFocus(null);
     }
     
     public void focusCamera() {
@@ -269,9 +262,6 @@ public class MainView extends Scene {
         for (int i=0; i<displayObjects.length; i++) {
             if (displayObjects[i] == trackedObject) {
                 focusCamera();
-            }
-            if (displayObjects[i] instanceof FuturePath) {
-                ((FuturePath)displayObjects[i]).setOrbitReferencePath(trackedObject.paths);
             }
             displayObjects[i].renderNoTransform(g2, camera);
         }
