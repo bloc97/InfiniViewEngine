@@ -27,11 +27,19 @@ public abstract class Scene extends JPanel implements Runnable {
     
     protected World[] worlds;
     
-    
-    public Scene(int xsize, int ysize, World... worlds) {
-        this(60, xsize, ysize, worlds);
+    public Scene(int desiredUPS, int xsize, int ysize) {
+        this.isActive = false;
+        this.desiredUPS = desiredUPS;
+        this.camera = new Camera(this, xsize, ysize);
+        
+        this.xsize = xsize;
+        this.ysize = ysize;
+        
+        this.setLayout(null);
+        this.setVisible(true);
+        
+        thread = new Thread(this);
     }
-    
     public Scene(int desiredUPS, int xsize, int ysize, World... worlds) {
         this.isActive = false;
         this.desiredUPS = desiredUPS;
@@ -45,7 +53,6 @@ public abstract class Scene extends JPanel implements Runnable {
         this.setVisible(true);
         
         thread = new Thread(this);
-        
     }
     
     final public void setDisplayObjects(World... worlds) {

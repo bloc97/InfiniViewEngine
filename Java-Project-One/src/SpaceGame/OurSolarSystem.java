@@ -72,7 +72,7 @@ public class OurSolarSystem implements World {
         
         //NBodyFuturePath futureIntegrator = new NBodyFuturePath(Integrator.IntegratorType.SYMPLECTIC4, 1E8, 200, 1, smallObjects, bigObjects);
         //NBodyFutureOrbit orbitIntegrator = new NBodyFutureOrbit(Integrator.IntegratorType.SYMPLECTIC4, 20, bigObjects, orbitalPeriods);
-        NBodySimulation space = new NBodySimulation(Integrator.IntegratorType.SYMPLECTIC4, 1E5, 30, 1, initialDate, allObjects);
+        SpaceSimulation space = new SpaceSimulation(initialDate, allObjects);
         
         space.start();
         simulations = new Simulation[] {space};//, orbitIntegrator, futureIntegrator};
