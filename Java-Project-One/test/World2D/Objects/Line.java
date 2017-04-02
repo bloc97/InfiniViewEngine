@@ -5,13 +5,16 @@
  */
 package World2D.Objects;
 
+import Physics2D.Vector2;
 import World2D.Camera;
+import World2D.Objects.DisplayObject;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Line2D;
+import java.util.Date;
 
 /**
  *
@@ -100,6 +103,16 @@ public class Line implements DisplayObject {
 
     @Override
     public void renderNoTransform(Graphics2D g, Camera camera) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setOrbitPath(Vector2[] paths, Vector2[] vels, long[] timeStamps) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setCurrentDate(Date date) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

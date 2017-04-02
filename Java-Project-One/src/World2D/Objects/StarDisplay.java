@@ -5,10 +5,12 @@
  */
 package World2D.Objects;
 
+import Physics2D.Vector2;
 import World2D.Camera;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import java.util.Date;
 
 /**
  *
@@ -127,6 +129,16 @@ public class StarDisplay implements DisplayObject, Interpolable {
         g2.fill(circle);
         
         
+    }
+
+    @Override
+    public void setOrbitPath(Vector2[] paths, Vector2[] vels, long[] timeStamps) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setCurrentDate(Date date) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     

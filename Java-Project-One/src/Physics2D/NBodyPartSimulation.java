@@ -17,7 +17,6 @@ import Physics2D.Objects.Planet;
 import Physics2D.Objects.Spacecraft;
 import Physics2D.Objects.Star;
 import World2D.Objects.DisplayObject;
-import World2D.Objects.FutureOrbit;
 import java.util.Date;
 
 /**
@@ -36,7 +35,6 @@ public class NBodyPartSimulation implements Runnable, Simulation {
     private Vector2[][] futureOrbitPos;
     private Vector2[][] futureOrbitVel;
     private long[][] futureOrbitTime;
-    private FutureOrbit[] futureOrbits;
     
     private Integrator integrator;
     private Integrator integrator2;
@@ -93,10 +91,6 @@ public class NBodyPartSimulation implements Runnable, Simulation {
         futureOrbitPos = new Vector2[planets.length][0];
         futureOrbitVel = new Vector2[planets.length][0];
         futureOrbitTime = new long[planets.length][0];
-        futureOrbits = new FutureOrbit[planets.length];
-        for (int i=0; i<futureOrbits.length; i++) {
-            futureOrbits[i] = new FutureOrbit();
-        }
     }
     @Override
     public void step() {
@@ -116,8 +110,8 @@ public class NBodyPartSimulation implements Runnable, Simulation {
         }
         fCount++;
         
-        for (int i=0; i<futureOrbits.length; i++) {
-            futureOrbits[i].setCurrentDate(date);
+        for (int i=0; i<planets.length; i++) {
+            planets[i].displayComponent.setCurrentDate(date);
         }
     }
     public void reCalculateOrbits() {
@@ -141,7 +135,7 @@ public class NBodyPartSimulation implements Runnable, Simulation {
         pers[0] = 1E9;
 
                 
-        for (int i=0; i<futureOrbits.length; i++) {
+        for (int i=0; i<planets.length; i++) {
             //System.out.println((pers[i]/10/5));
             Vector2[][] posAndVel = Integrator.getFutureSingleWithVel(planets, i, integrator2, (pers[i]/50/4), 50);
             futureOrbitPos[i] = posAndVel[0];
@@ -149,8 +143,9 @@ public class NBodyPartSimulation implements Runnable, Simulation {
             futureOrbitTime[i] = Integrator.getFutureSingleTimeStamps(date, (pers[i]/50/4), 50);
         }
 
-        for (int i=0; i<futureOrbits.length; i++) {
-            futureOrbits[i].setOrbitPath(futureOrbitPos[i], futureOrbitVel[i], futureOrbitTime[i]);
+
+        for (int i=0; i<planets.length; i++) {
+            planets[i].displayComponent.setOrbitPath(futureOrbitPos[i], futureOrbitVel[i], futureOrbitTime[i]);
         }
     }
     private void updateSpatialPositions() {
@@ -292,7 +287,7 @@ public class NBodyPartSimulation implements Runnable, Simulation {
                 objectsIndex++;
             }
         }
-        return concat(displayObjects, futureOrbits);
+        return displayObjects;
     }
     private DisplayObject[] concat(DisplayObject[] a, DisplayObject[] b) {
         int aLen = a.length;
@@ -304,7 +299,7 @@ public class NBodyPartSimulation implements Runnable, Simulation {
      }
     @Override
     public int getObjectsNumber() {
-        return planets.length + futureOrbits.length;
+        return planets.length;
     }
 
     @Override

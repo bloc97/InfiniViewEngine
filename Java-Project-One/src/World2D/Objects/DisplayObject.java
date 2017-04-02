@@ -5,8 +5,10 @@
  */
 package World2D.Objects;
 
+import Physics2D.Vector2;
 import World2D.Camera;
 import java.awt.Graphics2D;
+import java.util.Date;
 
 /**
  *
@@ -25,6 +27,9 @@ public interface DisplayObject {
     
     public void hide();
     public void show();
+    
+    public void setOrbitPath(Vector2[] paths, Vector2[] vels, long[] timeStamps);
+    public void setCurrentDate(Date date);
     
     public static double getIx(double x, Camera camera) {
         return ((x - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());

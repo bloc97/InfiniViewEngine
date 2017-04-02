@@ -5,10 +5,17 @@
  */
 package World2D.Objects;
 
+import Physics2D.Vector2;
 import World2D.Camera;
+import static World2D.Objects.DisplayObject.getIx;
+import static World2D.Objects.DisplayObject.getIy;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
+import java.util.Date;
 import javafx.scene.shape.Ellipse;
 
 /**
@@ -28,13 +35,17 @@ public class PlanetDisplay implements DisplayObject, Interpolable {
     private double dst;
     private double dft;
     
-    
     private double lastUpdateTime;
     
     private boolean isHidden;
     
     private String name;
     private Color color;
+    
+    private Vector2[] path;
+    private Vector2[] vel;
+    private long[] pathTime;
+    private Date currentDate;
     
     public PlanetDisplay(String name, double r) {
         this(name, Color.WHITE, r);
@@ -180,17 +191,73 @@ public class PlanetDisplay implements DisplayObject, Interpolable {
             return;
         }
         
+        renderFutureOrbit(g2, camera);
+        
         if ((radius>10000000 && camera.getScale() > 3E-11) || camera.getScale() > 3E-10) {
             g2.drawString(name, (float)(idx+r+4), (float)(idy+5));
         }
         
-        
-        
         Ellipse2D.Double circle = new Ellipse2D.Double(idx-r, idy-r, r*2, r*2);
         g2.fill(circle);
-        
-        
     }
     
+    public void renderFutureOrbit(Graphics2D g2, Camera camera) {
+        if (camera.getScale() < 6E-12) {
+            return;
+        }
+        
+        Stroke originalStroke = g2.getStroke();
+        Path2D.Double orbit = new Path2D.Double();
+        
+        int initiali = -1;
+        long currentTime = currentDate.getTime();
+        
+        for (int i=0; i<path.length; i++) {
+            if (pathTime[i] > currentTime) {
+                initiali = i-1;
+                break;
+            }
+        }
+        
+        if (initiali >= path.length || initiali == -1) {
+            return;
+        }
+        
+        double ix0 = getIx(path[initiali].get(0), camera);
+        double iy0 = getIy(path[initiali].get(1), camera);
+        
+        orbit.moveTo(ix0, iy0);
+        
+            
+        for (int i=initiali+1; i<path.length; i++) {
+            
+            double ix = getIx(path[i].get(0), camera);
+            double iy = getIy(path[i].get(1), camera);
+            orbit.lineTo(ix, iy);
+            
+        }
+        float dashScale = 1E9f * (float)camera.getScale();
+        while (dashScale < 5) {
+            dashScale *= 5;
+        }
+        g2.setStroke(new BasicStroke(1.0f,                      // Width
+                           BasicStroke.CAP_SQUARE,    // End cap
+                           BasicStroke.JOIN_BEVEL,    // Join style
+                           1000.0f,                     // Miter limit
+                           new float[] {dashScale, dashScale}, // Dash pattern
+                           0.5f));
+        g2.draw(orbit);
+        g2.setStroke(originalStroke);
+    }
+    @Override
+    public void setOrbitPath(Vector2[] paths, Vector2[] vels, long[] timeStamps) {//, double cyc, double ratio) {
+        path = paths;
+        vel = vels;
+        pathTime = timeStamps;
+    }
+    @Override
+    public void setCurrentDate(Date date) {
+        currentDate = date;
+    }
     
 }

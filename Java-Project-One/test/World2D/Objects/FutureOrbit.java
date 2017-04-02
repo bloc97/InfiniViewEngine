@@ -8,6 +8,7 @@ package World2D.Objects;
 import Physics2D.Vector2;
 import Physics2D.Vectors2;
 import World2D.Camera;
+import World2D.Objects.DisplayObject;
 import static World2D.Objects.DisplayObject.getIx;
 import static World2D.Objects.DisplayObject.getIy;
 import java.awt.BasicStroke;
