@@ -26,6 +26,10 @@ import java.util.Date;
  */
 public class SpaceNatural extends RoundBody implements DisplayObject, Interpolable, FuturePath {
 
+    @Override
+    public void setOrbitReferencePath(Vector2[] paths) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     
     public enum SpaceNaturalType {
@@ -47,7 +51,6 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
     
     
     private Vector2[] path;
-    private Vector2[] pathRef;
     private Vector2[] vel;
     private long[] pathTime;
     private Date currentDate;
@@ -135,8 +138,8 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         double realTimeDiff = (System.currentTimeMillis() - lastUpdateTime)/1000;
         double simulatedTimeDiff = dst * realTimeDiff;
         
-        double ix = x + vx * simulatedTimeDiff;
-        double iy = y + vy * simulatedTimeDiff;
+        double ix = x;// + vx * simulatedTimeDiff;
+        double iy = y;// + vy * simulatedTimeDiff;
         
         if (isPaused) {
             ix = x;
@@ -182,9 +185,11 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         
         int initiali = -1;
         
-        long currentTime = currentDate.getTime() + (long)(dt * 1000);
+        long currentTime;// = currentDate.getTime() + (long)(dt * 1000);
         
         if (isPaused) {
+            currentTime = currentDate.getTime();
+        } else {
             currentTime = currentDate.getTime();
         }
         
@@ -234,33 +239,28 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
     }
     
     @Override
-    public void setOrbitReferencePath(Vector2[] paths) {
-        pathRef = paths;
-    }
-
-    @Override
-    public Vector2[] getOrbitPath() {
-        return path;
-    }
-    @Override
     public double getIx() {
         if (isPaused) {
             return x;
+        } else {
+            return x;
         }
-        double realTimeDiff = (System.currentTimeMillis() - lastUpdateTime)/1000;
-        double simulatedTimeDiff = dst * realTimeDiff;
+        //double realTimeDiff = (System.currentTimeMillis() - lastUpdateTime)/1000;
+        //double simulatedTimeDiff = dst * realTimeDiff;
         
-        return x + vx * simulatedTimeDiff;
+        //return x + vx * simulatedTimeDiff;
     }
     @Override
     public double getIy() {
         if (isPaused) {
             return y;
+        } else {
+            return y;
         }
-        double realTimeDiff = (System.currentTimeMillis() - lastUpdateTime)/1000;
-        double simulatedTimeDiff = dst * realTimeDiff;
+        //double realTimeDiff = (System.currentTimeMillis() - lastUpdateTime)/1000;
+        //double simulatedTimeDiff = dst * realTimeDiff;
         
-        return y + vy * simulatedTimeDiff;
+        //return y + vy * simulatedTimeDiff;
     }
     @Override
     public double getSx(Camera camera) {
