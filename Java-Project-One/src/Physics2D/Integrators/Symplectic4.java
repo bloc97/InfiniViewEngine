@@ -44,6 +44,11 @@ public class Symplectic4 implements Integrator {
         }
         
     }
+    @Override
+    public void partialApply(int n, PointBody[] bodies, double dt) {
+        Symplectic.applySympleticPositionStep(bodies, c[n], dt);
+        accelerations = Symplectic.applySympleticVelocityStep(bodies, d[n], dt);
+    }
 
     @Override
     public Vector2[] getCurrentAccelerations() {
@@ -62,4 +67,5 @@ public class Symplectic4 implements Integrator {
     public void applyByPart(PointBody[] bodies, double dt) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }

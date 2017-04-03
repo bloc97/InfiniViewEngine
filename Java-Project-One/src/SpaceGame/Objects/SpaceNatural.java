@@ -168,7 +168,7 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
         Stroke originalStroke = g2.getStroke();
         Path2D.Double orbit = new Path2D.Double();
         
-        if (futureReference == null) {
+        //if (futureReference == null) {
             Vector2 p0 = future.getPos(0);
             double px0 = DisplayObject.getSx(p0.get(0), camera);
             double py0 = DisplayObject.getSy(p0.get(1), camera);
@@ -183,14 +183,14 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
             }
             
             
-        } else {
+        /*} else {
             //System.out.println("step1");
             Vector2 p0 = Vectors2.add(future.getPos(0, futureReference), futureReference.getPos(0));
             double px0 = DisplayObject.getSx(p0.get(0), camera);
             double py0 = DisplayObject.getSy(p0.get(1), camera);
             orbit.moveTo(px0, py0);
             //System.out.println("step2");
-            /*
+            
             final int length = future.length(futureReference);
             
             for (int i=1; i<length; i++) {
@@ -200,7 +200,7 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
                 double pyi = DisplayObject.getSy(pi.get(1), camera);
                 orbit.lineTo(pxi, pyi);
                 //System.out.println("step5." + i);
-            }*/
+            }
             
             final int length;
             if (future.getTime(1) - future.getTime(0) > futureReference.getTime(1) - futureReference.getTime(0)) {
@@ -223,9 +223,9 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
            // System.out.println("step6");
             
             
-        }
+        }*/
         
-        float dashScale = 1E9f * (float)camera.getScale();
+        float dashScale = 1E7f * (float)camera.getScale();
         while (dashScale < 5) {
             dashScale *= 5;
         }

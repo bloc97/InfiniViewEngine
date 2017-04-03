@@ -8,6 +8,7 @@ package Physics2D.Integrators;
 import Physics2D.Objects.PointBody;
 import SpaceGame.Objects.SpaceArtificial;
 import Physics2D.Vector2;
+import Physics2D.Vectors2;
 import java.util.Date;
 
 /**
@@ -21,6 +22,8 @@ public interface Integrator {
     }
     public void apply(PointBody[] bodies, double dt);
     public void applyByPart(PointBody[] bodies, double dt); //Check for mass to categorise all different bodies
+    public void partialApply(int n, PointBody[] bodies, double dt);
+    
     public Vector2[] getCurrentAccelerations();
     //public PointBody[] get(PointBody[] bodies, double dt, int steps);
     //public Vector2[][] getFuture(PointBody[] bodies, double dt, int steps);
@@ -93,6 +96,25 @@ public interface Integrator {
             integrator.apply(bodiesClone, dt);
             positionTime[0][i] = bodiesClone[k].position().clone();
             positionTime[1][i] = bodiesClone[k].velocity().clone();
+        }
+        return positionTime;
+    }
+    public static Vector2[][] getFutureSingleWithVelRelative(PointBody[] bodies, int k, int kr, Integrator integrator, double dt, int steps) {
+        PointBody[] bodiesClone = new PointBody[bodies.length];
+        
+        for (int i=0; i<bodies.length; i++) {
+            bodiesClone[i] = bodies[i].clone();
+        }
+        
+        Vector2[][] positionTime = new Vector2[2][steps];
+        
+        Vector2 referencePosition0 = bodiesClone[kr].position().clone();
+        positionTime[0][0] = bodiesClone[k].position().clone();
+        positionTime[1][0] = Vectors2.sub(bodiesClone[k].velocity(), bodiesClone[kr].velocity());
+        for (int i=1; i<steps; i++) {
+            integrator.apply(bodiesClone, dt);
+            positionTime[0][i] = Vectors2.sub(bodiesClone[k].position(), bodiesClone[kr].position()).add(referencePosition0);
+            positionTime[1][i] = Vectors2.sub(bodiesClone[k].velocity(), bodiesClone[kr].velocity());
         }
         return positionTime;
     }

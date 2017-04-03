@@ -23,10 +23,12 @@ import java.util.Date;
  */
 public class SpaceSimulation extends NBodySimulation {
     private SpaceNatural[] bodies;
-    private SpaceNatural focus;
+    private int focusIndex;
+    private Integrator integrator;
     public SpaceSimulation(Date date, SpaceNatural... bodies) {
         super(Integrator.IntegratorType.SYMPLECTIC4, 1E5, 10, 4, date, bodies);
         this.bodies = bodies;
+        this.integrator = integrator;
     }
     @Override
     public void forward(int steps) {
@@ -34,7 +36,14 @@ public class SpaceSimulation extends NBodySimulation {
         date = new Date(newTime);
         
         for (int i=0; i<steps; i++) {
-            integrator.apply(bodies, secondsPerMiniStep/deccel);
+            for (int n=0; n<4; n++) {
+                integrator.partialApply(n, bodies, secondsPerMiniStep/deccel);
+                for (int k=0; k<bodies.length; k++) {
+                    if (bodies[k] instanceof DisplayObject) {
+                        ((DisplayObject)(bodies[k])).registerUpdate();
+                    }
+                }
+            }
         }/*
         //if (fCount%fWait == 0) {
         if (fCount > fWait/(ratio/initialRatio)) {
@@ -48,11 +57,6 @@ public class SpaceSimulation extends NBodySimulation {
         fCount++;*/
         reCalculateOrbits();
         
-        for (int i=0; i<bodies.length; i++) {
-            if (bodies[i] instanceof DisplayObject) {
-                ((DisplayObject)(bodies[i])).registerUpdate();
-            }
-        }
     }
     
     @Override
@@ -61,7 +65,7 @@ public class SpaceSimulation extends NBodySimulation {
         double[] vels = new double[bodies.length];
         double[] pers = new double[bodies.length];
 
-        if (focus == null) {
+        //if (focus == null) {
             for (int i=0; i<vels.length; i++) {
                 vels[i] = Vectors2.sub(bodies[i].velocity(), bodies[i].orbiting(bodies).velocity()).norm();
             }
@@ -72,9 +76,8 @@ public class SpaceSimulation extends NBodySimulation {
                 double c0 = G*G*M0*M0;
                 pers[i] = 2 * Math.PI * Math.sqrt(c0/Math.pow(vels[i], 6));
             }
-            pers[5] = pers[9];
             pers[0] = 1E9;
-        } else {
+        /*} else {
             double velFocus = Vectors2.sub(focus.velocity(), focus.orbiting(bodies).velocity()).norm();
             double G = NBody.G;
             double M0 = focus.orbiting(bodies).mass();
@@ -84,15 +87,24 @@ public class SpaceSimulation extends NBodySimulation {
             for (int i=0; i<vels.length; i++) {
                 pers[i] = focusPeriod;
             }
-        }
+        }*/
 
-                
-        for (int i=0; i<bodies.length; i++) {
-            //System.out.println((pers[i]/10/5));
-            Vector2[][] posAndVel = Integrator.getFutureSingleWithVel(bodies, i, integrator, (pers[i]/50/2), 50);
-            futureOrbitPos[i] = posAndVel[0];
-            futureOrbitVel[i] = posAndVel[1];
-            futureOrbitTime[i] = Integrator.getFutureSingleTimeStamps(date, (pers[i]/50/2), 50);
+        if (focusIndex == -1) {
+            for (int i=0; i<bodies.length; i++) {
+                //System.out.println((pers[i]/10/5));
+                Vector2[][] posAndVel = Integrator.getFutureSingleWithVel(bodies, i, integrator, (pers[i]/50/2), 50);
+                futureOrbitPos[i] = posAndVel[0];
+                futureOrbitVel[i] = posAndVel[1];
+                futureOrbitTime[i] = Integrator.getFutureSingleTimeStamps(date, (pers[i]/50/2), 50);
+            }
+        } else {
+            for (int i=0; i<bodies.length; i++) {
+                double realP = (pers[i] > pers[focusIndex]) ? (pers[focusIndex]/50/2) : (pers[i]/50/2);
+                Vector2[][] posAndVel = Integrator.getFutureSingleWithVelRelative(bodies, i, focusIndex, integrator, realP, 50);
+                futureOrbitPos[i] = posAndVel[0];
+                futureOrbitVel[i] = posAndVel[1];
+                futureOrbitTime[i] = Integrator.getFutureSingleTimeStamps(date, realP, 50);
+            }
         }
 
         for (int i=0; i<bodies.length; i++) {
@@ -102,7 +114,13 @@ public class SpaceSimulation extends NBodySimulation {
         }
     }
     public void setFocus(SpaceNatural body) {
-        focus = body;
+        for (int i=0; i<bodies.length; i++) {
+            if (body == bodies[i]) {
+                focusIndex = i;
+                return;
+            }
+        }
+        focusIndex = -1;
     }
     /*
     public void reCalculateOrbits(PointBody body) {
