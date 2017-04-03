@@ -8,10 +8,11 @@ package SpaceGame;
 import Physics2D.Integrators.Integrator;
 import Physics2D.Integrators.NBody;
 import Physics2D.NBodySimulation;
-import Physics2D.Objects.FuturePath;
+import Physics2D.Integrators.FuturePath;
 import Physics2D.Objects.PointBody;
 import Physics2D.Vector2;
 import Physics2D.Vectors2;
+import SpaceGame.Objects.SpaceNatural;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Interpolable;
 import java.util.Date;
@@ -21,12 +22,11 @@ import java.util.Date;
  * @author bowen
  */
 public class SpaceSimulation extends NBodySimulation {
-    private PointBody focus;
-    public SpaceSimulation(Date date, PointBody... bodies) {
+    private SpaceNatural[] bodies;
+    private SpaceNatural focus;
+    public SpaceSimulation(Date date, SpaceNatural... bodies) {
         super(Integrator.IntegratorType.SYMPLECTIC4, 1E5, 10, 4, date, bodies);
-    }
-    public void setFocus(PointBody body) {
-        this.focus = body;
+        this.bodies = bodies;
     }
     @Override
     public void forward(int steps) {
@@ -46,21 +46,65 @@ public class SpaceSimulation extends NBodySimulation {
             fCount = 0;
         }
         fCount++;*/
-            if (focus != null) {
-                reCalculateOrbits(focus);
-            } else {
-                reCalculateOrbits();
-            }
+        reCalculateOrbits();
         
         for (int i=0; i<bodies.length; i++) {
-            if (bodies[i] instanceof FuturePath) {
-                ((FuturePath)(bodies[i])).setCurrentDate(date);
-            }
             if (bodies[i] instanceof DisplayObject) {
                 ((DisplayObject)(bodies[i])).registerUpdate();
             }
         }
     }
+    
+    @Override
+    public void reCalculateOrbits() {
+
+        double[] vels = new double[bodies.length];
+        double[] pers = new double[bodies.length];
+
+        if (focus == null) {
+            for (int i=0; i<vels.length; i++) {
+                vels[i] = Vectors2.sub(bodies[i].velocity(), bodies[i].orbiting(bodies).velocity()).norm();
+            }
+            double G = NBody.G;
+            
+            for (int i=0; i<vels.length; i++) {
+                double M0 = bodies[i].orbiting(bodies).mass();
+                double c0 = G*G*M0*M0;
+                pers[i] = 2 * Math.PI * Math.sqrt(c0/Math.pow(vels[i], 6));
+            }
+            pers[5] = pers[9];
+            pers[0] = 1E9;
+        } else {
+            double velFocus = Vectors2.sub(focus.velocity(), focus.orbiting(bodies).velocity()).norm();
+            double G = NBody.G;
+            double M0 = focus.orbiting(bodies).mass();
+            double c0 = G*G*M0*M0;
+            double focusPeriod = 2 * Math.PI * Math.sqrt(c0/Math.pow(velFocus, 6));
+            
+            for (int i=0; i<vels.length; i++) {
+                pers[i] = focusPeriod;
+            }
+        }
+
+                
+        for (int i=0; i<bodies.length; i++) {
+            //System.out.println((pers[i]/10/5));
+            Vector2[][] posAndVel = Integrator.getFutureSingleWithVel(bodies, i, integrator, (pers[i]/50/2), 50);
+            futureOrbitPos[i] = posAndVel[0];
+            futureOrbitVel[i] = posAndVel[1];
+            futureOrbitTime[i] = Integrator.getFutureSingleTimeStamps(date, (pers[i]/50/2), 50);
+        }
+
+        for (int i=0; i<bodies.length; i++) {
+            if (bodies[i] instanceof SpaceNatural) {
+                ((SpaceNatural)(bodies[i])).setOrbitPath(futureOrbitPos[i], futureOrbitVel[i], futureOrbitTime[i]);
+            }
+        }
+    }
+    public void setFocus(SpaceNatural body) {
+        focus = body;
+    }
+    /*
     public void reCalculateOrbits(PointBody body) {
         //double futureSimRatio = ratio/4;
         //futureOrbitPos = Integrator.getFuture(bodies, integrator2, futureSimRatio, 500);
@@ -109,8 +153,8 @@ public class SpaceSimulation extends NBodySimulation {
 
         for (int i=0; i<bodies.length; i++) {
             if (bodies[i] instanceof FuturePath) {
-                ((FuturePath)(bodies[i])).setOrbitPath(futureOrbitPos[i], futureOrbitVel[i], futureOrbitTime[i], date);
+                //((FuturePath)(bodies[i])).setOrbitPath(futureOrbitPos[i], futureOrbitVel[i], futureOrbitTime[i], date);
             }
         }
-    }
+    }*/
 }

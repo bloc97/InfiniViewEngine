@@ -92,12 +92,17 @@ public abstract class Scene extends JPanel implements Runnable {
     
     @Override
     protected void paintComponent(Graphics g) {
+        prePaint();
         super.paintComponent(g);
-        drawAllObjects(g);
+        onPaint(g);
+        postPaint();
     }
     
-    protected abstract void drawAllObjects(Graphics g);
-    protected abstract void tick();
+    protected abstract void beforePaint();
+    protected abstract void prePaint();
+    protected abstract void onPaint(Graphics g);
+    protected abstract void postPaint();
+    protected abstract void afterPaint();
     
     @Override
     public void run() {
@@ -114,8 +119,9 @@ public abstract class Scene extends JPanel implements Runnable {
                 startTime = System.nanoTime();
                 //updateCameraToObjects();
                 //invalidate();
-                tick();
+                beforePaint();
                 repaint();
+                afterPaint();
                 endTime = System.nanoTime();
                 
                 sleepTime = (long)(desiredSleepms*1000000) - (endTime-startTime);

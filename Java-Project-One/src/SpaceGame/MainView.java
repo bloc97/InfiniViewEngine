@@ -6,7 +6,7 @@
 package SpaceGame;
 
 import MathExt.Ext;
-import Physics2D.Objects.FuturePath;
+import Physics2D.Integrators.FuturePath;
 import Physics2D.Objects.LinearMotion;
 import Physics2D.Objects.PointBody;
 import SpaceGame.Objects.SpaceNatural;
@@ -181,26 +181,27 @@ public class MainView extends Scene {
             if (currentObject.isVisible(camera.getScale())) {
                 if (x > tx-tr && x < tx+tr && y > ty-tr && y < ty+tr) {
                     trackedObject = currentObject;
-                    if (trackedObject instanceof FuturePath && trackedObject instanceof PointBody) {
-                        ((SpaceSimulation)(spaceWorld.getSimulations()[0])).setFocus((PointBody)trackedObject);
-                        ((SpaceSimulation)(spaceWorld.getSimulations()[0])).reCalculateOrbits((PointBody)trackedObject);
-                    }
+                    //if (trackedObject instanceof FuturePath && trackedObject instanceof PointBody) {
+                        //((SpaceSimulation)(spaceWorld.getSimulations()[0])).setFocus((PointBody)trackedObject);
+                        //((SpaceSimulation)(spaceWorld.getSimulations()[0])).reCalculateOrbits((PointBody)trackedObject);
+                    //}
                     focusCamera();
                     return;
                 }
             }
         }
         releaseFocus();
-        ((SpaceSimulation)(spaceWorld.getSimulations()[0])).reCalculateOrbits();
     }
     public void releaseFocus() {
         trackedObject = null;
-        ((SpaceSimulation)(spaceWorld.getSimulations()[0])).setFocus(null);
+        //((SpaceSimulation)(spaceWorld.getSimulations()[0])).setFocus(null);
     }
     
     public void focusCamera() {
+        if (trackedObject instanceof DisplayObject) {
             camera.setxPos(trackedObject.getX());
             camera.setyPos(-trackedObject.getY());
+        }
     }
     
     
@@ -233,9 +234,26 @@ public class MainView extends Scene {
         return seconds + "";
     }
     
-    
     @Override
-    protected void drawAllObjects(Graphics g) {
+    protected void beforePaint() {
+        checkKeys();
+    }
+    @Override
+    protected void prePaint() {
+        for (int i=0; i<displayObjects.length; i++) {
+            if (displayObjects[i] instanceof SpaceNatural) {
+                if (trackedObject instanceof SpaceNatural) {
+                    ((SpaceSimulation)worlds[0].getSimulations()[0]).setFocus((SpaceNatural)trackedObject);
+                    ((SpaceNatural)displayObjects[i]).setReference(((SpaceNatural)trackedObject));
+                } else {
+                    ((SpaceSimulation)worlds[0].getSimulations()[0]).setFocus(null);
+                    ((SpaceNatural)displayObjects[i]).setReference(null);
+                }
+            }
+        }
+    }
+    @Override
+    protected void onPaint(Graphics g) {
         g.setColor(Color.YELLOW);
         /*
         g.drawLine(0, 0, 0, 1080);
@@ -266,10 +284,11 @@ public class MainView extends Scene {
         }
         g2.setTransform(originalTransform);
         */
+        focusCamera();
         for (int i=0; i<displayObjects.length; i++) {
-            if (displayObjects[i] == trackedObject || trackedObject != null) {
-                focusCamera();
-            }/*
+            //if (displayObjects[i] == trackedObject || trackedObject != null) {
+            //}
+            /*
             if (displayObjects[i] instanceof FuturePath) {
                 ((FuturePath)displayObjects[i]).setOrbitReferencePath(trackedObject.paths);
             }*/
@@ -278,8 +297,12 @@ public class MainView extends Scene {
         
     }
     @Override
-    protected void tick() {
-        checkKeys();
+    protected void postPaint() {
+        
+    }
+    @Override
+    protected void afterPaint() {
+        
     }
     
 

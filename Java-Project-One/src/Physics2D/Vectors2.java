@@ -73,4 +73,7 @@ public class Vectors2 {
     public static Vector2 zeroVector2() {
         return new Vector2(0);
     }
+    public static Vector2 lerp(Vector2 v0, Vector2 v1, double t) {
+        return prod(sub(v1, v0), t).add(v0);
+    }
 }

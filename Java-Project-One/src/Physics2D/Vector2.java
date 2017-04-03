@@ -71,7 +71,7 @@ public class Vector2 extends Vector {
             return super.get(1);
         }
     }
-    public void setNorm(double c) {
+    public Vector2 setNorm(double c) {
         if (isCartesian) {
             double rot = rot();
             super.set(0, c*Math.cos(rot));
@@ -79,8 +79,9 @@ public class Vector2 extends Vector {
         } else {
             super.set(0, c);
         }
+        return this;
     }
-    public void setRot(double rad) {
+    public Vector2 setRot(double rad) {
         if (isCartesian) {
             double norm = norm();
             super.set(0, norm*Math.cos(rad));
@@ -88,26 +89,29 @@ public class Vector2 extends Vector {
         } else {
             super.set(1, rad);
         }
+        return this;
     }
-    public void addNorm(double c) {
-        setNorm(norm() + c);
+    public Vector2 addNorm(double c) {
+        return setNorm(norm() + c);
     }
-    public void multNorm(double c) {
-        setNorm(norm() * c);
+    public Vector2 multNorm(double c) {
+        return setNorm(norm() * c);
     }
-    public void addRot(double c) {
-        setRot(rot() + c);
+    public Vector2 addRot(double c) {
+        return setRot(rot() + c);
     }
-    public void multRot(double c) {
-        setRot(rot() * c);
+    public Vector2 multRot(double c) {
+        return setRot(rot() * c);
     }
-    public void add(int i, double c) {
+    public Vector2 add(int i, double c) {
         set(i, get(i) + c);
+        return this;
     }
-    public void prod(int i, double c) {
+    public Vector2 prod(int i, double c) {
         set(i, get(i) * c);
+        return this;
     }
-    public void add(Vector2 vector2) {
+    public Vector2 add(Vector2 vector2) {
         if (isCartesian == vector2.isCartesian) {
             super.set(0, get(0) + vector2.get(0));
             super.set(1, get(1) + vector2.get(1));
@@ -118,8 +122,9 @@ public class Vector2 extends Vector {
             setNorm(norm() + vector2.norm());
             setRot(rot() + vector2.rot());
         }
+        return this;
     }
-    public void sub(Vector2 vector2) {
+    public Vector2 sub(Vector2 vector2) {
         if (isCartesian == vector2.isCartesian) {
             super.set(0, get(0) - vector2.get(0));
             super.set(1, get(1) - vector2.get(1));
@@ -130,8 +135,9 @@ public class Vector2 extends Vector {
             setNorm(norm() - vector2.norm());
             setRot(rot() - vector2.rot());
         }
+        return this;
     }
-    public void prod(Vector2 vector2) {
+    public Vector2 prod(Vector2 vector2) {
         if (isCartesian == vector2.isCartesian) {
             super.set(0, get(0) * vector2.get(0));
             super.set(1, get(1) * vector2.get(1));
@@ -142,8 +148,9 @@ public class Vector2 extends Vector {
             setNorm(norm() * vector2.norm());
             setRot(rot() * vector2.rot());
         }
+        return this;
     }
-    public void div(Vector2 vector2) {
+    public Vector2 div(Vector2 vector2) {
         if (isCartesian == vector2.isCartesian) {
             double other0 = vector2.get(0);
             double other1 = vector2.get(1);
@@ -169,6 +176,7 @@ public class Vector2 extends Vector {
             setNorm(norm() / otherNorm);
             setRot(rot() / otherRot);
         }
+        return this;
     }
     @Override
     public double get(int i) {
@@ -251,15 +259,16 @@ public class Vector2 extends Vector {
             set(1, vector2.get(1));
         }
     }
-    public void proj(Vector2 vector2) {
+    public Vector2 proj(Vector2 vector2) {
         if (isCartesian) {
             super.proj(vector2);
         } else {
             setNorm(norm() * Math.cos(Math.abs(rot() - vector2.rot())));
             setRot(vector2.rot());
         }
+        return this;
     }
-    public void rej(Vector2 vector2) {
+    public Vector2 rej(Vector2 vector2) {
         if (isCartesian) {
             super.rej(vector2);
         } else {
@@ -274,6 +283,7 @@ public class Vector2 extends Vector {
                 setRot(myRot - remRot);
             }
         }
+        return this;
     }
     @Override
     public Vector2 clone() {

@@ -5,7 +5,7 @@
  */
 package World2D.Objects;
 
-import Physics2D.Objects.FuturePath;
+import Physics2D.Integrators.FuturePath;
 import Physics2D.Vector2;
 import World2D.Camera;
 import World2D.Objects.DisplayObject;
@@ -19,9 +19,9 @@ import java.awt.geom.Path2D;
 import java.util.Date;
 import javafx.scene.shape.Ellipse;
 import static World2D.Objects.DisplayObject.getSx;
-import static World2D.Objects.DisplayObject.getIx;
 import static World2D.Objects.DisplayObject.getSy;
-import static World2D.Objects.DisplayObject.getIy;
+import static World2D.Objects.DisplayObject.getSx;
+import static World2D.Objects.DisplayObject.getSy;
 
 /**
  *
@@ -228,16 +228,16 @@ public class PlanetDisplay implements DisplayObject, Interpolable, FuturePath {
             return;
         }
         
-        double ix0 = getIx(path[initiali].get(0), camera);
-        double iy0 = getIy(path[initiali].get(1), camera);
+        double ix0 = getSx(path[initiali].get(0), camera);
+        double iy0 = getSy(path[initiali].get(1), camera);
         
         orbit.moveTo(ix0, iy0);
         
             
         for (int i=initiali+1; i<path.length; i++) {
             
-            double ix = getIx(path[i].get(0), camera);
-            double iy = getIy(path[i].get(1), camera);
+            double ix = getSx(path[i].get(0), camera);
+            double iy = getSy(path[i].get(1), camera);
             orbit.lineTo(ix, iy);
             
         }

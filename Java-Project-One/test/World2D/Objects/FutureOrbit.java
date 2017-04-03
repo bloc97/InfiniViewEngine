@@ -16,9 +16,9 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.util.Date;
 import static World2D.Objects.DisplayObject.getSx;
-import static World2D.Objects.DisplayObject.getIx;
 import static World2D.Objects.DisplayObject.getSy;
-import static World2D.Objects.DisplayObject.getIy;
+import static World2D.Objects.DisplayObject.getSx;
+import static World2D.Objects.DisplayObject.getSy;
 
 /**
  *
@@ -62,16 +62,16 @@ public class FutureOrbit implements DisplayObject {
             return;
         }
         
-        double ix0 = getIx(path[initiali].get(0), camera);
-        double iy0 = getIy(path[initiali].get(1), camera);
+        double ix0 = getSx(path[initiali].get(0), camera);
+        double iy0 = getSy(path[initiali].get(1), camera);
         
         orbit.moveTo(ix0, iy0);
         
             
         for (int i=initiali+1; i<path.length; i++) {
             
-            double ix = getIx(path[i].get(0), camera);
-            double iy = getIy(path[i].get(1), camera);
+            double ix = getSx(path[i].get(0), camera);
+            double iy = getSy(path[i].get(1), camera);
             /*
             Vector2 controlPoint = getPointOfIntersection(path[i], path[i-1], vel[i], vel[i-1]);
             double cix = getIx(controlPoint.get(0), camera);

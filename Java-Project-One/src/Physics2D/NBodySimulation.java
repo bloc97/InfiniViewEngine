@@ -11,7 +11,7 @@ import Physics2D.Integrators.Integrator.IntegratorType;
 import Physics2D.Integrators.NBody;
 import Physics2D.Integrators.Symplectic1;
 import Physics2D.Integrators.Symplectic4;
-import Physics2D.Objects.FuturePath;
+import Physics2D.Integrators.FuturePath;
 import Physics2D.Objects.PointBody;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Interpolable;
@@ -93,17 +93,17 @@ public class NBodySimulation implements Runnable, Simulation {
         }
         //if (fCount%fWait == 0) {
         if (fCount > fWait/(ratio/initialRatio)) {
-            reCalculateOrbits();
+            //reCalculateOrbits();
             fCount = 0;
         }
         fCount++;
         
         for (int i=0; i<bodies.length; i++) {
             if (bodies[i] instanceof FuturePath) {
-                ((FuturePath)(bodies[i])).setCurrentDate(date);
+                //((FuturePath)(bodies[i])).setCurrentDate(date);
             }
-            if (bodies[i] instanceof Interpolable) {
-                ((Interpolable)(bodies[i])).registerUpdate();
+            if (bodies[i] instanceof DisplayObject) {
+                ((DisplayObject)(bodies[i])).registerUpdate();
             }
         }
     }
@@ -138,7 +138,7 @@ public class NBodySimulation implements Runnable, Simulation {
 
         for (int i=0; i<bodies.length; i++) {
             if (bodies[i] instanceof FuturePath) {
-                ((FuturePath)(bodies[i])).setOrbitPath(futureOrbitPos[i], futureOrbitVel[i], futureOrbitTime[i], date);
+                //((FuturePath)(bodies[i])).setOrbitPath(futureOrbitPos[i], futureOrbitVel[i], futureOrbitTime[i], date);
             }
         }
     }/*

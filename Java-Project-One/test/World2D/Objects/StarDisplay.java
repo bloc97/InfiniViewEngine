@@ -5,7 +5,7 @@
  */
 package World2D.Objects;
 
-import Physics2D.Objects.FuturePath;
+import Physics2D.Integrators.FuturePath;
 import Physics2D.Vector2;
 import World2D.Camera;
 import World2D.Objects.DisplayObject;
