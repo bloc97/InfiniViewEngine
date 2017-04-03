@@ -24,14 +24,8 @@ import java.util.Date;
  *
  * @author bowen
  */
-public class SpaceNatural extends RoundBody implements DisplayObject, Interpolable, FuturePath {
+public class SpaceNatural extends RoundBody implements DisplayObject, FuturePath {
 
-    @Override
-    public void setOrbitReferencePath(Vector2[] paths) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    
     public enum SpaceNaturalType {
         Massive, Big, Medium, Small, Tiny, Particle
     }// Superbig, Star, Planet, Moon, Asteroid, Rings
@@ -59,24 +53,6 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
     
     public boolean isPaused = false;
     
-    @Override
-    public void pause() {
-        isPaused = true;
-    }
-    @Override
-    public void unpause() {
-        vx = 0;
-        vy = 0;
-        isPaused = false;
-    }
-    @Override
-    public void togglePause() {
-        if (isPaused) {
-            unpause();
-        } else {
-            pause();
-        }
-    }
     
     //private double lastTimeDiff = 0;
     
@@ -117,6 +93,26 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         return displayComponent;
     }*/
     @Override
+    public void setOrbitReferencePath(Vector2[] paths) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void registerUpdate() {
+        x = position().get(0);
+        y = position().get(1);
+    }
+
+    @Override
+    public double getX() {
+        return x;
+    }
+
+    @Override
+    public double getY() {
+        return y;
+    }
+    @Override
     public SpaceNatural clone() {
         SpaceNatural newNatural = new SpaceNatural("Clone", position(), velocity(), mass(), angle(), angVelocity(), radius());
         return newNatural;
@@ -135,22 +131,12 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         }
         
         double r = getSr(camera);
-        double realTimeDiff = (System.currentTimeMillis() - lastUpdateTime)/1000;
-        double simulatedTimeDiff = dst * realTimeDiff;
         
-        double ix = x;// + vx * simulatedTimeDiff;
-        double iy = y;// + vy * simulatedTimeDiff;
-        
-        if (isPaused) {
-            ix = x;
-            iy = y;
-        }
-        
-        double idx = ((ix - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
-        double idy = ((iy + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
+        double idx = ((x - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
+        double idy = ((y + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
         
         g2.setColor(color);
-        
+        /*
         if (Math.abs(idx) > 1E4) {
             idx = 1E4;
             return;
@@ -158,13 +144,13 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         if (Math.abs(idy) > 1E4) {
             idy = 1E4;
             return;
-        }
+        }*/
         
         
         //if ((radius>10000000 && camera.getScale() > 3E-11) || camera.getScale() > 3E-10) {
         
         if (SpaceRender.canRenderNaturalPathByScale(type, camera.getScale())) {
-            renderFutureOrbit(g2, camera, ix, iy, simulatedTimeDiff);
+            renderFutureOrbit(g2, camera, idx, idy);
         }
         
         if (SpaceRender.canRenderNaturalNameByScale(type, camera.getScale())) {
@@ -175,7 +161,7 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         Ellipse2D.Double circle = new Ellipse2D.Double(idx-r, idy-r, r*2, r*2);
         g2.fill(circle);
     }
-    public void renderFutureOrbit(Graphics2D g2, Camera camera, double cx, double cy, double dt) {
+    public void renderFutureOrbit(Graphics2D g2, Camera camera, double idx, double idy) {
         if (camera.getScale() < 6E-12) {
             return;
         }
@@ -211,10 +197,8 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         
         //double ix0 = getIx(path[initiali].get(0), camera);
         //double iy0 = getIy(path[initiali].get(1), camera);
-        double ix0 = DisplayObject.getIx(cx, camera);
-        double iy0 = DisplayObject.getIy(cy, camera);
         
-        orbit.moveTo(ix0, iy0);
+        orbit.moveTo(idx, idy);
         
             
         for (int i=initiali+1; i<path.length; i++) {
@@ -238,30 +222,6 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         g2.setStroke(originalStroke);
     }
     
-    @Override
-    public double getIx() {
-        if (isPaused) {
-            return x;
-        } else {
-            return x;
-        }
-        //double realTimeDiff = (System.currentTimeMillis() - lastUpdateTime)/1000;
-        //double simulatedTimeDiff = dst * realTimeDiff;
-        
-        //return x + vx * simulatedTimeDiff;
-    }
-    @Override
-    public double getIy() {
-        if (isPaused) {
-            return y;
-        } else {
-            return y;
-        }
-        //double realTimeDiff = (System.currentTimeMillis() - lastUpdateTime)/1000;
-        //double simulatedTimeDiff = dst * realTimeDiff;
-        
-        //return y + vy * simulatedTimeDiff;
-    }
     @Override
     public double getSx(Camera camera) {
         return ((x - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
@@ -294,19 +254,6 @@ public class SpaceNatural extends RoundBody implements DisplayObject, Interpolab
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public void setInterpolationSimulationTime(double dst) {
-        this.dst = dst;
-    }
-
-    @Override
-    public void registerUpdate() {
-        lastUpdateTime = System.currentTimeMillis();
-        x = position().get(0);
-        y = position().get(1);
-        vx = velocity().get(0);
-        vy = velocity().get(1);
-    }
     @Override
     public void setOrbitPath(Vector2[] paths, Vector2[] vels, long[] timeStamps, Date date) {//, double cyc, double ratio) {
         path = paths;

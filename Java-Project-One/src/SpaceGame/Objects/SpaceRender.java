@@ -31,6 +31,9 @@ public abstract class SpaceRender {
                 }
                 break;
             case Tiny:
+                if (scale > 6E-11) {
+                    return true;
+                }
                 break;
         }
         return false;
@@ -54,6 +57,9 @@ public abstract class SpaceRender {
                 }
                 break;
             case Tiny:
+                if (scale > 6E-11) {
+                    return true;
+                }
                 break;
         }
         return false;
@@ -77,6 +83,9 @@ public abstract class SpaceRender {
                 }
                 break;
             case Tiny:
+                if (scale > 6E-11) {
+                    return true;
+                }
                 break;
         }
         return false;

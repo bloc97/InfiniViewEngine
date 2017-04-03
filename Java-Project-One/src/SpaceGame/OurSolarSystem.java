@@ -42,13 +42,17 @@ public class OurSolarSystem implements World {
         SpaceNatural saturn = generateBody("Saturn", -1.480710269996489E+00, -9.935855469617195E+00, 5.212138334313683E-03, -8.394219517928074E-04, 5.683E26, 60268);
         SpaceNatural uranus = generateBody("Uranus", 1.822435404251011E+01, 8.083455869795067E+00, -1.623364621989834E-03, 3.411947644480543E-03, 8.681E25, 25559);
         SpaceNatural neptune = generateBody("Neptune", 2.841221822673949E+01, -9.468008842306654E+00, 9.711403807320941E-04, 2.996820640231039E-03, 1.024E26, 24766);
+        
+        SpaceNatural io = generateBody("Io", -5.232407848072828E+00, -1.527931361742913E+00, 1.181296153693576E-02, -4.991777558911189E-03, 893.3E20, 1821.3);
+        
+        
         SpaceNatural proximaCentauri = generateStar("Proxima Centauri", 0.2, 0.1, 0.123, 0.141);
         SpaceNatural galacticCenter = generateStar("Galactic Centre", 15000, 10000, 40000, 20);
         SpaceNatural andromeda = generateStar("Andromeda Galaxy", -2.5E6, 0, 80000, 20);
         
         Date initialDate = new Date(1489636800000l);
         
-        SpaceNatural[] bigObjects = new SpaceNatural[] {sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune};//, proximaCentauri, galacticCenter, andromeda};
+        SpaceNatural[] bigObjects = new SpaceNatural[] {sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, io};//, proximaCentauri, galacticCenter, andromeda};
         SpaceNatural[] smallObjects = new SpaceNatural[] {};
         /*
         double[] orbitalPeriodsInDays = new double[] {1E4, 87.97, 224.7, 365.26, 686.98, 4332.82, 10755.7, 30687.15, 60190.03};

@@ -183,12 +183,15 @@ public class MainView extends Scene {
                     trackedObject = currentObject;
                     if (trackedObject instanceof FuturePath && trackedObject instanceof PointBody) {
                         ((SpaceSimulation)(spaceWorld.getSimulations()[0])).setFocus((PointBody)trackedObject);
+                        ((SpaceSimulation)(spaceWorld.getSimulations()[0])).reCalculateOrbits((PointBody)trackedObject);
                     }
+                    focusCamera();
                     return;
                 }
             }
         }
         releaseFocus();
+        ((SpaceSimulation)(spaceWorld.getSimulations()[0])).reCalculateOrbits();
     }
     public void releaseFocus() {
         trackedObject = null;
@@ -196,11 +199,8 @@ public class MainView extends Scene {
     }
     
     public void focusCamera() {
-        if (trackedObject instanceof Interpolable) {
-            Interpolable centerObject = (Interpolable)trackedObject;
-            camera.setxPos(centerObject.getIx());
-            camera.setyPos(-centerObject.getIy());
-        }
+            camera.setxPos(trackedObject.getX());
+            camera.setyPos(-trackedObject.getY());
     }
     
     
@@ -267,7 +267,7 @@ public class MainView extends Scene {
         g2.setTransform(originalTransform);
         */
         for (int i=0; i<displayObjects.length; i++) {
-            if (displayObjects[i] == trackedObject) {
+            if (displayObjects[i] == trackedObject || trackedObject != null) {
                 focusCamera();
             }/*
             if (displayObjects[i] instanceof FuturePath) {

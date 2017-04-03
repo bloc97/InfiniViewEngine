@@ -20,11 +20,15 @@ public interface DisplayObject {
     public void renderNoTransform(Graphics2D g2, Camera camera); //part of the rendering without transforms (per pixel)
     
     //public void setPos(double x, double y);
+    public void registerUpdate();
     
     public boolean isVisible(double scale);
     
     public void hide();
     public void show();
+    
+    public double getX();
+    public double getY();
     
     public double getSx(Camera camera);
     public double getSy(Camera camera);

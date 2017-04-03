@@ -12,6 +12,7 @@ import Physics2D.Objects.FuturePath;
 import Physics2D.Objects.PointBody;
 import Physics2D.Vector2;
 import Physics2D.Vectors2;
+import World2D.Objects.DisplayObject;
 import World2D.Objects.Interpolable;
 import java.util.Date;
 
@@ -22,7 +23,7 @@ import java.util.Date;
 public class SpaceSimulation extends NBodySimulation {
     private PointBody focus;
     public SpaceSimulation(Date date, PointBody... bodies) {
-        super(Integrator.IntegratorType.SYMPLECTIC4, 1E5, 30, 1, date, bodies);
+        super(Integrator.IntegratorType.SYMPLECTIC4, 1E5, 10, 4, date, bodies);
     }
     public void setFocus(PointBody body) {
         this.focus = body;
@@ -55,8 +56,8 @@ public class SpaceSimulation extends NBodySimulation {
             if (bodies[i] instanceof FuturePath) {
                 ((FuturePath)(bodies[i])).setCurrentDate(date);
             }
-            if (bodies[i] instanceof Interpolable) {
-                ((Interpolable)(bodies[i])).registerUpdate();
+            if (bodies[i] instanceof DisplayObject) {
+                ((DisplayObject)(bodies[i])).registerUpdate();
             }
         }
     }
@@ -87,7 +88,7 @@ public class SpaceSimulation extends NBodySimulation {
         for (int i=0; i<bodies.length; i++) {
             //System.out.println((pers[i]/10/5));
             if (bodies[i] == body) {
-                referencePosAndVel = Integrator.getFutureSingleWithVel(bodies, i, integrator2, (1e5), 100);
+                referencePosAndVel = Integrator.getFutureSingleWithVel(bodies, i, integrator, (5e4), 160);
                 referenceOrbitPos = referencePosAndVel[0];
                 referenceOrbitVel = referencePosAndVel[1];
             }
@@ -95,7 +96,7 @@ public class SpaceSimulation extends NBodySimulation {
                 
         for (int i=0; i<bodies.length; i++) {
             //System.out.println((pers[i]/10/5));
-            Vector2[][] posAndVel = Integrator.getFutureSingleWithVel(bodies, i, integrator2, (1e5), 100);
+            Vector2[][] posAndVel = Integrator.getFutureSingleWithVel(bodies, i, integrator, (5e4), 160);
             futureOrbitPos[i] = posAndVel[0];
             
             for (int n=0; n<futureOrbitPos[i].length; n++) {
@@ -103,7 +104,7 @@ public class SpaceSimulation extends NBodySimulation {
             }
             
             futureOrbitVel[i] = posAndVel[1];
-            futureOrbitTime[i] = Integrator.getFutureSingleTimeStamps(date, (1e5), 100);
+            futureOrbitTime[i] = Integrator.getFutureSingleTimeStamps(date, (5e4), 160);
         }
 
         for (int i=0; i<bodies.length; i++) {
