@@ -6,6 +6,7 @@
 package SpaceGame.Objects;
 
 import Physics2D.Vector2;
+import SpaceGame.SolarSystem;
 
 
 /**
@@ -15,7 +16,7 @@ import Physics2D.Vector2;
 public class SpaceArtificial extends SpaceNatural {
     
     public SpaceArtificial(String name, Vector2 position, Vector2 velocity, double mass, double angPos, double angVel, double radius) {
-        super(name, position, velocity, mass, angPos, angVel, radius);
+        super(new SolarSystem(), name, position, velocity, mass, angPos, angVel, radius);
     }
     
 }

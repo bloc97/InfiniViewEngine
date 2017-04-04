@@ -6,10 +6,9 @@
 package SpaceGame;
 
 import Physics.Simulation;
-import Physics2D.Integrators.Integrator;
-import Physics2D.NBodySimulation;
 import Physics2D.Vector2;
 import SpaceGame.Objects.SpaceNatural;
+import SpaceGame.SpaceSimulation;
 import World2D.Objects.DisplayObject;
 import World2D.World;
 import java.util.Date;
@@ -33,7 +32,7 @@ public class OurSolarSystem implements World {
         
         
         //SpaceNatural sun = generateBody("Sun", 0, 0, 0, 0, 1.989E30, 695000);
-        SpaceNatural sun = generateStar("Sun", 0, 0, 1, 1);
+        SpaceNatural sun = generateStar("Sun", 3.164698112995927E-03, 4.430714289164239E-03, -3.379874197009493E-06, 6.606862110289219E-06, 1, 1);
         SpaceNatural mercury = generateBody("Mercury", 2.805339263696457E-01, 1.727431750445399E-01, -2.010150137126407E-02, 2.529075820940590E-02, 3.285E23, 2440); // 2017-03-16 - 2017-03-17
         SpaceNatural venus = generateBody("Venus", -7.028941647603416E-01, 1.359581091434492E-01, -3.813062436826709E-03, -1.996801334623488E-02, 4.867E24, 6052);
         SpaceNatural earth = generateBody("Earth", -9.882510901700633E-01, 8.499778853173919E-02, -1.680240369278054E-03, -1.719988462359221E-02, 5.972E24, 6378);
@@ -43,6 +42,7 @@ public class OurSolarSystem implements World {
         SpaceNatural uranus = generateBody("Uranus", 1.822435404251011E+01, 8.083455869795067E+00, -1.623364621989834E-03, 3.411947644480543E-03, 8.681E25, 25559);
         SpaceNatural neptune = generateBody("Neptune", 2.841221822673949E+01, -9.468008842306654E+00, 9.711403807320941E-04, 2.996820640231039E-03, 1.024E26, 24766);
         
+        SpaceNatural luna = generateBody("Luna", -9.904577058616644E-01, 8.349623043211503E-02, -1.375089243780029E-03, -1.767737909657187E-02, 734.9E20, 1737.4);
         SpaceNatural io = generateBody("Io", -5.232407848072828E+00, -1.527931361742913E+00, 1.181296153693576E-02, -4.991777558911189E-03, 893.3E20, 1821.3);
         
         
@@ -52,7 +52,7 @@ public class OurSolarSystem implements World {
         
         Date initialDate = new Date(1489636800000l);
         
-        SpaceNatural[] bigObjects = new SpaceNatural[] {sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, io};//, proximaCentauri, galacticCenter, andromeda};
+        SpaceNatural[] bigObjects = new SpaceNatural[] {sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, luna, io};//, proximaCentauri, galacticCenter, andromeda};
         SpaceNatural[] smallObjects = new SpaceNatural[] {};
         /*
         double[] orbitalPeriodsInDays = new double[] {1E4, 87.97, 224.7, 365.26, 686.98, 4332.82, 10755.7, 30687.15, 60190.03};
@@ -80,6 +80,7 @@ public class OurSolarSystem implements World {
         
         space.start();
         simulations = new Simulation[] {space};//, orbitIntegrator, futureIntegrator};
+        System.out.println("Earth: " + earth.type());
         
     }
     
@@ -87,6 +88,11 @@ public class OurSolarSystem implements World {
         Vector2 pos = new Vector2(new double[]{xAU*AU, yAU*AU});
         Vector2 vel = new Vector2(new double[]{vxAUDay*AU/DAY, vyAUDay*AU/DAY});
         return new SpaceNatural(name, pos, vel, massKg, 0, 0, radiusKm*1000);
+    }
+    public static SpaceNatural generateStar(String name, double xAU, double yAU, double vxAUDay, double vyAUDay, double massM0, double radiusR0) {
+        Vector2 pos = new Vector2(new double[]{xAU*AU, yAU*AU});
+        Vector2 vel = new Vector2(new double[]{vxAUDay*AU/DAY, vyAUDay*AU/DAY});
+        return new SpaceNatural(name, pos, vel, massM0*M0, 0, 0, radiusR0*R0);
     }
     public static SpaceNatural generateStar(String name, double xLy, double yLy, double massM0, double radiusR0) {
         Vector2 pos = new Vector2(new double[]{xLy*LY, yLy*LY});

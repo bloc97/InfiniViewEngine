@@ -40,8 +40,8 @@ public class MainView extends Scene {
     private Boolean keyD = false;
     
     private DisplayObject trackedObject;
-    
-    private OurSolarSystem spaceWorld = new OurSolarSystem();
+    private Universe spaceWorld = new Universe();
+    private SpaceSimulation mainSimulation;
     
     public MainView(int xsize, int ysize) {
         this(60, xsize, ysize);
@@ -51,6 +51,7 @@ public class MainView extends Scene {
         super(desiredFPS, xsize, ysize);
         this.setBackground(Color.getHSBColor(298F/360, 1F/100, 22F/100));
         this.worlds = new World[] {spaceWorld};
+        this.mainSimulation = (SpaceSimulation)spaceWorld.getSimulations()[0];
         this.setDisplayObjects(worlds);
         
         this.addComponentListener(new ComponentAdapter() {
@@ -180,21 +181,27 @@ public class MainView extends Scene {
             //if (tx >= 0 && ty >= 0 && tx <= camera.getxScrOffset()*2 && ty <= camera.getyScrOffset()) {
             if (currentObject.isVisible(camera.getScale())) {
                 if (x > tx-tr && x < tx+tr && y > ty-tr && y < ty+tr) {
-                    trackedObject = currentObject;
-                    //if (trackedObject instanceof FuturePath && trackedObject instanceof PointBody) {
-                        //((SpaceSimulation)(spaceWorld.getSimulations()[0])).setFocus((PointBody)trackedObject);
-                        //((SpaceSimulation)(spaceWorld.getSimulations()[0])).reCalculateOrbits((PointBody)trackedObject);
-                    //}
-                    focusCamera();
+                    setFocus(currentObject);
                     return;
                 }
             }
         }
         releaseFocus();
     }
+    public void setFocus(DisplayObject object) {
+        trackedObject = object;
+        focusCamera();
+        if (trackedObject instanceof SpaceNatural) {
+            mainSimulation.setFocus((SpaceNatural)trackedObject);
+        } else {
+            mainSimulation.setFocus(null);
+        }
+        mainSimulation.reCalculateOrbits();
+    }
+    
     public void releaseFocus() {
         trackedObject = null;
-        //((SpaceSimulation)(spaceWorld.getSimulations()[0])).setFocus(null);
+        mainSimulation.setFocus(null);
     }
     
     public void focusCamera() {
@@ -240,17 +247,6 @@ public class MainView extends Scene {
     }
     @Override
     protected void prePaint() {
-        for (int i=0; i<displayObjects.length; i++) {
-            if (displayObjects[i] instanceof SpaceNatural) {
-                if (trackedObject instanceof SpaceNatural) {
-                    ((SpaceSimulation)worlds[0].getSimulations()[0]).setFocus((SpaceNatural)trackedObject);
-                    ((SpaceNatural)displayObjects[i]).setReference(((SpaceNatural)trackedObject));
-                } else {
-                    ((SpaceSimulation)worlds[0].getSimulations()[0]).setFocus(null);
-                    ((SpaceNatural)displayObjects[i]).setReference(null);
-                }
-            }
-        }
     }
     @Override
     protected void onPaint(Graphics g) {
@@ -261,7 +257,7 @@ public class MainView extends Scene {
         g.drawLine(1920, 0, 1920, 1080);
         g.drawLine(0, 1080, 1920, 1080);*/
         
-        g.drawString(worlds[0].getSimulations()[0].getDate().toGMTString(), 10, 20);
+        g.drawString(mainSimulation.getDate().toGMTString(), 10, 20);
         g.drawString(secondsToText(worlds[0].getSimulations()[0].getSpeed()), 10, 40);
         g.drawString("Current Scale: " + camera.getScale(), 10, 60);
         
@@ -284,10 +280,10 @@ public class MainView extends Scene {
         }
         g2.setTransform(originalTransform);
         */
-        focusCamera();
         for (int i=0; i<displayObjects.length; i++) {
-            //if (displayObjects[i] == trackedObject || trackedObject != null) {
-            //}
+            if (displayObjects[i] == trackedObject || trackedObject != null) {
+                focusCamera();
+            }
             /*
             if (displayObjects[i] instanceof FuturePath) {
                 ((FuturePath)displayObjects[i]).setOrbitReferencePath(trackedObject.paths);

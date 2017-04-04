@@ -11,6 +11,7 @@ import Physics2D.Integrators.FutureContainer;
 import Physics2D.Objects.RoundBody;
 import Physics2D.Vector2;
 import Physics2D.Vectors2;
+import SpaceGame.SolarSystem;
 import World2D.Camera;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Interpolable;
@@ -30,7 +31,7 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
 
     public enum SpaceNaturalType {
         Massive, Big, Medium, Small, Tiny, Particle
-    }// Superbig, Star, Planet, Moon, Asteroid, Rings
+    }// Superbig, Star, BigPlanet, Planet & Moons, Asteroid, Rings
     
     final private SpaceNaturalType type;
     
@@ -44,7 +45,6 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
     private double y;
     
     private FutureContainer future;
-    private FutureContainer futureReference;
     
     private Date currentDate;
     
@@ -52,17 +52,62 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
     
     public boolean isPaused = false;
     
+    private SolarSystem system;
+    
     
     //private double lastTimeDiff = 0;
     
-
+    public SpaceNatural(SolarSystem system, String name, Vector2 position, Vector2 velocity, double mass, double angPos, double angVel, double radius) {
+        this(name, position, velocity, mass, angPos, angVel, radius);
+        this.system = system;
+    }
+    
     public SpaceNatural(String name, Vector2 position, Vector2 velocity, double mass, double angPos, double angVel, double radius) {
         super(position, velocity, mass, angPos, angVel, radius);
         this.name = name;
         this.type = computeType(mass);
     }
     
+    public void setSystem(SolarSystem system) {
+        this.system = system;
+    }
+    
     public SpaceNatural orbiting(SpaceNatural[] bodies) {
+        return orbitingBySphereOfInfluence(bodies);
+    }
+    
+    public SpaceNatural orbitingBySphereOfInfluence(SpaceNatural[] bodies) {
+        Vector2 starCM = new Vector2(0);
+        double totalMass = 0;
+        for (int i=0; i<bodies.length; i++) {
+            if (bodies[i].type() == SpaceNaturalType.Big || bodies[i].type() == SpaceNaturalType.Massive) {
+                totalMass += bodies[i].mass();
+                starCM.add(Vectors2.prod(bodies[i].position(), bodies[i].mass()));
+            }
+        }
+        if (totalMass == 0) {
+            totalMass = 1;
+        }
+        starCM.div(totalMass);
+        //System.out.println(totalMass);
+        
+        SpaceNatural nearbyObject = new SpaceNatural(system, "Barycenter", starCM, new Vector2(0), totalMass, 0, 0, 1);
+        for (int i=0; i<bodies.length; i++) {
+            if ((bodies[i].type() == SpaceNaturalType.Medium || bodies[i].type() == SpaceNaturalType.Small) && bodies[i] != this) {
+                double spInfluence = Vectors2.sub(bodies[i].position(), starCM).norm() * (Math.pow(bodies[i].mass()/totalMass, 2d/5));
+                if (Vectors2.sub(this.position(), bodies[i].position()).norm() <= spInfluence) {
+                    nearbyObject = bodies[i];
+                }
+            }
+        }
+        
+        
+        return nearbyObject;
+        
+    }
+    
+    public SpaceNatural orbitingByGravity(SpaceNatural[] bodies) {
+        
         SpaceNatural closestObject = null;
         double maxGravity = 0;
         for (int i=0; i<bodies.length; i++) {
@@ -100,23 +145,40 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
     
 
     @Override
-    public void registerUpdate() {
+    public void registerUpdate(Date date) {
         x = position().get(0);
         y = position().get(1);
+        currentDate = date;
     }
 
     @Override
     public double getX() {
-        return x;
+        return x + offsetX();
     }
 
     @Override
     public double getY() {
-        return y;
+        return y + offsetY();
     }
+    
+    public double offsetX() {
+        if (system != null) {
+            return system.offset().get(0);
+        } else {
+            return 0;
+        }
+    }
+    public double offsetY() {
+        if (system != null) {
+            return system.offset().get(1);
+        } else {
+            return 0;
+        }
+    }
+    
     @Override
     public SpaceNatural clone() {
-        SpaceNatural newNatural = new SpaceNatural("Clone", position(), velocity(), mass(), angle(), angVelocity(), radius());
+        SpaceNatural newNatural = new SpaceNatural(system, "Clone", position(), velocity(), mass(), angle(), angVelocity(), radius());
         return newNatural;
     }
 
@@ -155,7 +217,7 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
         }
         
         if (SpaceRender.canRenderNaturalNameByScale(type, camera.getScale())) {
-            g2.drawString(name, (float)(sx+r+4), (float)(sy+5));
+            //g2.drawString(name, (float)(sx+r+4), (float)(sy+5));
         }
         
         
@@ -165,65 +227,44 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
     
     public void renderFutureOrbit(Graphics2D g2, Camera camera, double sx, double sy) {
         
+        if (future == null) {
+            return;
+        }
+        
+        
         Stroke originalStroke = g2.getStroke();
         Path2D.Double orbit = new Path2D.Double();
+
+        long currentTime = currentDate.getTime();
+
+        final int length = future.length();
         
-        //if (futureReference == null) {
-            Vector2 p0 = future.getPos(0);
-            double px0 = DisplayObject.getSx(p0.get(0), camera);
-            double py0 = DisplayObject.getSy(p0.get(1), camera);
-            orbit.moveTo(px0, py0);
-            
-            final int length = future.length();
-            for (int i=1; i<length; i++) {
-                Vector2 pi = future.getPos(i);
-                double pxi = DisplayObject.getSx(pi.get(0), camera);
-                double pyi = DisplayObject.getSy(pi.get(1), camera);
-                orbit.lineTo(pxi, pyi);
+        if (length == 0) {
+            return;
+        }
+        int initiali = -1;
+        for (int i=0; i<length; i++) {
+            if (future.getTime(i) > currentTime) {
+                initiali = i-1;
+                break;
             }
-            
-            
-        /*} else {
-            //System.out.println("step1");
-            Vector2 p0 = Vectors2.add(future.getPos(0, futureReference), futureReference.getPos(0));
-            double px0 = DisplayObject.getSx(p0.get(0), camera);
-            double py0 = DisplayObject.getSy(p0.get(1), camera);
-            orbit.moveTo(px0, py0);
-            //System.out.println("step2");
-            
-            final int length = future.length(futureReference);
-            
-            for (int i=1; i<length; i++) {
-                //System.out.println("step4." + i);
-                Vector2 pi = Vectors2.add(future.getPos(i, futureReference), futureReference.getPos(0));
-                double pxi = DisplayObject.getSx(pi.get(0), camera);
-                double pyi = DisplayObject.getSy(pi.get(1), camera);
-                orbit.lineTo(pxi, pyi);
-                //System.out.println("step5." + i);
-            }
-            
-            final int length;
-            if (future.getTime(1) - future.getTime(0) > futureReference.getTime(1) - futureReference.getTime(0)) {
-                length = futureReference.length(future);
-                for (int i=1; i<length; i++) {
-                    Vector2 pi = Vectors2.add(future.getPos(futureReference.getTime(i), futureReference), futureReference.getPos(0));
-                    double pxi = DisplayObject.getSx(pi.get(0), camera);
-                    double pyi = DisplayObject.getSy(pi.get(1), camera);
-                    orbit.lineTo(pxi, pyi);
-                }
-            } else {
-                length = future.length(futureReference);
-                for (int i=1; i<length; i++) {
-                    Vector2 pi = Vectors2.add(future.getPos(future.getTime(i), futureReference), futureReference.getPos(0));
-                    double pxi = DisplayObject.getSx(pi.get(0), camera);
-                    double pyi = DisplayObject.getSy(pi.get(1), camera);
-                    orbit.lineTo(pxi, pyi);
-                }
-            }
-           // System.out.println("step6");
-            
-            
-        }*/
+        }
+        
+        if (initiali == -1) {
+            return;
+        }
+        
+        Vector2 p0 = future.getPos(initiali);
+        double px0 = DisplayObject.getSx(p0.get(0) + offsetX(), camera);
+        double py0 = DisplayObject.getSy(p0.get(1) + offsetY(), camera);
+        orbit.moveTo(px0, py0);
+
+        for (int i=initiali+1; i<length; i++) {
+            Vector2 pi = future.getPos(i);
+            double pxi = DisplayObject.getSx(pi.get(0) + offsetX(), camera);
+            double pyi = DisplayObject.getSy(pi.get(1) + offsetY(), camera);
+            orbit.lineTo(pxi, pyi);
+        }
         
         float dashScale = 1E7f * (float)camera.getScale();
         while (dashScale < 5) {
@@ -239,21 +280,14 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
         g2.setStroke(originalStroke);
         
     }
-    public void setReference(SpaceNatural body) {
-        if (body == null) {
-            this.futureReference = null;
-        } else {
-            this.futureReference = body.future;
-        }
-    }
     
     @Override
     public double getSx(Camera camera) {
-        return ((x - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
+        return ((x + offsetX() - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
     }
     @Override
     public double getSy(Camera camera) {
-        return ((y + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
+        return ((y + offsetY() + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
     }
     @Override
     public double getSr(Camera camera) {
@@ -279,9 +313,6 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void setCurrentDate(Date date) {
-        currentDate = date;
-    }
     public FutureContainer getFutureContainer() {
         return future;
     }

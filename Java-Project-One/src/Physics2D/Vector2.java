@@ -124,6 +124,11 @@ public class Vector2 extends Vector {
         }
         return this;
     }
+    public Vector2 addC(double c) {
+        set(0, get(0) + c);
+        set(1, get(1) + c);
+        return this;
+    }
     public Vector2 sub(Vector2 vector2) {
         if (isCartesian == vector2.isCartesian) {
             super.set(0, get(0) - vector2.get(0));
@@ -137,6 +142,11 @@ public class Vector2 extends Vector {
         }
         return this;
     }
+    public Vector2 subC(double c) {
+        set(0, get(0) - c);
+        set(1, get(1) - c);
+        return this;
+    }
     public Vector2 prod(Vector2 vector2) {
         if (isCartesian == vector2.isCartesian) {
             super.set(0, get(0) * vector2.get(0));
@@ -148,6 +158,11 @@ public class Vector2 extends Vector {
             setNorm(norm() * vector2.norm());
             setRot(rot() * vector2.rot());
         }
+        return this;
+    }
+    public Vector2 prodC(double c) {
+        set(0, get(0) * c);
+        set(1, get(1) * c);
         return this;
     }
     public Vector2 div(Vector2 vector2) {
@@ -176,6 +191,11 @@ public class Vector2 extends Vector {
             setNorm(norm() / otherNorm);
             setRot(rot() / otherRot);
         }
+        return this;
+    }
+    public Vector2 divC(double c) {
+        set(0, get(0) / c);
+        set(1, get(1) / c);
         return this;
     }
     @Override

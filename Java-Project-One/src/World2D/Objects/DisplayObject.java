@@ -20,7 +20,7 @@ public interface DisplayObject {
     public void renderNoTransform(Graphics2D g2, Camera camera); //part of the rendering without transforms (per pixel)
     
     //public void setPos(double x, double y);
-    public void registerUpdate();
+    public void registerUpdate(Date date);
     
     public boolean isVisible(double scale);
     
@@ -41,6 +41,7 @@ public interface DisplayObject {
     public static double getSy(double y, Camera camera) {
         return ((y + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
     }
+    
     public static double getSr(double radius, Camera camera) {
         double rOut = (Math.log10(radius)-6)*3;
         double rIn = radius*camera.getScale();

@@ -103,7 +103,7 @@ public class NBodySimulation implements Runnable, Simulation {
                 //((FuturePath)(bodies[i])).setCurrentDate(date);
             }
             if (bodies[i] instanceof DisplayObject) {
-                ((DisplayObject)(bodies[i])).registerUpdate();
+                ((DisplayObject)(bodies[i])).registerUpdate(date);
             }
         }
     }
