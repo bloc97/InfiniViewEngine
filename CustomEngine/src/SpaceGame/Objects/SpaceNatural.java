@@ -29,6 +29,11 @@ import java.util.Date;
  */
 public class SpaceNatural extends RoundBody implements DisplayObject {
 
+    @Override
+    public boolean isVisible() {
+        return isRenderByScale && isRenderByPosition;
+    }
+
     public enum SpaceNaturalType {
         Massive, Big, Medium, Small, Tiny, Particle
     }// Superbig, Star, BigPlanet, Planet & Moons, Asteroid, Rings
@@ -39,6 +44,7 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
     final private String name;
     private boolean isHidden = false;
     private boolean isRenderByScale;
+    private boolean isRenderByPosition;
     private boolean isRenderNameByScale;
     private boolean isRenderPathScale;
         
@@ -206,14 +212,17 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
         double sx = getSx(camera);
         
         
-        if (Math.abs(sx) > 1E4) {
+        if (sx > 3940 || sx < -100) {
+            isRenderByPosition = false;
             return;
         }
         double sy = getSy(camera);
         
-        if (Math.abs(sy) > 1E4) {
+        if (sy > 2260 || sy < -100) {
+            isRenderByPosition = false;
             return;
         }
+        isRenderByPosition = true;
         
         double r = getSr(camera);
         g2.setColor(color);

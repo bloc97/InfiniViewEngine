@@ -8,6 +8,9 @@ package World2D;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Interpolable;
 import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import javax.swing.JPanel;
 
 /**
@@ -28,6 +31,13 @@ public abstract class Scene extends JPanel implements Runnable {
     protected World[] worlds;
     protected Viewport viewport;
     
+    public Scene() {
+        this(60);
+    }
+    public Scene(int desiredUPS) {
+        this(desiredUPS, 0, 0);
+    }
+    
     public Scene(int desiredUPS, int xsize, int ysize) {
         this.isActive = false;
         this.desiredUPS = desiredUPS;
@@ -40,20 +50,24 @@ public abstract class Scene extends JPanel implements Runnable {
         this.setVisible(true);
         
         thread = new Thread(this);
+        
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                Rectangle r = e.getComponent().getBounds();
+                int h = r.height;
+                int w = r.width;
+                Scene thisScene = ((Scene)(e.getComponent()));
+                thisScene.xsize = w;
+                thisScene.ysize = h;
+                Camera thisCamera = thisScene.getCamera();
+                thisCamera.setScreenSize(w, h);
+            }
+        });
     }
     public Scene(int desiredUPS, int xsize, int ysize, World... worlds) {
-        this.isActive = false;
-        this.desiredUPS = desiredUPS;
-        this.camera = new Camera(this, xsize, ysize);
+        this(desiredUPS, xsize, ysize);
         this.worlds = worlds;
-        
-        this.xsize = xsize;
-        this.ysize = ysize;
-        
-        this.setLayout(null);
-        this.setVisible(true);
-        
-        thread = new Thread(this);
     }
     
     final public void setDisplayObjects(World... worlds) {

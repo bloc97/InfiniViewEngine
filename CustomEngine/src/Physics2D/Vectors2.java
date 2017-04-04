@@ -7,7 +7,6 @@ package Physics2D;
 
 import MathExt.Algebra.Tensor;
 import MathExt.Algebra.Tensors;
-import MathExt.Algebra.Vector;
 
 /**
  *

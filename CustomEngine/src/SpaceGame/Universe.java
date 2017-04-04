@@ -11,6 +11,7 @@ import Physics2D.Vector2;
 import SpaceGame.Objects.SpaceNatural;
 import World2D.Objects.DisplayObject;
 import World2D.World;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -49,11 +50,11 @@ public class Universe implements World {
         SolarSystem sol4 = new SolSystem(milkyWay, new Vector2(new double[] {3.469e+23, 3.469e+23}), initialDate);
         //sol4.pushToArrayList(allDisplayObjects);
         
-        SolarSystem stress1 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGen(5000));
+        SolarSystem stress1 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGen(8000));
         stress1.pushToArrayList(allDisplayObjects);
         
-        SolarSystem stress2 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGenInvis(500000));
-        stress2.pushToArrayList(allDisplayObjects);
+        //SolarSystem stress2 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGenInvis(200000));
+        //stress2.pushToArrayList(allDisplayObjects);
         
         activeSimulation = sol.simulation;
     }
@@ -61,10 +62,24 @@ public class Universe implements World {
     
     @Override
     public DisplayObject[] getDisplayObjects() {
-        
         return allDisplayObjects.toArray(new DisplayObject[allDisplayObjects.size()]);
     }
-
+    
+    public void sortByX() {
+        allDisplayObjects.sort(new Comparator<DisplayObject>() {
+            @Override
+            public int compare(DisplayObject o1, DisplayObject o2) {
+                if (o1.getX() > o2.getX()) {
+                    return 1;
+                } else if (o1.getX() < o2.getX()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+    }
+    
     public Simulation getSimulation() {
         return activeSimulation;
     }

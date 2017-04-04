@@ -90,20 +90,17 @@ public class NBodySimulation implements Runnable, Simulation {
         
         for (int i=0; i<steps; i++) {
             integrator.apply(bodies, secondsPerMiniStep/deccel);
-        }
+        }/*
         //if (fCount%fWait == 0) {
         if (fCount > fWait/(ratio/initialRatio)) {
             //reCalculateOrbits();
             fCount = 0;
         }
-        fCount++;
+        fCount++;*/
         
-        for (int i=0; i<bodies.length; i++) {
-            if (bodies[i] instanceof FuturePath) {
-                //((FuturePath)(bodies[i])).setCurrentDate(date);
-            }
-            if (bodies[i] instanceof DisplayObject) {
-                ((DisplayObject)(bodies[i])).registerUpdate(date);
+        for (PointBody body : bodies) {
+            if (body instanceof DisplayObject) {
+                ((DisplayObject)body).registerUpdate(date);
             }
         }
     }
@@ -136,8 +133,8 @@ public class NBodySimulation implements Runnable, Simulation {
             futureOrbitTime[i] = Integrator.getFutureSingleTimeStamps(date, (pers[i]/50/4), 50);
         }
 
-        for (int i=0; i<bodies.length; i++) {
-            if (bodies[i] instanceof FuturePath) {
+        for (PointBody body : bodies) {
+            if (body instanceof FuturePath) {
                 //((FuturePath)(bodies[i])).setOrbitPath(futureOrbitPos[i], futureOrbitVel[i], futureOrbitTime[i], date);
             }
         }
@@ -149,9 +146,9 @@ public class NBodySimulation implements Runnable, Simulation {
         }
     }*/
     private void updateInterpolationSimulationTime(double time) { //Total time to interpolate before next physics Big Step
-        for (int i=0; i<bodies.length; i++) {
-            if (bodies[i] instanceof Interpolable) {
-                ((Interpolable)(bodies[i])).setInterpolationSimulationTime(time);
+        for (PointBody body : bodies) {
+            if (body instanceof Interpolable) {
+                ((Interpolable)body).setInterpolationSimulationTime(time);
             }
         }
     }

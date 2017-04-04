@@ -22,6 +22,7 @@ public interface DisplayObject {
     //public void setPos(double x, double y);
     public void registerUpdate(Date date);
     
+    public boolean isVisible();
     public boolean isVisible(double scale);
     
     public void hide();

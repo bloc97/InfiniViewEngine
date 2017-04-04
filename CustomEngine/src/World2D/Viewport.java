@@ -5,9 +5,6 @@
  */
 package World2D;
 
-import SpaceGame.MainView;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 
 /**
@@ -30,8 +27,6 @@ public class Viewport extends JFrame {
         
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
-        
     }
     public Scene getScene() {
         return scene;
@@ -39,6 +34,8 @@ public class Viewport extends JFrame {
     public void setScene(Scene scene) {
         if (this.scene != null) {
             this.scene.deactivate();
+            this.scene.setViewport(null);
+            this.scene.setFocusable(false);
             this.remove(this.scene);
         }
         this.scene = scene;

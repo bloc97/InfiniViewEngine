@@ -3,25 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SpaceGame;
+package SpaceGame.Scenes;
 
-import MathExt.Ext;
-import Physics2D.Integrators.FuturePath;
-import Physics2D.Objects.LinearMotion;
-import Physics2D.Objects.PointBody;
 import SpaceGame.Objects.SpaceNatural;
-import World2D.Camera;
+import SpaceGame.SpaceSimulation;
+import SpaceGame.Universe;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Interpolable;
 import World2D.Scene;
-import World2D.Viewport;
 import World2D.World;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -33,7 +26,7 @@ import java.awt.event.MouseWheelEvent;
  *
  * @author bowen
  */
-public class MainView extends Scene {
+public class GameView extends Scene {
     
     private Boolean keyW = false;
     private Boolean keyS = false;
@@ -44,32 +37,25 @@ public class MainView extends Scene {
     private Universe spaceWorld = new Universe();
     private SpaceSimulation mainSimulation;
     
-    
     private long msCounter = 1;
     private int fpsCounter = 0;
     
-    public MainView(int xsize, int ysize) {
-        this(60, xsize, ysize);
+    public GameView() {
+        this(60, 0, 0);
     }
     
-    public MainView(int desiredFPS, int xsize, int ysize) {
+    public GameView(int desiredFPS, int xsize, int ysize) {
         super(desiredFPS, xsize, ysize);
-        this.setBackground(Color.getHSBColor(298F/360, 1F/100, 22F/100));
+        setBackground(Color.getHSBColor(298F/360, 1F/100, 22F/100));
         this.worlds = new World[] {spaceWorld};
         this.mainSimulation = (SpaceSimulation)spaceWorld.getSimulations()[0];
         this.setDisplayObjects(worlds);
         updateDisplayObjectsCanRenderByScale();
+        initialiseHandlers();
         
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                Rectangle r = e.getComponent().getBounds();
-                int h = r.height;
-                int w = r.width;
-                Camera thisCamera = ((Scene)(e.getComponent())).getCamera();
-                thisCamera.setScreenSize(w, h);
-            }
-        });
+    }
+    
+    public final void initialiseHandlers() {
         
         this.addMouseWheelListener(new MouseAdapter() {
             @Override
@@ -114,7 +100,7 @@ public class MainView extends Scene {
                         togglePause();
                         break;
                     case KeyEvent.VK_F11:
-                        ((MainView)e.getComponent()).viewport.toggleFullScreen();
+                        ((GameView)e.getComponent()).viewport.toggleFullScreen();
                         System.out.println("FullScreen");
                         break;
                     default :
@@ -166,7 +152,6 @@ public class MainView extends Scene {
             public void mouseExited(MouseEvent me) {
             }
         });
-        
     }
     
     public void togglePause() {
@@ -179,22 +164,26 @@ public class MainView extends Scene {
     }
     
     public void checkClickFocus(int x, int y) {
-        for (int i=0; i<displayObjects.length; i++) {
-            
-            DisplayObject currentObject = displayObjects[i];
-            
-            double tx = currentObject.getSx(camera);
-            double ty = currentObject.getSy(camera);
-            double tr = currentObject.getSr(camera);
-            
-            if (tr < 10) tr = 10;
-            
+        for (DisplayObject currentObject : displayObjects) {
             //if (tx >= 0 && ty >= 0 && tx <= camera.getxScrOffset()*2 && ty <= camera.getyScrOffset()) {
-            if (currentObject.isVisible(camera.getScale())) {
-                if (x > tx-tr && x < tx+tr && y > ty-tr && y < ty+tr) {
-                    setFocus(currentObject);
-                    return;
+            if (currentObject.isVisible()) {
+                double tr = currentObject.getSr(camera);
+                if (tr < 10) tr = 10;
+                
+                double tx = currentObject.getSx(camera);
+                if (!(x > tx-tr && x < tx+tr)) {
+                    continue;
                 }
+                
+                double ty = currentObject.getSy(camera);
+                if (!(y > ty-tr && y < ty+tr)) {
+                    continue;
+                }
+                
+                //if (x > tx-tr && x < tx+tr && y > ty-tr && y < ty+tr) {
+                setFocus(currentObject);
+                return;
+                //}
             }
         }
         releaseFocus();
@@ -299,7 +288,7 @@ public class MainView extends Scene {
         g2.setTransform(originalTransform);
          */
         for (DisplayObject displayObject : displayObjects) {
-            if (displayObject == trackedObject || trackedObject != null) {
+            if (displayObject == trackedObject) {;// || trackedObject != null) {
                 focusCamera();
             }
             /*
