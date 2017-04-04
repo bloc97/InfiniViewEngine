@@ -195,6 +195,17 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
             return;
         }
         
+        double qsx = ((x + offsetX().doubleValue() - camera.getxPos().doubleValue()) * camera.getScale() + camera.getxScrOffset());
+        double qsy = ((y + offsetY().doubleValue() + camera.getyPos().doubleValue()) * -camera.getScale() + camera.getyScrOffset());
+        
+        if (Math.abs(qsx) > 1E4) {
+            return;
+        }
+        if (Math.abs(qsy) > 1E4) {
+            return;
+        }
+        
+        
         double r = getSr(camera);
         
         double sx = getSx(camera);
