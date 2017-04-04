@@ -15,7 +15,7 @@ import javax.swing.JFrame;
  * @author bowen
  */
 public class Viewport extends JFrame {
-    private MainView scene;
+    private Scene scene;
     
     private boolean fullScreen = false;
     private int lastX, lastY, lastW, lastH;
@@ -24,37 +24,27 @@ public class Viewport extends JFrame {
     public Viewport(int xsize, int ysize, World world) {
         this(xsize, ysize, new Scene(xsize, ysize, world));
     }*/
-    public Viewport(int xsize, int ysize, MainView scene) {
+    public Viewport(int xsize, int ysize) {
         this.setTitle("Space!");
         this.setSize(xsize, ysize);
         
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         
-        this.scene = scene;
-        this.scene.setViewport(this);
-        //this.setFocusable(true);
-        this.scene.setFocusable(true);
-        this.add(scene);
-        this.scene.activate();
         
-        this.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                //System.out.println(e.getKeyChar());
-                 switch(e.getKeyCode()) {
-                    default :
-                        break;
-                 }
-            }
-        });
     }
-    public MainView getScene() {
+    public Scene getScene() {
         return scene;
     }
-    public void setScene(MainView scene) {
-        this.scene.deactivate();
+    public void setScene(Scene scene) {
+        if (this.scene != null) {
+            this.scene.deactivate();
+            this.remove(this.scene);
+        }
         this.scene = scene;
+        this.add(scene);
+        this.scene.setViewport(this);
+        this.scene.setFocusable(true);
         this.scene.activate();
     }
     

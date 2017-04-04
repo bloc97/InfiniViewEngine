@@ -44,7 +44,9 @@ public class MainView extends Scene {
     private Universe spaceWorld = new Universe();
     private SpaceSimulation mainSimulation;
     
-    private Viewport viewport;
+    
+    private long msCounter = 1;
+    private int fpsCounter = 0;
     
     public MainView(int xsize, int ysize) {
         this(60, xsize, ysize);
@@ -56,6 +58,7 @@ public class MainView extends Scene {
         this.worlds = new World[] {spaceWorld};
         this.mainSimulation = (SpaceSimulation)spaceWorld.getSimulations()[0];
         this.setDisplayObjects(worlds);
+        updateDisplayObjectsCanRenderByScale();
         
         this.addComponentListener(new ComponentAdapter() {
             @Override
@@ -73,6 +76,7 @@ public class MainView extends Scene {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 int notches = e.getWheelRotation();
                 camera.addScale(notches);
+                updateDisplayObjectsCanRenderByScale();
             }
             
         });
@@ -80,7 +84,7 @@ public class MainView extends Scene {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                //System.out.println(e.getKeyChar());
+                System.out.println(e.getKeyChar());
                  switch(e.getKeyCode()) {
                     case KeyEvent.VK_W :
                         keyW = true;
@@ -218,9 +222,6 @@ public class MainView extends Scene {
         }
     }
     
-    public void setViewport(Viewport viewport) {
-        this.viewport = viewport;
-    }
     
     
     public void checkKeys() {
@@ -252,12 +253,21 @@ public class MainView extends Scene {
         return seconds + "";
     }
     
+    private void updateDisplayObjectsCanRenderByScale() {
+        for (DisplayObject object : displayObjects) {
+            if (object instanceof SpaceNatural) {
+                ((SpaceNatural)object).updateCanRenderByScale(camera);
+            }
+        }
+    }
+    
     @Override
     protected void beforePaint() {
         checkKeys();
     }
     @Override
     protected void prePaint() {
+        msCounter = System.currentTimeMillis();
     }
     @Override
     protected void onPaint(Graphics g) {
@@ -271,40 +281,43 @@ public class MainView extends Scene {
         g.drawString(mainSimulation.getDate().toGMTString(), 10, 20);
         g.drawString(secondsToText(worlds[0].getSimulations()[0].getSpeed()), 10, 40);
         g.drawString("Current Scale: " + camera.getScale(), 10, 60);
+        g.drawString("FPS: " + fpsCounter, 10, 80);
         
         
         Graphics2D g2 = (Graphics2D)g;
         /*
         AffineTransform originalTransform = g2.getTransform();
         AffineTransform transform = new AffineTransform();
-        
         double scale = camera.getScale();
         transform.scale(scale, -scale);
         transform.translate(-camera.getxPos(), camera.getyPos());
         g2.translate(camera.getxScrOffset(), camera.getyScrOffset());
-        
-        
-        
         g2.transform(transform);
         for (int i=0; i<displayObjects.length; i++) {
-            displayObjects[i].renderTransform(g2, camera);
+        displayObjects[i].renderTransform(g2, camera);
         }
         g2.setTransform(originalTransform);
-        */
-        for (int i=0; i<displayObjects.length; i++) {
-            if (displayObjects[i] == trackedObject || trackedObject != null) {
+         */
+        for (DisplayObject displayObject : displayObjects) {
+            if (displayObject == trackedObject || trackedObject != null) {
                 focusCamera();
             }
             /*
             if (displayObjects[i] instanceof FuturePath) {
-                ((FuturePath)displayObjects[i]).setOrbitReferencePath(trackedObject.paths);
+            ((FuturePath)displayObjects[i]).setOrbitReferencePath(trackedObject.paths);
             }*/
-            displayObjects[i].renderNoTransform(g2, camera);
+            displayObject.renderNoTransform(g2, camera);
         }
         
     }
     @Override
     protected void postPaint() {
+        int msDiff = (int)(System.currentTimeMillis() - msCounter);
+        if (msDiff == 0) {
+            msDiff = 1;
+        }
+        int newFps = Math.floorDiv(1000, msDiff);
+        fpsCounter = (newFps <= 60) ? newFps : 60;
         
     }
     @Override

@@ -26,6 +26,7 @@ public abstract class Scene extends JPanel implements Runnable {
     protected int xsize, ysize;
     
     protected World[] worlds;
+    protected Viewport viewport;
     
     public Scene(int desiredUPS, int xsize, int ysize) {
         this.isActive = false;
@@ -77,6 +78,14 @@ public abstract class Scene extends JPanel implements Runnable {
             
             //this.add(displayObjects[i].getJComponent());
         }
+    }
+    
+    public Viewport viewport() {
+        return viewport;
+    }
+    
+    public void setViewport(Viewport viewport) {
+        this.viewport = viewport;
     }
     
     public void deactivate() {

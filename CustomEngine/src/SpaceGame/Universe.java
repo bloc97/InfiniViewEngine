@@ -5,6 +5,7 @@
  */
 package SpaceGame;
 
+import MathExt.Approx;
 import Physics.Simulation;
 import Physics2D.Vector2;
 import SpaceGame.Objects.SpaceNatural;
@@ -37,18 +38,22 @@ public class Universe implements World {
         Galaxy milkyWay = new Galaxy("Milky Way", new Vector2(0));
         SolarSystem sol = new SolSystem(milkyWay, new Vector2(new double[] {2.469e+20, 0}), initialDate);
         sol.pushToArrayList(allDisplayObjects);
+        //sol.simulation.start();
         
         SolarSystem sol2 = new SolSystem(milkyWay, new Vector2(new double[] {0, 2.469e+20}), initialDate);
-        sol2.pushToArrayList(allDisplayObjects);
+        //sol2.pushToArrayList(allDisplayObjects);
         
         SolarSystem sol3 = new SolSystem(milkyWay, new Vector2(new double[] {2.469e+20, 2.469e+20}), initialDate);
-        sol3.pushToArrayList(allDisplayObjects);
+        //sol3.pushToArrayList(allDisplayObjects);
         
         SolarSystem sol4 = new SolSystem(milkyWay, new Vector2(new double[] {3.469e+23, 3.469e+23}), initialDate);
-        sol4.pushToArrayList(allDisplayObjects);
+        //sol4.pushToArrayList(allDisplayObjects);
         
-        SolarSystem sol5 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGen(10000));
-        sol5.pushToArrayList(allDisplayObjects);
+        SolarSystem stress1 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGen(5000));
+        stress1.pushToArrayList(allDisplayObjects);
+        
+        SolarSystem stress2 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGenInvis(500000));
+        stress2.pushToArrayList(allDisplayObjects);
         
         activeSimulation = sol.simulation;
     }
@@ -68,20 +73,42 @@ public class Universe implements World {
         return new Simulation[] {activeSimulation};
     }
     
+    public SpaceNatural[] scatterGenInvis(int n) {
+        SpaceNatural[] scatteredObjects = new SpaceNatural[n];
+        
+        for (int i=0; i<scatteredObjects.length; i++) {
+            double r0 = randomTransformR(Math.random());
+            double r = r0*3.094e+9;
+            double th = randomTransformRot(Math.random(), r0)*Math.PI*2;
+            Vector2 circ = new Vector2(0);
+            circ.setNorm(r);
+            circ.setRot(th);
+            scatteredObjects[i] = generateBody("SG"+i, circ.get(0), circ.get(1), 0, 0, 1E10, 9500 + Math.random() * 10000);
+        }
+        
+        return scatteredObjects;
+    }
     
     public SpaceNatural[] scatterGen(int n) {
         SpaceNatural[] scatteredObjects = new SpaceNatural[n];
         
         for (int i=0; i<scatteredObjects.length; i++) {
-            double r = Math.random()*5;
-            double th = Math.random()*Math.PI*2;
+            double r0 = randomTransformR(Math.random());
+            double r = r0*3.094e+9;
+            double th = randomTransformRot(Math.random(), r0)*Math.PI*2;
             Vector2 circ = new Vector2(0);
             circ.setNorm(r);
             circ.setRot(th);
-            scatteredObjects[i] = generateBody("SG"+i, circ.get(0), circ.get(1), 0, 0, 1E24, 5000);
+            scatteredObjects[i] = generateBody("SG"+i, circ.get(0), circ.get(1), 0, 0, 1E30, 9500 + Math.random() * 10000);
         }
         
         return scatteredObjects;
+    }
+    public double randomTransformR(double d) {
+        return 1/(Math.pow(d, 2))/90 - 0.01111;
+    }
+    public double randomTransformRot(double d, double r) {
+        return Math.cos(d*16*Math.PI)/6 + (1-1/8) - d + Math.pow(r+1, 10) + 10*r;
     }
     public SpaceNatural generateBody(String name, double xAU, double yAU, double vxAUDay, double vyAUDay, double massKg, double radiusKm) {
         Vector2 pos = new Vector2(new double[]{xAU*AU, yAU*AU});

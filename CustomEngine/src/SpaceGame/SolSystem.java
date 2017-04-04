@@ -75,7 +75,7 @@ public class SolSystem extends SolarSystem {
         //NBodyFutureOrbit orbitIntegrator = new NBodyFutureOrbit(Integrator.IntegratorType.SYMPLECTIC4, 20, bigObjects, orbitalPeriods);
         simulation = new SpaceSimulation(initialDate, bigObjects);
         
-        simulation.start();
+        //simulation.start();
         //System.out.println("Earth: " + earth.type());
         
     }

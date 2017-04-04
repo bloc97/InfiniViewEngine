@@ -37,7 +37,10 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
     
     final private static Color color = Color.getHSBColor(16F/360, 33F/100, 100F/100);
     final private String name;
-    private boolean isHidden;
+    private boolean isHidden = false;
+    private boolean isRenderByScale;
+    private boolean isRenderNameByScale;
+    private boolean isRenderPathScale;
         
     private double lastUpdateTime;
     
@@ -186,37 +189,44 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
     public void renderTransform(Graphics2D g2, Camera camera) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
+    public void updateCanRenderByScale(Camera camera) {
+        isRenderByScale = SpaceRender.canRenderNaturalObjectByScale(type, camera.getScale());
+        isRenderNameByScale = SpaceRender.canRenderNaturalNameByScale(type, camera.getScale());
+        isRenderPathScale = SpaceRender.canRenderNaturalPathByScale(type, camera.getScale());
+    }
+    
     @Override
     public void renderNoTransform(Graphics2D g2, Camera camera) {
         
-        if (!SpaceRender.canRenderNaturalObjectByScale(type, camera.getScale())) {
+        if (!isRenderByScale) {
             return;
         }
         
-        double r = getSr(camera);
-        
         double sx = getSx(camera);
-        double sy = getSy(camera);
+        
         
         if (Math.abs(sx) > 1E4) {
             return;
         }
+        double sy = getSy(camera);
+        
         if (Math.abs(sy) > 1E4) {
             return;
         }
         
+        double r = getSr(camera);
         g2.setColor(color);
         
         
         
         //if ((radius>10000000 && camera.getScale() > 3E-11) || camera.getScale() > 3E-10) {
         
-        if (SpaceRender.canRenderNaturalPathByScale(type, camera.getScale())) {
+        if (isRenderPathScale) {
             renderFutureOrbit(g2, camera, sx, sy);
         }
         
-        if (SpaceRender.canRenderNaturalNameByScale(type, camera.getScale())) {
+        if (isRenderNameByScale) {
             g2.drawString(name, (float)(sx+r+4), (float)(sy+5));
         }
         
@@ -306,12 +316,12 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
 
     @Override
     public void hide() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.isHidden = true;
     }
 
     @Override
     public void show() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.isHidden = false;
     }
 
     public FutureContainer getFutureContainer() {
