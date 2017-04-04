@@ -74,10 +74,28 @@ public class Camera {
     }
     
     public void addxPos(double x) {
-        this.xPos += x*(1/scale);
+        xPos += (x*(1/scale));
     }
     public void addyPos(double y) {
-        this.yPos += y*(1/scale);
+        yPos += (y*(1/scale));
+    }
+    public void addxPosMaxPrec(double x) {
+        double newXPos = xPos + (x*(1/scale));
+        if (newXPos == xPos) {
+            int dir = (x < 0.0) ? -1 : 1; 
+            xPos = Double.longBitsToDouble(Double.doubleToLongBits(xPos) + dir);
+        } else {
+            xPos = newXPos;
+        }
+    }
+    public void addyPosMaxPrec(double y) {
+        double newYPos = yPos + (y*(1/scale));
+        if (newYPos == yPos) {
+            int dir = (y < 0.0) ? -1 : 1; 
+            yPos = Double.longBitsToDouble(Double.doubleToLongBits(yPos) - dir);
+        } else {
+            yPos = newYPos;
+        }
     }
     public void addScale(int n) {
         if (n > 0) {
@@ -92,7 +110,7 @@ public class Camera {
         }
     }
     private void multiplyScale() {
-        if (scale < 1 && enoughPrecisionToZoom()) {
+        if (scale < 1) {
             scale *= 2;
         }
         if (scale > 1) {
@@ -100,11 +118,11 @@ public class Camera {
         }
     }
     private void divideScale() {
-        if (scale > 1E-20) {
+        if (scale > 1E-28) {
             scale /= 2;
         }
-        if (scale < 1E-20) {
-            scale = 1E-20;
+        if (scale < 1E-28) {
+            scale = 1E-28;
         }
     }
     private boolean enoughPrecisionToZoom() {
@@ -113,12 +131,12 @@ public class Camera {
         } else {
             return true;
         }
-    }
+    }/*
     private boolean enoughPrecisionToSee() {
         if (xPos + (1*(0.5/scale)) == xPos || xPos - (1*(0.5/scale)) == xPos) {
             return false;
         } else {
             return true;
         }
-    }
+    }*/
 }

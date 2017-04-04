@@ -256,14 +256,14 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
         }
         
         Vector2 p0 = future.getPos(initiali);
-        double px0 = DisplayObject.getSx(p0.get(0) + offsetX(), camera);
-        double py0 = DisplayObject.getSy(p0.get(1) + offsetY(), camera);
+        double px0 = DisplayObject.getSx(p0.get(0), offsetX(), camera);
+        double py0 = DisplayObject.getSy(p0.get(1), offsetY(), camera);
         orbit.moveTo(px0, py0);
 
         for (int i=initiali+1; i<length; i++) {
             Vector2 pi = future.getPos(i);
-            double pxi = DisplayObject.getSx(pi.get(0) + offsetX(), camera);
-            double pyi = DisplayObject.getSy(pi.get(1) + offsetY(), camera);
+            double pxi = DisplayObject.getSx(pi.get(0), offsetX(), camera);
+            double pyi = DisplayObject.getSy(pi.get(1), offsetY(), camera);
             orbit.lineTo(pxi, pyi);
         }
         
@@ -284,11 +284,11 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
     
     @Override
     public double getSx(Camera camera) {
-        return ((x + offsetX() - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
+        return ((x + (offsetX() - camera.getxPos())) * camera.getScale() + camera.getxScrOffset());
     }
     @Override
     public double getSy(Camera camera) {
-        return ((y + offsetY() + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
+        return ((y + (offsetY() + camera.getyPos())) * -camera.getScale() + camera.getyScrOffset());
     }
     @Override
     public double getSr(Camera camera) {

@@ -34,12 +34,12 @@ public interface DisplayObject {
     public double getSy(Camera camera);
     public double getSr(Camera camera);
             
-    public static double getSx(double x, Camera camera) {
-        return ((x - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
+    public static double getSx(double x, double offsetX, Camera camera) {
+        return ((x + (offsetX - camera.getxPos())) * camera.getScale() + camera.getxScrOffset());
     }
 
-    public static double getSy(double y, Camera camera) {
-        return ((y + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
+    public static double getSy(double y, double offsetY, Camera camera) {
+        return ((y + (offsetY + camera.getyPos())) * -camera.getScale() + camera.getyScrOffset());
     }
     
     public static double getSr(double radius, Camera camera) {
