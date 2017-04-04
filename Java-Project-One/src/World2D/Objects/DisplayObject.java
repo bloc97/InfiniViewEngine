@@ -8,6 +8,7 @@ package World2D.Objects;
 import Physics2D.Vector2;
 import World2D.Camera;
 import java.awt.Graphics2D;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -27,19 +28,19 @@ public interface DisplayObject {
     public void hide();
     public void show();
     
-    public double getX();
-    public double getY();
+    public BigDecimal getX();
+    public BigDecimal getY();
     
     public double getSx(Camera camera);
     public double getSy(Camera camera);
     public double getSr(Camera camera);
             
-    public static double getSx(double x, Camera camera) {
-        return ((x - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
+    public static double getSx(double x, BigDecimal offsetX, Camera camera) {
+        return ((x + offsetX.subtract(camera.getxPos()).doubleValue()) * camera.getScale() + camera.getxScrOffset());
     }
 
-    public static double getSy(double y, Camera camera) {
-        return ((y + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
+    public static double getSy(double y, BigDecimal offsetY, Camera camera) {
+        return ((y + offsetY.add     (camera.getyPos()).doubleValue()) * -camera.getScale() + camera.getyScrOffset());
     }
     
     public static double getSr(double radius, Camera camera) {

@@ -44,7 +44,7 @@ public class Universe implements World {
         SolarSystem sol3 = new SolSystem(milkyWay, new Vector2(new double[] {2.469e+20, 2.469e+20}), initialDate);
         sol3.pushToArrayList(allDisplayObjects);
         
-        SolarSystem sol4 = new SolSystem(milkyWay, new Vector2(new double[] {2.469e+22, 2.469e+22}), initialDate);
+        SolarSystem sol4 = new SolSystem(milkyWay, new Vector2(new double[] {2.469e+27, 2.469e+27}), initialDate);
         sol4.pushToArrayList(allDisplayObjects);
         
         SolarSystem sol5 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGen(10000));

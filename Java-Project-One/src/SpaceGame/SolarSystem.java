@@ -9,6 +9,7 @@ import Physics2D.Vector2;
 import Physics2D.Vectors2;
 import SpaceGame.Objects.SpaceNatural;
 import World2D.Objects.DisplayObject;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -19,20 +20,23 @@ import java.util.LinkedList;
 public class SolarSystem {
     Galaxy galaxy;
     String name;
-    Vector2 offset;
+    BigDecimal offsetX;
+    BigDecimal offsetY;
     protected SpaceSimulation simulation;
     
     public SolarSystem() {
     }
-    protected SolarSystem(Galaxy galaxy, String name, Vector2 offset) {
+    protected SolarSystem(Galaxy galaxy, String name, BigDecimal offsetX, BigDecimal offsetY) {
         this.galaxy = galaxy;
         this.name = name;
-        this.offset = offset;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
     }
     protected SolarSystem(Galaxy galaxy, String name, Vector2 offset, Date initialDate, SpaceNatural[] bodies) {
         this.galaxy = galaxy;
         this.name = name;
-        this.offset = offset;
+        this.offsetX = new BigDecimal(offset.get(0));
+        this.offsetY = new BigDecimal(offset.get(1));
         simulation = new SpaceSimulation(initialDate, bodies);
         
         for (SpaceNatural body : bodies) {
@@ -43,8 +47,11 @@ public class SolarSystem {
     public String name() {
         return name;
     }
-    public Vector2 offset() {
-        return Vectors2.add(offset, galaxy.offset());
+    public BigDecimal offsetX() {
+        return offsetX.add(galaxy.offsetX());
+    }
+    public BigDecimal offsetY() {
+        return offsetY.add(galaxy.offsetY());
     }
     public Galaxy galaxy() {
         return galaxy;

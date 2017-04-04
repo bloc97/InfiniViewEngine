@@ -21,6 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -152,27 +153,27 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
     }
 
     @Override
-    public double getX() {
-        return x + offsetX();
+    public BigDecimal getX() {
+        return offsetX().add(new BigDecimal(x));
     }
 
     @Override
-    public double getY() {
-        return y + offsetY();
+    public BigDecimal getY() {
+        return offsetY().add(new BigDecimal(y));
     }
     
-    public double offsetX() {
+    public BigDecimal offsetX() {
         if (system != null) {
-            return system.offset().get(0);
+            return system.offsetX();
         } else {
-            return 0;
+            return new BigDecimal(0);
         }
     }
-    public double offsetY() {
+    public BigDecimal offsetY() {
         if (system != null) {
-            return system.offset().get(1);
+            return system.offsetY();
         } else {
-            return 0;
+            return new BigDecimal(0);
         }
     }
     
@@ -256,14 +257,14 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
         }
         
         Vector2 p0 = future.getPos(initiali);
-        double px0 = DisplayObject.getSx(p0.get(0) + offsetX(), camera);
-        double py0 = DisplayObject.getSy(p0.get(1) + offsetY(), camera);
+        double px0 = DisplayObject.getSx(p0.get(0), offsetX(), camera);
+        double py0 = DisplayObject.getSy(p0.get(1), offsetY(), camera);
         orbit.moveTo(px0, py0);
 
         for (int i=initiali+1; i<length; i++) {
             Vector2 pi = future.getPos(i);
-            double pxi = DisplayObject.getSx(pi.get(0) + offsetX(), camera);
-            double pyi = DisplayObject.getSy(pi.get(1) + offsetY(), camera);
+            double pxi = DisplayObject.getSx(pi.get(0), offsetX(), camera);
+            double pyi = DisplayObject.getSy(pi.get(1), offsetY(), camera);
             orbit.lineTo(pxi, pyi);
         }
         
@@ -284,11 +285,11 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
     
     @Override
     public double getSx(Camera camera) {
-        return ((x + offsetX() - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
+        return ((x + offsetX().subtract(camera.getxPos()).doubleValue()) * camera.getScale() + camera.getxScrOffset());
     }
     @Override
     public double getSy(Camera camera) {
-        return ((y + offsetY() + camera.getyPos()) * -camera.getScale() + camera.getyScrOffset());
+        return ((y + offsetY().add     (camera.getyPos()).doubleValue()) * -camera.getScale() + camera.getyScrOffset());
     }
     @Override
     public double getSr(Camera camera) {

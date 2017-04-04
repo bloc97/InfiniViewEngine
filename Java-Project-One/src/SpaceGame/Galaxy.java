@@ -6,6 +6,7 @@
 package SpaceGame;
 
 import Physics2D.Vector2;
+import java.math.BigDecimal;
 
 /**
  *
@@ -13,15 +14,21 @@ import Physics2D.Vector2;
  */
 public class Galaxy {
     private String name;
+    private BigDecimal offsetX;
+    private BigDecimal offsetY;
     private Vector2 offset;
     public Galaxy(String name, Vector2 offset) {
         this.name = name;
-        this.offset = offset;
+        this.offsetX = new BigDecimal(offset.get(0));
+        this.offsetY = new BigDecimal(offset.get(1));
     }
     public String name() {
         return name;
     }
-    public Vector2 offset() {
-        return offset;
+    public BigDecimal offsetX() {
+        return offsetX;
+    }
+    public BigDecimal offsetY() {
+        return offsetY;
     }
 }

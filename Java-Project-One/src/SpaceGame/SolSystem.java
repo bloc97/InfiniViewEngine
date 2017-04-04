@@ -10,6 +10,7 @@ import Physics2D.Vector2;
 import SpaceGame.Objects.SpaceNatural;
 import World2D.Objects.DisplayObject;
 import World2D.World;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -27,7 +28,7 @@ public class SolSystem extends SolarSystem {
     private static double DAY = 86400D;
 
     public SolSystem(Galaxy galaxy, Vector2 offset, Date initialDate) {
-        super(galaxy, "Sol", offset);
+        super(galaxy, "Sol", new BigDecimal(offset.get(0)), new BigDecimal(offset.get(1)));
         
         //SpaceNatural sun = generateBody("Sun", 0, 0, 0, 0, 1.989E30, 695000);
         SpaceNatural sun = generateStar("Sun", 3.164698112995927E-03, 4.430714289164239E-03, -3.379874197009493E-06, 6.606862110289219E-06, 1, 1);

@@ -214,7 +214,7 @@ public class MainView extends Scene {
     public void focusCamera() {
         if (trackedObject instanceof DisplayObject) {
             camera.setxPos(trackedObject.getX());
-            camera.setyPos(-trackedObject.getY());
+            camera.setyPos(trackedObject.getY().negate());
         }
     }
     

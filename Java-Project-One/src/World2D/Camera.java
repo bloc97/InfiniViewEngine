@@ -13,8 +13,8 @@ import java.math.BigDecimal;
  */
 public class Camera {
     private Scene currentScene;
-    private double xPos;
-    private double yPos;
+    private BigDecimal xPos;
+    private BigDecimal yPos;
     private double scale;
     
     private int screenOffsetx;
@@ -26,8 +26,8 @@ public class Camera {
     
     Camera(Scene currenScene, double x, double y, double s, int xsize, int ysize) {
         this.currentScene = currenScene;
-        xPos = x;
-        yPos = y;
+        xPos = new BigDecimal(x);
+        yPos = new BigDecimal(y);
         scale = s;
         screenOffsetx = xsize/2;
         screenOffsety = ysize/2;
@@ -45,16 +45,16 @@ public class Camera {
         screenOffsety = ysize/2;
     }
 
-    public double getxPos() {
+    public BigDecimal getxPos() {
         return xPos;
     }
-    public void setxPos(double xPos) {
+    public void setxPos(BigDecimal xPos) {
         this.xPos = xPos;
     }
-    public double getyPos() {
+    public BigDecimal getyPos() {
         return yPos;
     }
-    public void setyPos(double yPos) {
+    public void setyPos(BigDecimal yPos) {
         this.yPos = yPos;
     }
     
@@ -74,10 +74,10 @@ public class Camera {
     }
     
     public void addxPos(double x) {
-        this.xPos += x*(1/scale);
+        xPos = xPos.add(new BigDecimal(x*(1/scale)));
     }
     public void addyPos(double y) {
-        this.yPos += y*(1/scale);
+        yPos = yPos.add(new BigDecimal(y*(1/scale)));
     }
     public void addScale(int n) {
         if (n > 0) {
@@ -92,12 +92,12 @@ public class Camera {
         }
     }
     private void multiplyScale() {
-        if (scale < 2E25) {
+        if (scale < 2E28) {
             scale *= 2;
         }
     }
     private void divideScale() {
-        if (scale > 2E-25) {
+        if (scale > 2E-28) {
             scale /= 2;
         }
     }
