@@ -110,7 +110,7 @@ public class Camera {
         }
     }
     private void multiplyScale() {
-        if (scale < 1) {
+        if (scale < 1 && enoughPrecisionToZoom()) {
             scale *= 2;
         }
         if (scale > 1) {
@@ -118,11 +118,11 @@ public class Camera {
         }
     }
     private void divideScale() {
-        if (scale > 1E-28) {
+        if (scale > 1E-21) {
             scale /= 2;
         }
-        if (scale < 1E-28) {
-            scale = 1E-28;
+        if (scale < 1E-21) {
+            scale = 1E-21;
         }
     }
     private boolean enoughPrecisionToZoom() {
