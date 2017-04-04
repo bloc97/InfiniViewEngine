@@ -92,13 +92,33 @@ public class Camera {
         }
     }
     private void multiplyScale() {
-        if (scale < 2E25) {
+        if (scale < 1 && enoughPrecisionToZoom()) {
             scale *= 2;
+        }
+        if (scale > 1) {
+            scale = 1;
         }
     }
     private void divideScale() {
-        if (scale > 2E-25) {
+        if (scale > 1E-20) {
             scale /= 2;
+        }
+        if (scale < 1E-20) {
+            scale = 1E-20;
+        }
+    }
+    private boolean enoughPrecisionToZoom() {
+        if (xPos + (20*(0.5/scale)) == xPos || xPos - (20*(0.5/scale)) == xPos) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    private boolean enoughPrecisionToSee() {
+        if (xPos + (1*(0.5/scale)) == xPos || xPos - (1*(0.5/scale)) == xPos) {
+            return false;
+        } else {
+            return true;
         }
     }
 }
