@@ -17,8 +17,8 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
-        Scene scene = new MainView(1920, 1080);
+        //System.setProperty("sun.java2d.opengl","True");
+        MainView scene = new MainView(1920, 1080);
         Viewport viewport = new Viewport(1920, 1080, scene);
         
         

@@ -72,6 +72,7 @@ public abstract class SpaceRender {
                 if (scale > 4E-19) {
                     return true;
                 }
+                    return true;
             case Medium:
                 if (scale > 4E-12) {
                     return true;

@@ -217,12 +217,13 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
         }
         
         if (SpaceRender.canRenderNaturalNameByScale(type, camera.getScale())) {
-            //g2.drawString(name, (float)(sx+r+4), (float)(sy+5));
+            g2.drawString(name, (float)(sx+r+4), (float)(sy+5));
         }
         
         
         Ellipse2D.Double circle = new Ellipse2D.Double(sx-r, sy-r, r*2, r*2);
         g2.fill(circle);
+        //g2.fillOval((int)(sx-r), (int)(sy-r), (int)(r*2), (int)(r*2));
     }
     
     public void renderFutureOrbit(Graphics2D g2, Camera camera, double sx, double sy) {
@@ -266,7 +267,7 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
             orbit.lineTo(pxi, pyi);
         }
         
-        float dashScale = 1E7f * (float)camera.getScale();
+        float dashScale = 1E8f * (float)camera.getScale();
         while (dashScale < 5) {
             dashScale *= 5;
         }

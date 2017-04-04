@@ -5,6 +5,8 @@
  */
 package World2D;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author bowen
@@ -90,12 +92,12 @@ public class Camera {
         }
     }
     private void multiplyScale() {
-        if (scale < 2E20) {
+        if (scale < 2E25) {
             scale *= 2;
         }
     }
     private void divideScale() {
-        if (scale > 2E-20) {
+        if (scale > 2E-25) {
             scale /= 2;
         }
     }

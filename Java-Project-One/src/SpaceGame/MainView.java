@@ -14,6 +14,7 @@ import World2D.Camera;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Interpolable;
 import World2D.Scene;
+import World2D.Viewport;
 import World2D.World;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -42,6 +43,8 @@ public class MainView extends Scene {
     private DisplayObject trackedObject;
     private Universe spaceWorld = new Universe();
     private SpaceSimulation mainSimulation;
+    
+    private Viewport viewport;
     
     public MainView(int xsize, int ysize) {
         this(60, xsize, ysize);
@@ -105,6 +108,10 @@ public class MainView extends Scene {
                         break;
                     case KeyEvent.VK_SPACE:
                         togglePause();
+                        break;
+                    case KeyEvent.VK_F11:
+                        ((MainView)e.getComponent()).viewport.toggleFullScreen();
+                        System.out.println("FullScreen");
                         break;
                     default :
                         break;
@@ -209,6 +216,10 @@ public class MainView extends Scene {
             camera.setxPos(trackedObject.getX());
             camera.setyPos(-trackedObject.getY());
         }
+    }
+    
+    public void setViewport(Viewport viewport) {
+        this.viewport = viewport;
     }
     
     
