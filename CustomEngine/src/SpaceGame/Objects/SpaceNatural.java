@@ -11,7 +11,7 @@ import Physics2D.Integrators.FutureContainer;
 import Physics2D.Objects.RoundBody;
 import Physics2D.Vector2;
 import Physics2D.Vectors2;
-import SpaceGame.SolarSystem;
+import SpaceGame.GameWorld.SolarSystem;
 import World2D.Camera;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Interpolable;
@@ -22,6 +22,8 @@ import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.util.Date;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Ellipse;
 
 /**
  *
@@ -257,6 +259,51 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
         Ellipse2D.Double circle = new Ellipse2D.Double(sx-r, sy-r, r*2, r*2);
         g2.fill(circle);
         //g2.fillOval((int)(sx-r), (int)(sy-r), (int)(r*2), (int)(r*2));
+    }
+    @Override
+    public void renderTransform(Graphics g, Camera camera) {
+        g.drawOval((float)x, (float)y, (float)radius(), (float)radius());
+    }
+
+    @Override
+    public void renderNoTransform(Graphics g, Camera camera) {
+        if (!isRenderByScale) {
+            return;
+        }
+        
+        double sx = getSx(camera);
+        
+        //if (camera.isGalacticView()) {
+            if (sx > 3940 || sx < -100) {
+                isRenderByPosition = false;
+                return;
+            }
+        /*} else {
+            if (Math.abs(sx) > 1E4) {
+                isRenderByPosition = false;
+                return;
+            }
+        }*/
+        double sy = getSy(camera);
+        
+        //if (camera.isGalacticView()) {
+            if (sy > 2260 || sy < -100) {
+                isRenderByPosition = false;
+                return;
+            }
+        /*} else {
+            if (Math.abs(sy) > 1E4) {
+                isRenderByPosition = false;
+                return;
+            }
+        }*/
+
+        isRenderByPosition = true;
+        
+        double r = getSr(camera);
+        
+        Ellipse circle = new Ellipse((float)sx, (float)sy, (float)r, (float)r);
+        g.fill(circle);
     }
     
     public void renderFutureOrbit(Graphics2D g2, Camera camera, double sx, double sy) {

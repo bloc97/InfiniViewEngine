@@ -5,6 +5,8 @@
  */
 package World2D;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 
 /**
@@ -27,6 +29,8 @@ public class Viewport extends JFrame {
         
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        
     }
     public Scene getScene() {
         return scene;
@@ -35,13 +39,13 @@ public class Viewport extends JFrame {
         if (this.scene != null) {
             this.scene.deactivate();
             this.scene.setViewport(null);
-            this.scene.setFocusable(false);
-            this.remove(this.scene);
+            this.scene.getComponent().setFocusable(false);
+            this.remove(this.scene.getComponent());
         }
         this.scene = scene;
-        this.add(scene);
+        this.add(scene.getComponent());
         this.scene.setViewport(this);
-        this.scene.setFocusable(true);
+        this.scene.getComponent().setFocusable(true);
         this.scene.activate();
     }
     

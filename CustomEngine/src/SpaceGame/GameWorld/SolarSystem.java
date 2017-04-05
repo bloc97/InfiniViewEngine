@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SpaceGame;
+package SpaceGame.GameWorld;
 
 import Physics2D.Vector2;
 import Physics2D.Vectors2;
 import SpaceGame.Objects.SpaceNatural;
+import SpaceGame.SpaceSimulation;
 import World2D.Objects.DisplayObject;
 import java.util.Date;
 import java.util.LinkedList;

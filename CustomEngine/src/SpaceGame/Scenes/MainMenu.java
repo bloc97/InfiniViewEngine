@@ -5,7 +5,8 @@
  */
 package SpaceGame.Scenes;
 
-import World2D.Scene;
+import World2D.SceneSwing;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
@@ -18,7 +19,7 @@ import javax.swing.event.MouseInputListener;
  *
  * @author bowen
  */
-public class MainMenu extends Scene {
+public class MainMenu extends SceneSwing {
     
     private int x;
     private int y;
@@ -78,8 +79,7 @@ public class MainMenu extends Scene {
     }
 
     @Override
-    protected void onPaint(Graphics g) {
-        Graphics2D g2 = (Graphics2D)g;
+    protected void onPaint(Graphics2D g2) {
         g2.draw3DRect(x-40, y-40, 80, 80, true);
         g2.draw3DRect(x+100-40, y+20-40, 80, 80, true);
     }
@@ -91,5 +91,6 @@ public class MainMenu extends Scene {
     @Override
     protected void afterPaint() {
     }
+
     
 }

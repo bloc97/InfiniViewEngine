@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  * @author bowen
  */
 public class Camera {
-    private Scene currentScene;
+    private final Scene currentScene;
     private double xPos;
     private double yPos;
     private double scale;
@@ -21,11 +21,11 @@ public class Camera {
     private int screenOffsetx;
     private int screenOffsety;
 
-    Camera(Scene currentScene, int xsize, int ysize) {
+    public Camera(Scene currentScene, int xsize, int ysize) {
         this(currentScene, xsize/2, ysize/2, 1E-10, xsize, ysize);
     }
     
-    Camera(Scene currenScene, double x, double y, double s, int xsize, int ysize) {
+    public Camera(Scene currenScene, double x, double y, double s, int xsize, int ysize) {
         this.currentScene = currenScene;
         xPos = x;
         yPos = y;
@@ -37,9 +37,6 @@ public class Camera {
     
     public Scene scene() {
         return currentScene;
-    }
-    public void setScene(Scene scene) {
-        currentScene = scene;
     }
     public void setScreenSize(int xsize, int ysize) {
         screenOffsetx = xsize/2;

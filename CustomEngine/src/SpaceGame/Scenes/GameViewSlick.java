@@ -8,25 +8,28 @@ package SpaceGame.Scenes;
 import SpaceGame.Objects.SpaceNatural;
 import SpaceGame.SpaceSimulation;
 import SpaceGame.GameWorld.Universe;
+import SpaceGame.Slick.SceneSlick;
 import World2D.Objects.DisplayObject;
 import World2D.Objects.Interpolable;
 import World2D.SceneSwing;
 import World2D.World;
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Transform;
 
 /**
  *
  * @author bowen
  */
-public class GameView extends SceneSwing {
+public class GameViewSlick extends SceneSlick {
     
     private Boolean keyW = false;
     private Boolean keyS = false;
@@ -42,12 +45,15 @@ public class GameView extends SceneSwing {
     
     private int objPaintCounter = 0;
     
-    public GameView() {
-        this(60, 0, 0);
+    public static SceneSlick newGameViewSlick() throws SlickException {
+        GameThread game = new GameThread("");
+        GameViewSlick newScene = new GameViewSlick(game, 60, 0, 0);
+        game.setScene(newScene);
+        return newScene;
     }
     
-    public GameView(int desiredFPS, int xsize, int ysize) {
-        super(desiredFPS, xsize, ysize);
+    public GameViewSlick(GameThread game, int desiredFPS, int xsize, int ysize) throws SlickException {
+        super(game, desiredFPS, xsize, ysize);
         setBackground(Color.getHSBColor(298F/360, 1F/100, 22F/100));
         this.worlds = new World[] {spaceWorld};
         this.mainSimulation = (SpaceSimulation)spaceWorld.getSimulations()[0];
@@ -58,6 +64,65 @@ public class GameView extends SceneSwing {
     }
     
     public final void initialiseHandlers() {
+        /*
+        if (this.getContainer().getInput() == null) {
+            System.out.println("null");
+        }
+        
+        
+        this.getContainer().getInput().addMouseListener(new org.newdawn.slick.MouseListener() {
+            @Override
+            public void mouseWheelMoved(int i) {
+                camera.addScale(i);
+                updateDisplayObjectsCanRenderByScale();
+                
+            }
+
+            @Override
+            public void mouseClicked(int i, int i1, int i2, int i3) {
+                
+            }
+
+            @Override
+            public void mousePressed(int i, int i1, int i2) {
+                
+            }
+
+            @Override
+            public void mouseReleased(int i, int i1, int i2) {
+                
+            }
+
+            @Override
+            public void mouseMoved(int i, int i1, int i2, int i3) {
+                
+            }
+
+            @Override
+            public void mouseDragged(int i, int i1, int i2, int i3) {
+                
+            }
+
+            @Override
+            public void setInput(Input input) {
+                
+            }
+
+            @Override
+            public boolean isAcceptingInput() {
+                return true;
+            }
+
+            @Override
+            public void inputEnded() {
+                
+            }
+
+            @Override
+            public void inputStarted() {
+                
+            }
+        });*/
         
         this.addMouseWheelListener(new MouseAdapter() {
             @Override
@@ -100,7 +165,7 @@ public class GameView extends SceneSwing {
                         togglePause();
                         break;
                     case KeyEvent.VK_F11:
-                        ((GameView)e.getComponent()).viewport.toggleFullScreen();
+                        ((GameViewSlick)e.getComponent()).viewport.toggleFullScreen();
                         System.out.println("FullScreen");
                         break;
                     default :
@@ -262,18 +327,18 @@ public class GameView extends SceneSwing {
         msCounter = System.currentTimeMillis();
     }
     @Override
-    protected void onPaint(Graphics2D g2) {
-        g2.setColor(Color.YELLOW);
+    protected void onPaint(Graphics g) {
+        g.setColor(org.newdawn.slick.Color.yellow);
         /*
         g.drawLine(0, 0, 0, 1080);
         g.drawLine(0, 0, 1920, 0);
         g.drawLine(1920, 0, 1920, 1080);
         g.drawLine(0, 1080, 1920, 1080);*/
         
-        g2.drawString(mainSimulation.getDate().toGMTString(), 10, 20);
-        g2.drawString(secondsToText(worlds[0].getSimulations()[0].getSpeed()), 10, 40);
-        g2.drawString("Current Scale: " + camera.getScale(), 10, 60);
-        g2.drawString("FPS: " + fpsCounter, 10, 80);
+        g.drawString(mainSimulation.getDate().toGMTString(), 10, 20);
+        g.drawString(secondsToText(worlds[0].getSimulations()[0].getSpeed()), 10, 40);
+        g.drawString("Current Scale: " + camera.getScale(), 10, 60);
+        g.drawString("FPS: " + fpsCounter, 10, 80);
         
         
         /*
@@ -290,11 +355,12 @@ public class GameView extends SceneSwing {
         g2.setTransform(originalTransform);
          */
         
+        
         for (DisplayObject displayObject : displayObjects) {
             if (displayObject == trackedObject) {;// || trackedObject != null) {
                 focusCamera();
             }
-            displayObject.renderNoTransform(g2, camera);
+            displayObject.renderNoTransform(g, camera);
         }
     }
     @Override
@@ -311,6 +377,7 @@ public class GameView extends SceneSwing {
     protected void afterPaint() {
         
     }
+
     
 
 

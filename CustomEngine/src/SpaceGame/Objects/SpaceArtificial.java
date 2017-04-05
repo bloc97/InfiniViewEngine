@@ -6,7 +6,7 @@
 package SpaceGame.Objects;
 
 import Physics2D.Vector2;
-import SpaceGame.SolarSystem;
+import SpaceGame.GameWorld.SolarSystem;
 
 
 /**

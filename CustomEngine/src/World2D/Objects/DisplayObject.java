@@ -9,6 +9,7 @@ import Physics2D.Vector2;
 import World2D.Camera;
 import java.awt.Graphics2D;
 import java.util.Date;
+import org.newdawn.slick.Graphics;
 
 /**
  *
@@ -18,6 +19,8 @@ public interface DisplayObject {
     
     public void renderTransform(Graphics2D g2, Camera camera); //part of the rendering requiring affine transforms
     public void renderNoTransform(Graphics2D g2, Camera camera); //part of the rendering without transforms (per pixel)
+    public void renderTransform(Graphics g, Camera camera);
+    public void renderNoTransform(Graphics g, Camera camera);
     
     //public void setPos(double x, double y);
     public void registerUpdate(Date date);
@@ -49,5 +52,6 @@ public interface DisplayObject {
         double r = (rIn > rOut) ? rIn : rOut;
         return r;
     }
+
     
 }
