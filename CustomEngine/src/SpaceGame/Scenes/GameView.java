@@ -40,6 +40,8 @@ public class GameView extends Scene {
     private long msCounter = 1;
     private int fpsCounter = 0;
     
+    private int objPaintCounter = 0;
+    
     public GameView() {
         this(60, 0, 0);
     }
@@ -70,7 +72,7 @@ public class GameView extends Scene {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                System.out.println(e.getKeyChar());
+                //System.out.println(e.getKeyChar());
                  switch(e.getKeyCode()) {
                     case KeyEvent.VK_W :
                         keyW = true;
@@ -90,11 +92,9 @@ public class GameView extends Scene {
                         break;
                     case KeyEvent.VK_E :
                         worlds[0].getSimulations()[0].speedUp();
-                        //((NBodySimulation)(worlds[0].getSimulations()[0])).reCalculateOrbits();
                         break;
                     case KeyEvent.VK_Q :
                         worlds[0].getSimulations()[0].speedDown();
-                        //((NBodySimulation)(worlds[0].getSimulations()[0])).reCalculateOrbits();
                         break;
                     case KeyEvent.VK_SPACE:
                         togglePause();
@@ -196,12 +196,15 @@ public class GameView extends Scene {
         } else {
             mainSimulation.setFocus(null);
         }
-        mainSimulation.reCalculateOrbits();
+        //mainSimulation.reCalculateOrbits();
     }
     
     public void releaseFocus() {
-        trackedObject = null;
-        mainSimulation.setFocus(null);
+        if (trackedObject != null) {
+            trackedObject = null;
+            mainSimulation.setFocus(null);
+            //mainSimulation.reCalculateOrbits();
+        }
     }
     
     public void focusCamera() {
@@ -287,16 +290,24 @@ public class GameView extends Scene {
         }
         g2.setTransform(originalTransform);
          */
+        /*
         for (DisplayObject displayObject : displayObjects) {
             if (displayObject == trackedObject) {;// || trackedObject != null) {
                 focusCamera();
             }
-            /*
-            if (displayObjects[i] instanceof FuturePath) {
-            ((FuturePath)displayObjects[i]).setOrbitReferencePath(trackedObject.paths);
-            }*/
             displayObject.renderNoTransform(g2, camera);
         }
+        */
+        int initialI = objPaintCounter % displayObjects.length;
+        int endI = (objPaintCounter + 500) % (displayObjects.length+1);
+        
+        for (int i=initialI; i<endI; i++) {
+            if (displayObjects[i] == trackedObject) {;// || trackedObject != null) {
+                focusCamera();
+            }
+            displayObjects[i].renderNoTransform(g2, camera);
+        }
+        objPaintCounter = objPaintCounter + 500;
         
     }
     @Override

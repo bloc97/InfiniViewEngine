@@ -211,17 +211,31 @@ public class SpaceNatural extends RoundBody implements DisplayObject {
         
         double sx = getSx(camera);
         
-        
-        if (sx > 3940 || sx < -100) {
-            isRenderByPosition = false;
-            return;
-        }
+        //if (camera.isGalacticView()) {
+            if (sx > 3940 || sx < -100) {
+                isRenderByPosition = false;
+                return;
+            }
+        /*} else {
+            if (Math.abs(sx) > 1E4) {
+                isRenderByPosition = false;
+                return;
+            }
+        }*/
         double sy = getSy(camera);
         
-        if (sy > 2260 || sy < -100) {
-            isRenderByPosition = false;
-            return;
-        }
+        //if (camera.isGalacticView()) {
+            if (sy > 2260 || sy < -100) {
+                isRenderByPosition = false;
+                return;
+            }
+        /*} else {
+            if (Math.abs(sy) > 1E4) {
+                isRenderByPosition = false;
+                return;
+            }
+        }*/
+
         isRenderByPosition = true;
         
         double r = getSr(camera);

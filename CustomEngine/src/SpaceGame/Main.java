@@ -6,11 +6,14 @@
 package SpaceGame;
 
 import SpaceGame.Scenes.GameView;
-import SpaceGame.Scenes.MainMenu;
 import World2D.Scene;
 import World2D.Viewport;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.SlickException;
 /**
  *
  * @author bowen
@@ -32,7 +35,16 @@ public class Main {
         Viewport viewport = new Viewport(defaultW, defaultH);
         viewport.setScene(scene);
         
-        scene.start();
+        //scene.start();
+        
+        try {
+                AppGameContainer appgc;
+                appgc = new AppGameContainer(new TestSlick("Simple Slick Game"));
+                appgc.setDisplayMode(640, 480, false);
+                appgc.start();
+        } catch (SlickException ex) {
+                Logger.getLogger(TestSlick.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
     

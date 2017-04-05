@@ -16,6 +16,7 @@ public class Camera {
     private double xPos;
     private double yPos;
     private double scale;
+    private boolean isGalacticView;
     
     private int screenOffsetx;
     private int screenOffsety;
@@ -79,7 +80,7 @@ public class Camera {
     public void addyPos(double y) {
         yPos += (y*(1/scale));
     }
-    public void addxPosMaxPrec(double x) {
+    private void addxPosMaxPrec(double x) {
         double newXPos = xPos + (x*(1/scale));
         if (newXPos == xPos) {
             int dir = (x < 0.0) ? -1 : 1; 
@@ -88,7 +89,7 @@ public class Camera {
             xPos = newXPos;
         }
     }
-    public void addyPosMaxPrec(double y) {
+    private void addyPosMaxPrec(double y) {
         double newYPos = yPos + (y*(1/scale));
         if (newYPos == yPos) {
             int dir = (y < 0.0) ? -1 : 1; 
@@ -107,6 +108,11 @@ public class Camera {
             for (int i=0; i<n; i++) {
                 multiplyScale();
             }
+        }
+        if (scale < 1E-11) {
+            isGalacticView = true;
+        } else {
+            isGalacticView = false;
         }
     }
     private void multiplyScale() {
@@ -131,7 +137,12 @@ public class Camera {
         } else {
             return true;
         }
-    }/*
+    }
+    public boolean isGalacticView() {
+        return isGalacticView;
+    }
+    
+    /*
     private boolean enoughPrecisionToSee() {
         if (xPos + (1*(0.5/scale)) == xPos || xPos - (1*(0.5/scale)) == xPos) {
             return false;
