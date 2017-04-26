@@ -54,8 +54,8 @@ public class Universe implements World {
         SolarSystem stress1 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGen(8000));
         stress1.pushToArrayList(allDisplayObjects);
         
-        //SolarSystem stress2 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGenInvis(200000));
-        //stress2.pushToArrayList(allDisplayObjects);
+        SolarSystem stress2 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGenInvis(200000));
+        stress2.pushToArrayList(allDisplayObjects);
         
         activeSimulation = sol.simulation;
     }

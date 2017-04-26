@@ -334,4 +334,8 @@ public class NBodySimulation implements Runnable, Simulation {
     public Date getDate() {
         return date;
     }
+    @Override
+    public boolean isOverloaded() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

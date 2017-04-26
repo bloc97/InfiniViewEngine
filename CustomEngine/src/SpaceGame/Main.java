@@ -5,6 +5,7 @@
  */
 package SpaceGame;
 
+import SpaceGame.Scenes.FieldTest;
 import SpaceGame.Slick.TestSlick;
 import SpaceGame.Scenes.GameView;
 import SpaceGame.Scenes.GameViewSlick;
@@ -42,7 +43,7 @@ public class Main {
         int defaultW = width*9/10;
         int defaultH = height*9/10;
         //System.setProperty("sun.java2d.opengl","True");
-        Scene scene = new GameView();
+        Scene scene = new FieldTest();
         //Scene scene = newGameViewSlick();
         Viewport viewport = new Viewport(defaultW, defaultH);
         viewport.setScene(scene);

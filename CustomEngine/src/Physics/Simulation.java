@@ -26,6 +26,8 @@ public interface Simulation { //Any collection of objects that are simulable
     public void speedUp();
     public void speedDown();
     
+    public boolean isOverloaded();
+    
     public DisplayObject[] getDisplayObjects();
     public int getObjectsNumber();
 }

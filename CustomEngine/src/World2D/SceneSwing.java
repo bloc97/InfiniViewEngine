@@ -72,26 +72,18 @@ public abstract class SceneSwing extends JPanel implements Runnable, Scene {
     
     final public void setDisplayObjects(World... worlds) {
         int length = 0;
-        for (int i=0; i<worlds.length; i++) {
-            length += worlds[i].getDisplayObjects().length;
+        for (World world : worlds) {
+            length += world.getDisplayObjects().length;
         }
         this.displayObjects = new DisplayObject[length];
-        for (int n=0; n<worlds.length; n++) {
-            DisplayObject[] nDisplayObjects = worlds[n].getDisplayObjects();
-            for (int i=0; i<displayObjects.length; i++) {
-                this.displayObjects[i] = nDisplayObjects[i];
-                
-                //this.add(displayObjects[i].getJComponent());
-            }
+        for (World world : worlds) {
+            DisplayObject[] nDisplayObjects = world.getDisplayObjects();
+            System.arraycopy(nDisplayObjects, 0, this.displayObjects, 0, displayObjects.length); //this.add(displayObjects[i].getJComponent());
         }
     }
     final public void setDisplayObjects(DisplayObject... displayObjects) {
         this.displayObjects = new DisplayObject[displayObjects.length];
-        for (int i=0; i<displayObjects.length; i++) {
-            this.displayObjects[i] = displayObjects[i];
-            
-            //this.add(displayObjects[i].getJComponent());
-        }
+        System.arraycopy(displayObjects, 0, this.displayObjects, 0, displayObjects.length); //this.add(displayObjects[i].getJComponent());
     }
     
     @Override
