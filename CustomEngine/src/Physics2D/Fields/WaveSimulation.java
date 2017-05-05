@@ -11,9 +11,14 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -40,6 +45,8 @@ public class WaveSimulation extends SimulationThread {
     private double[][] addToState;
     private boolean[][] obstacles;
     
+    private int imageCount = 0;
+    
     private LinkedList<WaveEmitter> emitters;
     
     public WaveSimulation(int desiredUPS, int xsize, int ysize, int pixelPerGrid) {
@@ -61,12 +68,13 @@ public class WaveSimulation extends SimulationThread {
         //setCircle(addToState, gridSize/2, gridSize/2, 5, setMaxValue);
         //setCircle(state, gridSize/2, gridSize/2, 5, setMaxValue);
         
-        setRect(obstacles, 0, gridHeight/16, gridWidth/2-12, 1, true);
-        setRect(obstacles, gridWidth/2-4, gridHeight/16, 8, 1, true);
-        setRect(obstacles, gridWidth/2+12, gridHeight/16, gridWidth/2-2, 1, true);
+        //setRect(obstacles, 0, gridHeight/16, gridWidth/2-12, 1, true);
+        //setRect(obstacles, gridWidth/2-4, gridHeight/16, 8, 1, true);
+        //setRect(obstacles, gridWidth/2+12, gridHeight/16, gridWidth/2-2, 1, true);
         
         emitters = new LinkedList<>();
-        emitters.add(new WaveEmitter(0, 1, gridWidth, 1, 200, 32));
+        emitters.add(new WaveEmitter(gridWidth/2, gridHeight/2, 1, 1, 200, 32));
+        //emitters.add(new WaveEmitter(0, 1, gridWidth, 1, 200, 32));
         
         //setCircle(state, gridSize/2, gridSize/4, 2, 100);
         //setCircle(state, gridSize/4, gridSize/2, 2, 200);
@@ -296,12 +304,13 @@ public class WaveSimulation extends SimulationThread {
         for (int x=0; x<newState.length; x++) {
             for (int y=0; y<newState[x].length; y++) {
                 
-                if (x == 0 || y == 0 || x == newState.length-1 || y == newState[0].length-1) {
+                //if (x == 0 || y == 0 || x == newState.length-1 || y == newState[0].length-1) {
                     newState[x][y] = (0.25d * (getFromState(state, prevState, x+1, y) + getFromState(state, prevState, x-1, y) + getFromState(state, prevState, x, y+1) + getFromState(state, prevState, x, y-1) - (4 * getFromState(state, prevState, x, y)))) - getFromState(prevState, x, y) + (2 * getFromState(state, prevState, x, y));
-                } else {
-                    newState[x][y] = (0.25d * (getFromState(state, x+1, y) + getFromState(state, x-1, y) + getFromState(state, x, y+1) + getFromState(state, x, y-1) - (4 * getFromState(state, x, y)))) - getFromState(prevState, x, y) + (2 * getFromState(state, x, y));
-                }
-                newState[x][y] *= 0.995d;
+                //} else {
+                    //newState[x][y] = (0.25d * (getFromState(state, x+1, y) + getFromState(state, x-1, y) + getFromState(state, x, y+1) + getFromState(state, x, y-1) - (4 * getFromState(state, x, y)))) - getFromState(prevState, x, y) + (2 * getFromState(state, x, y));
+                //newState[x][y] = (0.25d * (0.5*getFromState(state, x+1, y) + 0.5*getFromState(state, x-1, y) + 0.5*getFromState(state, x, y+1) + 0.5*getFromState(state, x, y-1) + 0.25*getFromState(state, x+1, y+1) + 0.25*getFromState(state, x+1, y-1) + 0.25*getFromState(state, x-1, y-1) + 0.25*getFromState(state, x-1, y+1) - (3 * getFromState(state, x, y)))) - getFromState(prevState, x, y) + (2 * getFromState(state, x, y));
+                //}
+                //newState[x][y] *= 0.995d;
             }
         }
         //prevState2 = prevState;
@@ -325,6 +334,14 @@ public class WaveSimulation extends SimulationThread {
         }
         
         g2.drawImage(image.getScaledInstance((int)(gridWidth*pixelPerGrid), (int)(gridHeight*pixelPerGrid), BufferedImage.SCALE_FAST), 0, 0, comp);
+        
+        /*File outputfile = new File("image" + imageCount + ".png");
+        try {
+            ImageIO.write(image, "png", outputfile);
+        } catch (IOException ex) {
+            Logger.getLogger(WaveSimulation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        imageCount++;*/
         
         g2.setColor(Color.yellow);
         if (isOverloaded()) {
