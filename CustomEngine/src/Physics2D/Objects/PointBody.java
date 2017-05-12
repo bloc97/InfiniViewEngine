@@ -6,7 +6,6 @@
 package Physics2D.Objects;
 
 import Physics2D.Vector2;
-import World2D.Objects.DisplayObject;
 
 /**
  *

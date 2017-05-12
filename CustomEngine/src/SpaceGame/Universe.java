@@ -5,7 +5,7 @@
  */
 package SpaceGame;
 
-import MathExt.Approx;
+import fmath.Approx;
 import Physics.Simulation;
 import Physics2D.Vector2;
 import SpaceGame.Objects.SpaceNatural;
