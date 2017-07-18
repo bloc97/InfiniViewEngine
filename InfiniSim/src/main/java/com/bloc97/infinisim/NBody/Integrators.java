@@ -23,13 +23,6 @@ public abstract class Integrators {
     
     public static void integrate(IntegratorType itype, Optimisers.OptimiserType otype, Equations.EquationType etype, Set<Spatial> list, double dt) {
         
-        if (itype == IntegratorType.NONE) {
-            integrateVel(list, dt);
-            return;
-        }
-        
-        Map<Spatial, Vector> map = Optimisers.optimise(otype, etype, list);
-        
         switch (itype) {
             case NONE:
                 integrateVel(list, dt);
@@ -47,7 +40,7 @@ public abstract class Integrators {
                 integrateSymplectic4(otype, etype, list, dt);
                 break;
             default:
-                integrateEuler(map, dt);
+                integrateEuler(otype, etype, list, dt);
         }
     }
     
