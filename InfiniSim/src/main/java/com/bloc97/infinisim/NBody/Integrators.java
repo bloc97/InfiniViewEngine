@@ -35,16 +35,16 @@ public abstract class Integrators {
                 integrateVel(list, dt);
                 break;
             case EULER:
-                integrateEuler(map, dt);
+                integrateEuler(otype, etype, list, dt);
                 break;
             case SYMPLECTIC:
-                integrateSymplectic(map, dt);
+                integrateSymplectic(otype, etype, list, dt);
                 break;
             case LEAPFROG:
-                integrateLeapfrog(map, dt);
+                integrateLeapfrog(otype, etype, list, dt);
                 break;
             case SYMPLECTIC4:
-                integrateSymplectic4(map, dt);
+                integrateSymplectic4(otype, etype, list, dt);
                 break;
             default:
                 integrateEuler(map, dt);
@@ -53,64 +53,69 @@ public abstract class Integrators {
     
     public static void integrateVel(Set<Spatial> set, double dt) {
         
+        
         for (Spatial body : set) {
             body.position().add(Vectors.mulElem(body.velocity(), dt));
         }
     }
-    public static void integrateEuler(Map<Spatial, Vector> accelerationMap, double dt) {
+    public static void integrateEuler(Optimisers.OptimiserType otype, Equations.EquationType etype, Set<Spatial> list, double dt) {
+        
+        Map<Spatial, Vector> accelerationMap = Optimisers.optimise(otype, etype, list);
         
         for (Spatial body : accelerationMap.keySet()) {
             body.position().add(Vectors.mulElem(body.velocity(), dt));
             body.velocity().add(Vectors.mulElem(accelerationMap.get(body), dt));
         }
     }
-    public static void integrateSymplectic(Map<Spatial, Vector> accelerationMap, double dt) {
+    public static void integrateSymplectic(Optimisers.OptimiserType otype, Equations.EquationType etype, Set<Spatial> list, double dt) {
         if (dt > 0) {
-            applySympleticVelocityStep(accelerationMap, 1, dt);
-            applySympleticPositionStep(accelerationMap, 1, dt);
+            applySympleticVelocityStep(otype, etype, list, 1, dt);
+            applySympleticPositionStep(list, 1, dt);
         } else {
-            applySympleticPositionStep(accelerationMap, 1, dt);
-            applySympleticVelocityStep(accelerationMap, 1, dt);
+            applySympleticPositionStep(list, 1, dt);
+            applySympleticVelocityStep(otype, etype, list, 1, dt);
         }
         
     }
-    public static void integrateLeapfrog(Map<Spatial, Vector> accelerationMap, double dt) {
+    public static void integrateLeapfrog(Optimisers.OptimiserType otype, Equations.EquationType etype, Set<Spatial> list, double dt) {
         
     }
-    public static void integrateSymplectic4(Map<Spatial, Vector> accelerationMap, double dt) {
+    public static void integrateSymplectic4(Optimisers.OptimiserType otype, Equations.EquationType etype, Set<Spatial> list, double dt) {
         if (dt > 0) {
-            applySympleticVelocityStep(accelerationMap, 0.1288461583653841854D, dt);
-            applySympleticPositionStep(accelerationMap, 0.3340036032863214255D, dt);
-            applySympleticVelocityStep(accelerationMap, 0.4415830236164665242D, dt);
-            applySympleticPositionStep(accelerationMap, 0.7562300005156682911D, dt);
-            applySympleticVelocityStep(accelerationMap, -0.0857820194129736460D, dt);
-            applySympleticPositionStep(accelerationMap, -0.2248198030794208058D, dt);
-            applySympleticVelocityStep(accelerationMap, 0.5153528374311229364D, dt);
-            applySympleticPositionStep(accelerationMap, 0.1344961992774310892D, dt);
+            applySympleticVelocityStep(otype, etype, list, 0.1288461583653841854D, dt);
+            applySympleticPositionStep(list, 0.3340036032863214255D, dt);
+            applySympleticVelocityStep(otype, etype, list, 0.4415830236164665242D, dt);
+            applySympleticPositionStep(list, 0.7562300005156682911D, dt);
+            applySympleticVelocityStep(otype, etype, list, -0.0857820194129736460D, dt);
+            applySympleticPositionStep(list, -0.2248198030794208058D, dt);
+            applySympleticVelocityStep(otype, etype, list, 0.5153528374311229364D, dt);
+            applySympleticPositionStep(list, 0.1344961992774310892D, dt);
         } else {
-            applySympleticPositionStep(accelerationMap, 0.1344961992774310892D, dt);
-            applySympleticVelocityStep(accelerationMap, 0.5153528374311229364D, dt);
-            applySympleticPositionStep(accelerationMap, -0.2248198030794208058D, dt);
-            applySympleticVelocityStep(accelerationMap, -0.0857820194129736460D, dt);
-            applySympleticPositionStep(accelerationMap, 0.7562300005156682911D, dt);
-            applySympleticVelocityStep(accelerationMap, 0.4415830236164665242D, dt);
-            applySympleticPositionStep(accelerationMap, 0.3340036032863214255D, dt);
-            applySympleticVelocityStep(accelerationMap, 0.1288461583653841854D, dt);
+            applySympleticPositionStep(list, 0.1344961992774310892D, dt);
+            applySympleticVelocityStep(otype, etype, list, 0.5153528374311229364D, dt);
+            applySympleticPositionStep(list, -0.2248198030794208058D, dt);
+            applySympleticVelocityStep(otype, etype, list, -0.0857820194129736460D, dt);
+            applySympleticPositionStep(list, 0.7562300005156682911D, dt);
+            applySympleticVelocityStep(otype, etype, list, 0.4415830236164665242D, dt);
+            applySympleticPositionStep(list, 0.3340036032863214255D, dt);
+            applySympleticVelocityStep(otype, etype, list, 0.1288461583653841854D, dt);
             
         }
     }
     
     
-    protected static void applySympleticPositionStep(Map<Spatial, Vector> accelerationMap, double c, double time) {
+    protected static void applySympleticPositionStep(Set<Spatial> list, double c, double time) {
         double cT = time * c;
         
-        for (Spatial body : accelerationMap.keySet()) {
+        for (Spatial body : list) {
             body.position().add(Vectors.mulElem(body.velocity(), cT));
         }
     }
     
-    protected static void applySympleticVelocityStep(Map<Spatial, Vector> accelerationMap, double d, double time) {
+    protected static void applySympleticVelocityStep(Optimisers.OptimiserType otype, Equations.EquationType etype, Set<Spatial> list, double d, double time) {
         double cT = time * d;
+        
+        Map<Spatial, Vector> accelerationMap = Optimisers.optimise(otype, etype, list);
         
         for (Map.Entry<Spatial, Vector> entry : accelerationMap.entrySet()) {
             entry.getKey().velocity().add(Vectors.mulElem(entry.getValue(), cT));

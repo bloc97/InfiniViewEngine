@@ -44,9 +44,10 @@ public class Universe implements World {
         
         Galaxy milkyWay = new Galaxy("Milky Way", new Vector2(0));
         //SolarSystem sol = new SolSystem(milkyWay, new Vector2(2.469e+20, 0), initialDate);
-        //SolarSystem sol = new SolSystem(milkyWay, new Vector2(0, 0), initialDate);
-        //SolarSystem sol = new RandomParticles(4, 10, milkyWay, new Vector2(0, 0), initialDate);
-        SolarSystem sol = new MercuryGRTest(milkyWay, new Vector2(0, 0), initialDate, 1682.9d);
+        SolarSystem sol = new SolSystem(milkyWay, new Vector2(0, 0), initialDate);
+        //SolarSystem sol = new RandomParticles(40, 1, milkyWay, new Vector2(0, 0), initialDate);
+        double ratio = 1682.9d;
+        //SolarSystem sol = new MercuryGRTest(milkyWay, new Vector2(0, 0), initialDate, ratio);
         sol.pushBodiesToList(allDisplayObjects);
         
         mainSimulation = new NBodySimulation(Equations.EquationType.GR_APPROX, Optimisers.OptimiserType.BARNES_HUT, Integrators.IntegratorType.SYMPLECTIC4);
@@ -56,7 +57,7 @@ public class Universe implements World {
         simulationList.add(mainSimulation);
         simulationList.add(new CollisionSimulation());
         
-        SimulationThread st = new SimulationThread(simulationList, 30, 1000, 1/30d/10000000000d, sol.getInitialDate());
+        SimulationThread st = new SimulationThread(simulationList, 60, 1, 1/30d/(ratio*ratio*ratio), sol.getInitialDate());
         st.setObjects(sol.getBodies());
         st.enable();
         
