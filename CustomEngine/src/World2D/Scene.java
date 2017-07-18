@@ -153,7 +153,6 @@ public abstract class Scene extends JPanel implements Runnable {
                 } else {
                     long sleepms = Math.floorDiv(sleepTime, 1000000);
                     int sleepns = (int)Math.floorMod(sleepTime, 1000000);
-
                     try {
                         Thread.sleep(sleepms, sleepns);
                     } catch (InterruptedException ex) {

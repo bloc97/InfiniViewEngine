@@ -39,7 +39,7 @@ public class Universe implements World {
         Galaxy milkyWay = new Galaxy("Milky Way", new Vector2(0));
         SolarSystem sol = new SolSystem(milkyWay, new Vector2(new double[] {2.469e+20, 0}), initialDate);
         sol.pushToArrayList(allDisplayObjects);
-        //sol.simulation.start();
+        sol.simulation.start();
         
         SolarSystem sol2 = new SolSystem(milkyWay, new Vector2(new double[] {0, 2.469e+20}), initialDate);
         //sol2.pushToArrayList(allDisplayObjects);
@@ -51,7 +51,7 @@ public class Universe implements World {
         //sol4.pushToArrayList(allDisplayObjects);
         
         SolarSystem stress1 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGen(8000));
-        stress1.pushToArrayList(allDisplayObjects);
+        //stress1.pushToArrayList(allDisplayObjects);
         
         //SolarSystem stress2 = new SolarSystem(milkyWay, "StressTest", new Vector2(new double[] {0, 0}), initialDate, scatterGenInvis(200000));
         //stress2.pushToArrayList(allDisplayObjects);
