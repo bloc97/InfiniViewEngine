@@ -82,15 +82,51 @@ public abstract class Vectors {
         return vector;
     }
     
-    public static Vector2 cross2D_AxBxB(Vector a, Vector b) {
-        if (a instanceof Vector2) {
-            double AxB_k = (a.get(0) * b.get(1) - a.get(1) * b.get(0));
-            double AxBxB_i = -b.get(1) * AxB_k;
-            double AxBxB_j = b.get(0) * AxB_k;
-            return new Vector2(AxBxB_i, AxBxB_j);
-        } else {
-            throw new IllegalArgumentException("Vectors are not of size 2");
+    public static Vector3 cross(Vector3 vector, Vector3 vector2) {
+        double s0 = vector.get(1)*vector2.get(2) - vector.get(2)*vector2.get(1);
+        double s1 = vector.get(2)*vector2.get(0) - vector.get(0)*vector2.get(2);
+        double s2 = vector.get(0)*vector2.get(1) - vector.get(1)*vector2.get(0);
+        return new Vector3(s0, s1, s2);
+    }
+    
+    public static Vector cross_AxBxB(Vector a, Vector b) {
+        if (a instanceof Vector2 && b instanceof Vector2) {
+            return cross_AxBxB((Vector2) a, (Vector2) b);
+        } else if (a instanceof Vector3 && b instanceof Vector3) {
+            return cross_AxBxB((Vector3) a, (Vector3) b);
         }
+        throw new IllegalArgumentException("Cannot perform the cross product on a vector of this size");
+    }
+    
+    public static Vector2 cross_AxBxB(Vector2 a, Vector2 b) {
+        double AxB_k = (a.get(0) * b.get(1) - a.get(1) * b.get(0));
+        double AxBxB_i = -b.get(1) * AxB_k;
+        double AxBxB_j = b.get(0) * AxB_k;
+        return new Vector2(AxBxB_i, AxBxB_j);
+    }
+    
+    public static Vector3 cross_AxBxB(Vector3 a, Vector3 b) {
+        return cross(cross(a, b), b);
+    }
+    
+    public static Vector cross_AxBxA(Vector a, Vector b) {
+        if (a instanceof Vector2 && b instanceof Vector2) {
+            return cross_AxBxA((Vector2) a, (Vector2) b);
+        } else if (a instanceof Vector3 && b instanceof Vector3) {
+            return cross_AxBxA((Vector3) a, (Vector3) b);
+        }
+        throw new IllegalArgumentException("Cannot perform the cross product on a vector of this size");
+    }
+    
+    public static Vector cross_AxBxA(Vector2 a, Vector2 b) {
+        double AxB_k = (a.get(0) * b.get(1) - a.get(1) * b.get(0));
+        double AxBxA_i = -a.get(1) * AxB_k;
+        double AxBxA_j = a.get(0) * AxB_k;
+        return new Vector2(AxBxA_i, AxBxA_j);
+    }
+    
+    public static Vector cross_AxBxA(Vector3 a, Vector3 b) {
+        return cross(cross(a, b), a);
     }
     
 }

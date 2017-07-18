@@ -11,32 +11,33 @@ import java.util.Arrays;
  *
  * @author bowen
  */
-public class Vector2 implements Vector<Vector2> {
-    
+public class Vector3 implements Vector<Vector3> {
+
     private final double[] content;
     
-    public Vector2() {
-        content = new double[2];
+    public Vector3() {
+        content = new double[3];
     }
-    public Vector2(double fill) {
-        content = new double[] {fill, fill};
+    public Vector3(double fill) {
+        content = new double[] {fill, fill, fill};
     }
-    public Vector2(double a, double b) {
-        content = new double[] {a, b};
+    public Vector3(double a, double b, double c) {
+        content = new double[] {a, b, c};
     }
     
     @Override
-    public Vector2 copy() {
-        return new Vector2(content[0], content[1]);
+    public Vector3 copy() {
+        return new Vector3(content[0], content[1], content[2]);
     }
+
     @Override
-    public Vector2 shell() {
-        return new Vector2();
+    public Vector3 shell() {
+        return new Vector3();
     }
-    
+
     @Override
     public int size() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -46,44 +47,48 @@ public class Vector2 implements Vector<Vector2> {
 
     @Override
     public double[] get() {
-        return Arrays.copyOf(content, 2);
+        return Arrays.copyOf(content, 3);
     }
-    
+
     @Override
     public double get(int i) {
-        if (i >= 0 && i < 2) {
+        if (i >= 0 && i < 3) {
             return content[i];
         }
         return Double.NaN;
     }
 
     @Override
-    public Vector2 zero() {
+    public Vector3 zero() {
         content[0] = 0;
         content[1] = 0;
+        content[2] = 0;
         return this;
     }
-    
+
     @Override
-    public Vector2 fill(double d) {
+    public Vector3 fill(double d) {
         content[0] = d;
         content[1] = d;
+        content[2] = d;
         return this;
     }
-    
+
     @Override
-    public Vector2 negate() {
+    public Vector3 negate() {
         content[0] = -content[0];
         content[1] = -content[1];
+        content[2] = -content[2];
         return this;
     }
-    
+
     @Override
-    public Vector2 normalise() {
+    public Vector3 normalise() {
         double norm = norm();
         if (norm == 0) {
             content[0] = 1;
             content[1] = 1;
+            content[2] = 1;
             norm = norm();
         }
         div(norm);
@@ -91,8 +96,12 @@ public class Vector2 implements Vector<Vector2> {
     }
 
     @Override
-    public Vector2 set(double... dArr) {
-        if (dArr.length >= 2) {
+    public Vector3 set(double... dArr) {
+        if (dArr.length >= 3) {
+            content[0] = dArr[0];
+            content[1] = dArr[1];
+            content[2] = dArr[2];
+        } else if (dArr.length >= 2) {
             content[0] = dArr[0];
             content[1] = dArr[1];
         } else if (dArr.length == 1) {
@@ -100,98 +109,112 @@ public class Vector2 implements Vector<Vector2> {
         }
         return this;
     }
-    
+
     @Override
-    public Vector2 set(Vector2 vector) {
+    public Vector3 set(Vector3 vector) {
         content[0] = vector.get(0);
         content[1] = vector.get(1);
+        content[2] = vector.get(2);
         return this;
     }
 
     @Override
-    public Vector2 set(int i, double d) {
-        if (i >= 0 && i < 2) {
+    public Vector3 set(int i, double d) {
+        if (i >= 0 && i < 3) {
             content[i] = d;
         }
         return this;
     }
-    
+
     @Override
-    public Vector2 add(Vector2 vector) {
+    public Vector3 add(Vector3 vector) {
         content[0] += vector.get(0);
         content[1] += vector.get(1);
+        content[2] += vector.get(2);
         return this;
     }
+
     @Override
-    public Vector2 add(double d) {
+    public Vector3 add(double d) {
         content[0] += d;
         content[1] += d;
+        content[2] += d;
         return this;
     }
-    
+
     @Override
-    public Vector2 sub(Vector2 vector) {
+    public Vector3 sub(Vector3 vector) {
         content[0] -= vector.get(0);
         content[1] -= vector.get(1);
+        content[2] -= vector.get(2);
         return this;
     }
+
     @Override
-    public Vector2 sub(double d) {
+    public Vector3 sub(double d) {
         content[0] -= d;
         content[1] -= d;
+        content[2] -= d;
         return this;
     }
-    
+
     @Override
-    public Vector2 mulElem(Vector2 vector) {
+    public Vector3 mulElem(Vector3 vector) {
         content[0] *= vector.get(0);
         content[1] *= vector.get(1);
+        content[2] *= vector.get(2);
         return this;
     }
+
     @Override
-    public Vector2 mulElem(double d) {
+    public Vector3 mulElem(double d) {
         content[0] *= d;
         content[1] *= d;
+        content[2] *= d;
         return this;
     }
-    
+
     @Override
-    public Vector2 div(Vector2 vector) {
+    public Vector3 div(Vector3 vector) {
         content[0] /= (vector.get(0) == 0) ? 1 : vector.get(0);
         content[1] /= (vector.get(1) == 0) ? 1 : vector.get(1);
+        content[2] /= (vector.get(2) == 0) ? 1 : vector.get(2);
         return this;
     }
+
     @Override
-    public Vector2 div(double d) {
+    public Vector3 div(double d) {
         content[0] /= (d == 0) ? 1 : d;
         content[1] /= (d == 0) ? 1 : d;
+        content[2] /= (d == 0) ? 1 : d;
         return this;
     }
 
     @Override
     public double norm() { //Frobenius norm
-        return Math.sqrt((content[0] * content[0]) + (content[1] * content[1]));
+        return Math.sqrt((content[0] * content[0]) + (content[1] * content[1]) + (content[2] * content[2]));
     }
     @Override
     public double norm(double p) { //n-norm as vector norm
         if (p == 0) {
             return Double.NaN;
         } else {
-            return Math.pow(Math.pow(content[0], p) + Math.pow(content[1], p), 1/p);
+            return Math.pow(Math.pow(content[0], p) + Math.pow(content[1], p) + Math.pow(content[2], p), 1/p);
         }
         
     }
     @Override
     public double normMax() { //returns max norm, where p = inf
-        return Math.max(content[0], content[1]);
+        return Math.max(content[0], Math.max(content[1], content[2]));
     }
     @Override
     public double normSqr() { //Squared norm
-        return (content[0] * content[0]) + (content[1] * content[1]);
+        return (content[0] * content[0]) + (content[1] * content[1]) + (content[2] * content[2]);
     }
     
     @Override
     public String toString() {
-        return "[" + content[0] + ", " + content[1] + "]";
+        return "[" + content[0] + ", " + content[1] + ", " + content[2] + "]";
     }
+    
 }

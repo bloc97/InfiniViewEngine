@@ -129,7 +129,7 @@ public abstract class Equations {
         double dot = Vectors.dot(rhat, vehat);
         double cve = (1 - (3 * veSqr / ceSqr) + (veFour / ceFour));
         
-        Vector ve2Cross = Vectors.cross2D_AxBxB(rhat, vehat);
+        Vector ve2Cross = Vectors.cross_AxBxB(rhat, vehat);
         
         return ve2Cross.mulElem(gmrSqr).add(vehat.mulElem(-gmrSqr * dot * cve));
     }
