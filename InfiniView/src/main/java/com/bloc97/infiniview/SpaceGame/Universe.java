@@ -44,13 +44,13 @@ public class Universe implements World {
         
         Galaxy milkyWay = new Galaxy("Milky Way", new Vector2(0));
         //SolarSystem sol = new SolSystem(milkyWay, new Vector2(2.469e+20, 0), initialDate);
-        SolarSystem sol = new SolSystem(milkyWay, new Vector2(0, 0), initialDate);
-        //SolarSystem sol = new RandomParticles(40, 1, milkyWay, new Vector2(0, 0), initialDate);
-        double ratio = 1682.9d;
+        //SolarSystem sol = new SolSystem(milkyWay, new Vector2(0, 0), initialDate);
+        SolarSystem sol = new RandomParticles(400, 1, milkyWay, new Vector2(0, 0), initialDate);
+        double ratio = 1685d;
         //SolarSystem sol = new MercuryGRTest(milkyWay, new Vector2(0, 0), initialDate, ratio);
         sol.pushBodiesToList(allDisplayObjects);
         
-        mainSimulation = new NBodySimulation(Equations.EquationType.GR_APPROX, Optimisers.OptimiserType.BARNES_HUT, Integrators.IntegratorType.SYMPLECTIC4);
+        mainSimulation = new NBodySimulation(Equations.EquationType.NEWTON, Optimisers.OptimiserType.BARNES_HUT, Integrators.IntegratorType.SYMPLECTIC4);
         
         List<Simulation> simulationList = new LinkedList<>();
         

@@ -25,8 +25,22 @@ public abstract class Optimisers {
     }
     
     
-    
     public static Map<Spatial, Vector> optimise(OptimiserType type, Equations.EquationType etype, Set<Spatial> set) {
+        switch (type) {
+            case DIRECT:
+                return optimiseDirect(etype, set);
+            case TRUNCATED_DIRECT:
+                return optimiseDirect(etype, set);
+            case BARNES_HUT:
+                return optimiseBH(etype, set);
+            case TRUNCATED_BARNES_HUT:
+                return optimiseBH(etype, set);
+            default:
+                return optimiseDirect(etype, set);
+        }
+    }
+    
+    public static Map<Spatial, Vector> optimise(OptimiserType type, Equations.EquationType etype, Set<Spatial> set, double massRatioThreshold) {
         switch (type) {
             case DIRECT:
                 return optimiseDirect(etype, set);
