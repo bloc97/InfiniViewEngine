@@ -12,29 +12,33 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *
  * @author bowen
  */
-public class SimulationThread implements Runnable, Simulation {
+public class SimulationThread implements Runnable {
     private Thread thread;
     
-    protected List<Simulation> simulationList;
-    protected Set objects = new LinkedHashSet();
+    private ExecutorService executor = Executors.newCachedThreadPool();
     
-    protected double updatesPerSecond; //How many "Big steps" per second
-    protected int ticksPerUpdate; //How many "Small steps" per update
-    protected double secondsPerTick; //How many "Simulated seconds" per tick
+    private List<Simulation> simulationList;
+    private Set objects = new LinkedHashSet();
     
-    protected final double initialUpdatesPerSecond;
-    protected final int initialTicksPerUpdate;
-    protected final double initialSecondsPerTick;
+    private double updatesPerSecond; //How many "Big steps" per second
+    private int ticksPerUpdate; //How many "Small steps" per update
+    private double secondsPerTick; //How many "Simulated seconds" per tick
     
-    protected long ticks = 0;
-    protected Date date;
+    private final double initialUpdatesPerSecond;
+    private final int initialTicksPerUpdate;
+    private final double initialSecondsPerTick;
+    
+    private final Date date;
     
     private long totalTime = 0;
+    private long targetTime = 0;
     
     private boolean isEnabled = false;
 
@@ -51,50 +55,48 @@ public class SimulationThread implements Runnable, Simulation {
         this.secondsPerTick = this.initialSecondsPerTick;
         
         this.date = date;
-        passSettings();
+        
     }
     
-    private void passSettings() {
-        for (Simulation simulation : simulationList) {
-            simulation.setSimulatedSecondsPerTick(secondsPerTick);
-            simulation.setTicksPerUpdate(ticksPerUpdate);
-            simulation.setUpdatesPerSecond(updatesPerSecond);
-            simulation.setObjects(objects);
-        }
+    public Date getDate() {
+        return date;
     }
     
-    @Override
     public void step() {
         step(1);
     }
     
-    @Override
     public void step(int ticks) {
-        for (Simulation simulation : simulationList) {
-            simulation.step(ticks);
+        long initialTime = date.getTime();
+        
+        for (int i=0; i<ticks; i++) {
+            for (Simulation simulation : simulationList) {
+                simulation.step(secondsPerTick);
+            }
+            date.setTime(date.getTime() + (long)(1000 * secondsPerTick)); //Updates the time each tick for fluidness
         }
+        date.setTime(initialTime + (long)(1000 * ticks * secondsPerTick)); //Update the time to be most precise
     }
     
     public List<Simulation> getSimulations() {
         return new ArrayList<>(simulationList);
     }
     
-    @Override
     public boolean isEnabled() {
         return isEnabled;
     }
-    @Override
+    
     public void enable() {
         isEnabled = true;
         if (!this.thread.isAlive() && !this.thread.isInterrupted()) {
             this.thread.start();
         }
     }
-    @Override
+    
     public void disable() {
         isEnabled = false;
     }
-    @Override
+    
     public void toggle() {
         isEnabled = !isEnabled;
     }
@@ -104,6 +106,8 @@ public class SimulationThread implements Runnable, Simulation {
         
         double desiredSleepms = 1000D/updatesPerSecond; //Desired sleep time in miliseconds
         double desiredSleepns = 1000000000D/updatesPerSecond;
+        
+        targetTime = (long)(desiredSleepms*1000000);
         
         long startTime;
         long endTime;
@@ -121,8 +125,7 @@ public class SimulationThread implements Runnable, Simulation {
                 endTime = System.nanoTime();
                 
                 totalTime = endTime-startTime;
-                
-                sleepTime = (long)(desiredSleepms*1000000) - (endTime-startTime);
+                sleepTime = targetTime - totalTime;
                 
                 //realLagRatio = desiredSleepns/(endTime-startTime)*ratio;
                 //realLagRatio = 0;
@@ -148,97 +151,38 @@ public class SimulationThread implements Runnable, Simulation {
     }
     
     
-    @Override
-    public long getTicks() {
-        return ticks;
-    }
-
-
-    @Override
-    public Date getDate() {
-        return date;
-    }
-
-    @Override
-    public void setDate(Date date) {
-        this.date = new Date(date.getTime());
-        passSettings();
-    }
-
-    @Override
     public double getUpdatesPerSecond() {
         return updatesPerSecond;
     }
-
-    @Override
+    
     public void setUpdatesPerSecond(double updatesPerSecond) {
         this.updatesPerSecond = updatesPerSecond;
-        passSettings();
     }
-
-    @Override
+    
     public int getTicksPerUpdate() {
         return ticksPerUpdate;
     }
-
-    @Override
+    
     public void setTicksPerUpdate(int ticksPerUpdate) {
         this.ticksPerUpdate = ticksPerUpdate;
-        passSettings();
     }
 
-    @Override
     public double getSimulatedSecondsPerTick() {
         return secondsPerTick;
     }
-
-    @Override
+    
     public void setSimulatedSecondsPerTick(double secondsPerTick) {
         this.secondsPerTick = secondsPerTick;
-        passSettings();
     }
 
-
-    @Override
-    public Set getObjects() {
-        return new HashSet(objects);
+    public double getTicksPerSecond() {
+        return getUpdatesPerSecond() * getTicksPerUpdate();
     }
-
-    @Override
-    public int getObjectsNumber() {
-        return objects.size();
+    public double getSimulatedSecondsPerSecond() {
+        return getTicksPerSecond() * getSimulatedSecondsPerTick();
     }
-
-    @Override
-    public void clearObjects() {
-        this.objects = new LinkedHashSet();
-        passSettings();
-    }
-
-    @Override
-    public void addObject(Object object) {
-        this.objects.add(object);
-        //for (Simulation simulation : simulationList) {
-            //simulation.setObjects(objects);
-            //simulation.addObject(object);
-        //}
-    }
-
-    @Override
-    public boolean removeObject(Object object) {
-        boolean b = this.objects.remove(object);
-        //for (Simulation simulation : simulationList) {
-            //simulation.removeObject(object);
-        //}
-        return b;
-    }
-
-    @Override
-    public Set setObjects(Set set) {
-        Set oldSet = objects;
-        this.objects = set;
-        passSettings();
-        return oldSet;
+    public double getSimulatedSecondsPerUpdate() {
+        return getTicksPerUpdate() * getSimulatedSecondsPerTick();
     }
 
 }

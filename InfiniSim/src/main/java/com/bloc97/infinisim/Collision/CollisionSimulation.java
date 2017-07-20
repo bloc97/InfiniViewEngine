@@ -38,7 +38,7 @@ public class CollisionSimulation implements Simulation {
     }
 
     @Override
-    public void step() {
+    public void step(double secondsPerTick) {
         if (!isEnabled) {
             return;
         }
@@ -59,7 +59,7 @@ public class CollisionSimulation implements Simulation {
                     continue;
                 }
                 
-                if (doCollide(thisBody, otherBody, true)) { //If both particles are touching
+                if (doCollide(thisBody, otherBody, secondsPerTick, true)) { //If both particles are touching
                     
                     toRemove.add(otherBody);
                     Helpers.merge(thisBody, otherBody);
@@ -81,7 +81,7 @@ public class CollisionSimulation implements Simulation {
         ticks++;
     }
     
-    public boolean doCollide(Spatial obj, Spatial obj2, boolean fastMode) {
+    public boolean doCollide(Spatial obj, Spatial obj2, double secondsPerTick, boolean fastMode) {
         Vector relativePos = Vectors.sub(obj.position(), obj2.position());
         double currentDistanceSqr = relativePos.normSqr();
         
@@ -105,7 +105,7 @@ public class CollisionSimulation implements Simulation {
             return false;
         }
         
-        double maxDistanceTravelSqr = Vectors.mulElem(relativeVel, getSimulatedSecondsPerTick()).normSqr();
+        double maxDistanceTravelSqr = Vectors.mulElem(relativeVel, secondsPerTick).normSqr();
         
         if (maxDistanceTravelSqr + effectiveRadiusSqr < currentDistanceSqr) {
             return false;
@@ -116,7 +116,7 @@ public class CollisionSimulation implements Simulation {
         if (timeStep < 100) timeStep = 100;
         
         double time = timeStep;
-        while (time < getSimulatedSecondsPerTick()) {
+        while (time < secondsPerTick) {
             if (Vectors.mulElem(relativeVel, time).add(relativePos).normSqr() <= effectiveRadiusSqr) {
                 return true;
             }
@@ -127,48 +127,10 @@ public class CollisionSimulation implements Simulation {
     }
 
     @Override
-    public void step(int ticks) {
-        step();
-    }
-
-    @Override
-    public Date getDate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setDate(Date date) {
-        
-    }
-
-    @Override
-    public double getUpdatesPerSecond() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setUpdatesPerSecond(double ups) {
-        
-    }
-
-    @Override
-    public int getTicksPerUpdate() {
-        return 1;
-    }
-
-    @Override
-    public void setTicksPerUpdate(int ticksPerUpdate) {
-        
-    }
-
-    @Override
-    public double getSimulatedSecondsPerTick() {
-        return secondsPerTick;
-    }
-
-    @Override
-    public void setSimulatedSecondsPerTick(double simulatedSecondsPerTick) {
-        this.secondsPerTick = simulatedSecondsPerTick;
+    public void step(int ticks, double secondsPerTick) {
+        for (int i=0; i<ticks; i++) {
+            step(secondsPerTick);
+        }
     }
 
     @Override
@@ -197,36 +159,13 @@ public class CollisionSimulation implements Simulation {
     }
 
     @Override
-    public Set setObjects(Set set) {
-        Set oldSet = bodies;
+    public void setObjects(Set set) {
         this.bodies = set;
-        return oldSet;
     }
 
     @Override
     public int getObjectsNumber() {
         return bodies.size();
-    }
-
-    @Override
-    public void clearObjects() {
-        this.bodies.clear();
-    }
-
-    @Override
-    public void addObject(Object object) {
-        if (object instanceof Spatial) {
-            this.bodies.add((Spatial) object);
-        }
-    }
-
-    @Override
-    public boolean removeObject(Object object) {
-        if (object instanceof Spatial) {
-            return this.bodies.remove((Spatial) object);
-        } else {
-            return false;
-        }
     }
     
 }

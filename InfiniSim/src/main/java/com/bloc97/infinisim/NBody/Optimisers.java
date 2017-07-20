@@ -9,7 +9,6 @@ import com.bloc97.infinisim.Spatial;
 import com.bloc97.infinisim.NBody.BarnesHut.BHTree;
 import com.bloc97.infinisim.NBody.BarnesHut.Quad;
 import com.bloc97.uvector.Vector;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -71,14 +70,17 @@ public abstract class Optimisers {
     }
     
     public static Map<Spatial, Vector> optimiseBH(Equations.EquationType etype, Set<Spatial> set) {
-        Map<Spatial, Vector> map = new LinkedHashMap<>();
-        //Quad q = new Quad(0, 0, 1E15);
+        
+        
         Quad q = new Quad(0, 0, 1E15);
         BHTree tree = new BHTree(q, 0.5d);
         
         for (Spatial body : set) {
             tree.insert(body);
         }
+        
+        
+        Map<Spatial, Vector> map = new LinkedHashMap<>();
         
         for (Spatial body : set) {
             Vector acceleration = body.velocity().shell();
@@ -92,73 +94,4 @@ public abstract class Optimisers {
         return map;
     }
     
-    /*
-    
-    public static Map<Spatial, Set<Spatial>> optimise(OptimiserType type, Set<Spatial> list) {
-        switch (type) {
-            case PATCHED_CONIC:
-                return optimisePC(list);
-            case DIRECT:
-                return optimiseDirect(list);
-            case BARNES_HUT:
-                return optimiseBH(list);
-            case FAST_MULTIPOLE:
-                return optimiseFM(list);
-            default:
-                return optimiseDirect(list);
-        }
-    }
-    
-    public static Map<Spatial, Set<Spatial>> optimise(OptimiserType type, double clipMass, Set<Spatial> list) {
-        switch (type) {
-            case PATCHED_CONIC:
-                return optimisePC(list);
-            case DIRECT:
-                return optimiseDirect(list);
-            case BARNES_HUT:
-                return optimiseBH(list);
-            case FAST_MULTIPOLE:
-                return optimiseFM(list);
-            default:
-                return optimiseDirect(list);
-        }
-    }
-    
-    public static Map<Spatial, Set<Spatial>> optimisePC(Set<Spatial> list) {
-        return null;
-    }
-    
-    public static Map<Spatial, Set<Spatial>> optimiseDC(Set<Spatial> list) {
-        return null;
-    }
-    
-    public static Map<Spatial, Set<Spatial>> optimiseDirect(Set<Spatial> list) {
-        Map<Spatial, Set<Spatial>> map = new LinkedHashMap<>();
-        
-        for (Spatial body : list) {
-            map.put(body, list);
-        }
-        return map;
-    }
-    
-    public static Map<Spatial, Set<Spatial>> optimiseBH(Set<Spatial> list) {
-        Map<Spatial, Set<Spatial>> map = new LinkedHashMap<>();
-        //Quad q = new Quad(0, 0, 1E15);
-        Quad q = new Quad(0, 0, 1E15);
-        BHTree tree = new BHTree(q, 0.5d);
-        
-        for (Spatial body : list) {
-            tree.insert(body);
-        }
-        
-        for (Spatial body : list) {
-            map.put(body, tree.getBodies(body));
-        }
-        return map;
-    }
-    public static Map<Spatial, Set<Spatial>> optimiseFM(Set<Spatial> list) {
-        return null;
-    }
-    
-    */
 }

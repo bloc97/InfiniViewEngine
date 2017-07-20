@@ -14,42 +14,15 @@ import java.util.Set;
  */
 public interface Simulation {
     public long getTicks();
-    public void step();
-    public void step(int ticks);
-    
-    public Date getDate();
-    public void setDate(Date date);
-    
-    public double getUpdatesPerSecond();
-    public void setUpdatesPerSecond(double ups);
-    
-    public int getTicksPerUpdate();
-    public void setTicksPerUpdate(int ticksPerUpdate);
-    
-    public double getSimulatedSecondsPerTick();
-    public void setSimulatedSecondsPerTick(double simulatedSecondsPerTick);
-    
-    public default double getTicksPerSecond() {
-        return getUpdatesPerSecond() * getTicksPerUpdate();
-    }
-    public default double getSimulatedSecondsPerSecond() {
-        return getTicksPerSecond() * getSimulatedSecondsPerTick();
-    }
-    public default double getSimulatedSecondsPerUpdate() {
-        return getTicksPerUpdate() * getSimulatedSecondsPerTick();
-    }
+    public void step(double seconds);
+    public void step(int ticks, double secondsPerTick);
     
     public boolean isEnabled();
     public void enable();
     public void disable();
     public void toggle();
     
-    
     public Set getObjects();
-    public Set setObjects(Set set);
     public int getObjectsNumber();
-    
-    public void clearObjects();
-    public void addObject(Object object);
-    public boolean removeObject(Object object);
+    public void setObjects(Set set);
 }

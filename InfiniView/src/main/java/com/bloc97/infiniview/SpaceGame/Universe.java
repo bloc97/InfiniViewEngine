@@ -37,29 +37,29 @@ public class Universe implements World {
     
     LinkedList<DisplayObject> allDisplayObjects = new LinkedList<>();
     
-    private final Simulation mainSimulation;
+    private final SimulationThread mainSimulationThread;
     
     public Universe() {
         Date initialDate = new Date(1489636800000l);
         
         Galaxy milkyWay = new Galaxy("Milky Way", new Vector2(0));
         //SolarSystem sol = new SolSystem(milkyWay, new Vector2(2.469e+20, 0), initialDate);
-        //SolarSystem sol = new SolSystem(milkyWay, new Vector2(0, 0), initialDate);
-        SolarSystem sol = new RandomParticles(400, 1, milkyWay, new Vector2(0, 0), initialDate);
+        SolarSystem sol = new SolSystem(milkyWay, new Vector2(0, 0), initialDate);
+        //SolarSystem sol = new RandomParticles(4000, 10, milkyWay, new Vector2(0, 0), initialDate);
         double ratio = 1685d;
         //SolarSystem sol = new MercuryGRTest(milkyWay, new Vector2(0, 0), initialDate, ratio);
         sol.pushBodiesToList(allDisplayObjects);
         
-        mainSimulation = new NBodySimulation(Equations.EquationType.NEWTON, Optimisers.OptimiserType.BARNES_HUT, Integrators.IntegratorType.SYMPLECTIC4);
+        Simulation nBodySimulation = new NBodySimulation(Equations.EquationType.GR, Optimisers.OptimiserType.BARNES_HUT, Integrators.IntegratorType.SYMPLECTIC4);
+        nBodySimulation.setObjects(sol.getBodies());
         
         List<Simulation> simulationList = new LinkedList<>();
         
-        simulationList.add(mainSimulation);
+        simulationList.add(nBodySimulation);
         simulationList.add(new CollisionSimulation());
         
-        SimulationThread st = new SimulationThread(simulationList, 60, 1, 1/30d/(ratio*ratio*ratio), sol.getInitialDate());
-        st.setObjects(sol.getBodies());
-        st.enable();
+        mainSimulationThread = new SimulationThread(simulationList, 60, 1, 1/30d/(ratio*ratio*ratio), sol.getInitialDate());
+        mainSimulationThread.enable();
         
         simulationList.forEach((s) -> {s.enable();});
         
@@ -71,17 +71,19 @@ public class Universe implements World {
         
     }
 
-    public Simulation getSimulation() {
-        return mainSimulation;
+    public SimulationThread getSimulationThread() {
+        return mainSimulationThread;
     }
     
     @Override
     public List<DisplayObject> getDisplayObjects() {
         LinkedList<DisplayObject> displayObjects = new LinkedList<>();
         
-        for (Object o : mainSimulation.getObjects()) {
-            if (o instanceof DisplayObject) {
-                displayObjects.add((DisplayObject) o);
+        for (Simulation simulation : mainSimulationThread.getSimulations()) {
+            for (Object o : simulation.getObjects()) {
+                if (o instanceof DisplayObject) {
+                    displayObjects.add((DisplayObject) o);
+                }
             }
         }
         

@@ -131,7 +131,13 @@ public class Camera {
         } else {
             return true;
         }
-    }/*
+    }
+    
+    public Camera copy() {
+        return new Camera(currentScene, xPos, yPos, scale, screenOffsetx*2, screenOffsety*2);
+    }
+    
+    /*
     private boolean enoughPrecisionToSee() {
         if (xPos + (1*(0.5/scale)) == xPos || xPos - (1*(0.5/scale)) == xPos) {
             return false;

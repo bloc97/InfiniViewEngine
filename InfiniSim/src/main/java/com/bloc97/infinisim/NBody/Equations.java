@@ -22,34 +22,15 @@ public abstract class Equations {
     public static final double CSQR = 89875517873681764d;
     
     public enum EquationType {
-        NEWTON, POST_NEWTON, GR_APPROX, GR_DERIV
+        NEWTON, GR
     }
-    /*
-    public static Map<Spatial, Vector> equate(EquationType type, Map<Spatial, Set<Spatial>> map) {
-        switch (type) {
-            case NEWTON:
-                return equateNewton(map);
-            case ADAPTED_NEWTON:
-                return equateAdaptedNewton(map);
-            case POST_NEWTON:
-                return equatePostNewton(map);
-            case GR_APPROX:
-                return equateGrApprox(map);
-            default:
-                return equateNewton(map);
-        }
-    }*/
     
     public static Vector equate(EquationType type, Spatial here, Spatial other, Set<Spatial> set) {
         if (!here.equals(other)) {
             switch (type) {
                 case NEWTON:
                     return equateNewton(here, other);
-                case POST_NEWTON:
-                    return equatePostNewton(here, other);
-                case GR_APPROX:
-                    return equateGrApprox(here, other);
-                case GR_DERIV:
+                case GR:
                     return equateGrDeriv(here, other, set);
                 default:
                     return equateNewton(here, other);
@@ -65,28 +46,6 @@ public abstract class Equations {
             return Vectors.mulElem(relativePosition.div(Math.sqrt(distanceSqr)), other.getMass() * G / distanceSqr);
     }
     
-    private static Vector equateAdaptedNewton(Spatial here, Spatial other) {
-        Vector relativePosition = Vectors.sub(here.position(), other.position());
-        Vector relativeVelocity = Vectors.sub(here.velocity(), other.velocity());
-        final double distance = relativePosition.norm();
-        final double distanceCubed = distance * distance * distance;
-        final double relativeSpeedSqr = relativeVelocity.normSqr();
-        final double gm = G * other.getMass();
-
-        double e1 = -gm / (distanceCubed * CSQR);
-        Vector e2 = Vectors.mulElem(relativePosition, 4 * gm / distance - relativeSpeedSqr);
-        Vector e3 = relativeVelocity.mulElem(Vectors.dot(relativeVelocity, relativePosition) * 4);
-
-        return e2.add(e3).mulElem(e1).add(equateNewton(here, other));
-    }
-    
-    private static Vector equatePostNewton(Spatial here, Spatial other) {
-        Vector r = Vectors.sub(here.position(), other.position()); //Vector from this other pointing to this
-        double rSqr = r.normSqr();
-        
-        double gmrSqr = G * other.getMass() / rSqr;
-    }
-    
     private static Vector equateGrDeriv(Spatial here, Spatial other, Set<Spatial> set) {
         
         Vector ve = here.velocity().shell();
@@ -95,7 +54,7 @@ public abstract class Equations {
             if (here.equals(i)) {
                 continue;
             }
-            double ri = Vectors.sub(here.position(), other.position()).norm(); //Vector from this other pointing to this
+            double ri = Vectors.sub(here.position(), other.position()).norm(); //Vector from other pointing to this
             Vector vi = Vectors.sub(here.velocity(), i.velocity());
             double miri = i.getMass() / ri;
             mr += miri;
@@ -108,7 +67,7 @@ public abstract class Equations {
         double ceSqr = CSQR * (1 - (2 * G * mr / CSQR));
         
         
-        Vector r = Vectors.sub(here.position(), other.position()); //Vector from this other pointing to this
+        Vector r = Vectors.sub(here.position(), other.position());
         double rSqr = r.normSqr();
         
         Vector rhat = r.copy().normalise();

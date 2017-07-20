@@ -85,11 +85,12 @@ public class BHTree {
         // external node
         else {
             // subdivide the region further by creating four children
+            /*
             NW = new BHTree(quad.NW(), theta);
             NE = new BHTree(quad.NE(), theta);
             SE = new BHTree(quad.SE(), theta);
             SW = new BHTree(quad.SW(), theta);
-            
+            */
             // recursively insert both this body and Body b into the appropriate quadrant
             putBody(this.body);
             putBody(b);
@@ -113,14 +114,27 @@ public class BHTree {
      * Inserts a body into the appropriate quadrant.
      */ 
     private void putBody(Spatial b) {
-        if (quad.NW().contains(b.position().get(0), b.position().get(1)))
+        if (quad.NW().contains(b.position().get(0), b.position().get(1))) {
+            if (NW == null) {
+                NW = new BHTree(quad.NW(), theta);
+            }
             NW.insert(b);
-        else if (quad.NE().contains(b.position().get(0), b.position().get(1)))
+        } else if (quad.NE().contains(b.position().get(0), b.position().get(1))) {
+            if (NE == null) {
+                NE = new BHTree(quad.NE(), theta);
+            }
             NE.insert(b);
-        else if (quad.SE().contains(b.position().get(0), b.position().get(1)))
+        } else if (quad.SE().contains(b.position().get(0), b.position().get(1))) {
+            if (SE == null) {
+                SE = new BHTree(quad.SE(), theta);
+            }
             SE.insert(b);
-        else if (quad.SW().contains(b.position().get(0), b.position().get(1)))
+        } else if (quad.SW().contains(b.position().get(0), b.position().get(1))) {
+            if (SW == null) {
+                SW = new BHTree(quad.SW(), theta);
+            }
             SW.insert(b);
+        }
     }
 
 
@@ -139,7 +153,7 @@ public class BHTree {
      */
     public Set<Spatial> getBodies(Spatial b) {
         Set<Spatial> list = new LinkedHashSet<>();
-        recurseAddBodies(b, list);
+        recurseGetBodies(b, list);
         return list;
     }
     
@@ -150,40 +164,11 @@ public class BHTree {
      */
     public List<Spatial> getBodiesAsList(Spatial b) {
         List<Spatial> list = new LinkedList<>();
-        recurseAddBodies(b, list);
+        recurseGetBodies(b, list);
         return list;
     }
     
-    /*
-    private void recurseAddBodies(Spatial b, Collection<Spatial> list) {
-        
-        if (body == null || b.equals(body)) {
-            return;
-        }
-        
-        if (isExternal()) {
-            list.add(body);
-        } else {
-            
-            // width of region represented by internal node
-            double quadWidth = quad.length();
-            
-            // distance between Body b and this node's center-of-mass
-            double distance = Vectors.sub(body.position(), b.position()).norm(); //Using the distance squared to bypass the need of square roots
-            
-            // compare ratio (s / d) to threshold value Theta
-            if ((quadWidth / distance) < theta) {
-                list.add(body);
-            } else { // recurse on each of current node's children
-                NW.recurseAddBodies(b, list);
-                NE.recurseAddBodies(b, list);
-                SW.recurseAddBodies(b, list);
-                SE.recurseAddBodies(b, list);
-            }
-        }
-        
-    }*/
-    private void recurseAddBodies(Spatial b, Collection<Spatial> list) {
+    private void recurseGetBodies(Spatial b, Collection<Spatial> list) {
         
         if (body == null || b.equals(body)) {
             return;
@@ -204,10 +189,18 @@ public class BHTree {
             if ((quadWidthSqr / distanceSqr) < thetaSqr) {
                 list.add(body);
             } else { // recurse on each of current node's children
-                NW.recurseAddBodies(b, list);
-                NE.recurseAddBodies(b, list);
-                SW.recurseAddBodies(b, list);
-                SE.recurseAddBodies(b, list);
+                if (NW != null) {
+                    NW.recurseGetBodies(b, list);
+                }
+                if (NE != null) {
+                    NE.recurseGetBodies(b, list);
+                }
+                if (SW != null) {
+                    SW.recurseGetBodies(b, list);
+                }
+                if (SE != null) {
+                    SE.recurseGetBodies(b, list);
+                }
             }
         }
         
