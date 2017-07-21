@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -156,6 +157,15 @@ public class CollisionSimulation implements Simulation {
     @Override
     public Set getObjects() {
         return bodies;
+    }
+
+    @Override
+    public List getObjectsSnapshot() {
+        List<Spatial> list = new LinkedList<>();
+        for (Spatial body : bodies) {
+            list.add(body);
+        }
+        return list;
     }
 
     @Override

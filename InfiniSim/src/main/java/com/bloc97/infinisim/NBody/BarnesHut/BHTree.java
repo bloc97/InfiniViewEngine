@@ -68,7 +68,7 @@ public class BHTree {
 
         // if this node does not contain a body, put the new body b here
         if (body == null) {
-            body = Spatial.createCopy(b);
+            body = Spatial.createSpatialCopy(b);
             return;
         }
   

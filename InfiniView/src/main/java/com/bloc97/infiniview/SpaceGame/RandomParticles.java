@@ -43,9 +43,9 @@ public class RandomParticles extends SolarSystem {
         
         //double density = 5500;
         double density = 5500/1E6;
-        double massScaleKg = 1E25;
         
         for (int i=0; i<n; i++) {
+            double massScaleKg = 1E25 * Math.random();
             bodies.add(generateVisibleObject("R" + i, (Math.random()-0.5d) * scale, (Math.random()-0.5d) * scale, 0, 0, massScaleKg, density));
         }
         

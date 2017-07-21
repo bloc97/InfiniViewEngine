@@ -10,6 +10,7 @@ import com.bloc97.infinisim.NBody.BarnesHut.BHTree;
 import com.bloc97.infinisim.NBody.BarnesHut.Quad;
 import com.bloc97.uvector.Vector;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ import java.util.Set;
 public abstract class Optimisers {
     
     public enum OptimiserType {
-        DIRECT, TRUNCATED_DIRECT, BARNES_HUT, TRUNCATED_BARNES_HUT
+        DIRECT, BARNES_HUT
     }
     
     
@@ -28,26 +29,7 @@ public abstract class Optimisers {
         switch (type) {
             case DIRECT:
                 return optimiseDirect(etype, set);
-            case TRUNCATED_DIRECT:
-                return optimiseDirect(etype, set);
             case BARNES_HUT:
-                return optimiseBH(etype, set);
-            case TRUNCATED_BARNES_HUT:
-                return optimiseBH(etype, set);
-            default:
-                return optimiseDirect(etype, set);
-        }
-    }
-    
-    public static Map<Spatial, Vector> optimise(OptimiserType type, Equations.EquationType etype, Set<Spatial> set, double massRatioThreshold) {
-        switch (type) {
-            case DIRECT:
-                return optimiseDirect(etype, set);
-            case TRUNCATED_DIRECT:
-                return optimiseDirect(etype, set);
-            case BARNES_HUT:
-                return optimiseBH(etype, set);
-            case TRUNCATED_BARNES_HUT:
                 return optimiseBH(etype, set);
             default:
                 return optimiseDirect(etype, set);
@@ -68,10 +50,7 @@ public abstract class Optimisers {
         
         return map;
     }
-    
     public static Map<Spatial, Vector> optimiseBH(Equations.EquationType etype, Set<Spatial> set) {
-        
-        
         Quad q = new Quad(0, 0, 1E15);
         BHTree tree = new BHTree(q, 0.5d);
         
@@ -79,15 +58,14 @@ public abstract class Optimisers {
             tree.insert(body);
         }
         
-        
         Map<Spatial, Vector> map = new LinkedHashMap<>();
         
         for (Spatial body : set) {
             Vector acceleration = body.velocity().shell();
-            Set<Spatial> otherList = tree.getBodies(body);
+            List<Spatial> otherList = tree.getBodiesAsList(body);
             
             for (Spatial other : otherList) {
-                acceleration.add(Equations.equate(etype, body, other, set));
+                acceleration.add(Equations.equate(etype, body, other, otherList));
             }
             map.put(body, acceleration);
         }

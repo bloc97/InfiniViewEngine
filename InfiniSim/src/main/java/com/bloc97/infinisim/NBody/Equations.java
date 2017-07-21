@@ -8,9 +8,7 @@ package com.bloc97.infinisim.NBody;
 import com.bloc97.infinisim.Spatial;
 import com.bloc97.uvector.Vector;
 import com.bloc97.uvector.Vectors;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.Collection;
 
 /**
  *
@@ -25,13 +23,13 @@ public abstract class Equations {
         NEWTON, GR
     }
     
-    public static Vector equate(EquationType type, Spatial here, Spatial other, Set<Spatial> set) {
+    public static Vector equate(EquationType type, Spatial here, Spatial other, Collection<Spatial> otherList) {
         if (!here.equals(other)) {
             switch (type) {
                 case NEWTON:
                     return equateNewton(here, other);
                 case GR:
-                    return equateGrDeriv(here, other, set);
+                    return equateGrDeriv(here, other, otherList);
                 default:
                     return equateNewton(here, other);
             }
@@ -46,11 +44,11 @@ public abstract class Equations {
             return Vectors.mulElem(relativePosition.div(Math.sqrt(distanceSqr)), other.getMass() * G / distanceSqr);
     }
     
-    private static Vector equateGrDeriv(Spatial here, Spatial other, Set<Spatial> set) {
+    private static Vector equateGrDeriv(Spatial here, Spatial other, Collection<Spatial> otherList) {
         
         Vector ve = here.velocity().shell();
         double mr = 0;
-        for (Spatial i : set) {
+        for (Spatial i : otherList) {
             if (here.equals(i)) {
                 continue;
             }

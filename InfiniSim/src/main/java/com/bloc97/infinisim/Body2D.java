@@ -12,7 +12,7 @@ import com.bloc97.uvector.Vector2;
  *
  * @author bowen
  */
-public class Body2D implements Spatial<Vector2>, Angular2D {
+public abstract class Body2D implements Spatial<Vector2>, Angular2D {
     
     private final Vector2 position;
     private final Vector2 velocity;
@@ -99,6 +99,7 @@ public class Body2D implements Spatial<Vector2>, Angular2D {
         this.angMass = angMass;
     }
     
-    
+    @Override
+    public abstract Body2D clone();
     
 }

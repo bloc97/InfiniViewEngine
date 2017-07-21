@@ -39,7 +39,7 @@ public interface Vector<T extends Vector<T>> {
         if (i >= 0 && i < size()) {
             return content()[i];
         }
-        return Double.NaN;
+        return 0;
     }
     
     default T zero() {

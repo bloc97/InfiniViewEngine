@@ -54,7 +54,7 @@ public class Vector2 implements Vector<Vector2> {
         if (i >= 0 && i < 2) {
             return content[i];
         }
-        return Double.NaN;
+        return 0;
     }
 
     @Override

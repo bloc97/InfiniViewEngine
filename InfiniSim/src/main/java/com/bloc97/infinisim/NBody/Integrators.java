@@ -5,12 +5,9 @@
  */
 package com.bloc97.infinisim.NBody;
 
-import com.bloc97.infinisim.NBody.BarnesHut.BHTree;
-import com.bloc97.infinisim.NBody.BarnesHut.Quad;
 import com.bloc97.infinisim.Spatial;
 import com.bloc97.uvector.Vector;
 import com.bloc97.uvector.Vectors;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
