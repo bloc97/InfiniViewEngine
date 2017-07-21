@@ -43,6 +43,32 @@ public abstract class Helpers {
         double radius = (Math.pow(r1 + r2, 1/3d)); //3D radius
         a.setRadius(radius);
         
+    }
+    
+    public static void merge(double[] position, double[] velocity, double[] mass, double[] radius, boolean[] isActive, int a, int b) {
+        
+        int pa = a * 3;
+        int pb = b * 3;
+        
+        double m = mass[a] + mass[b];
+        
+        position[pa] = (position[pa] * mass[a] + position[pb] * mass[b]) / m;
+        position[pa + 1] = (position[pa + 1] * mass[a] + position[pb + 1] * mass[b]) / m;
+        position[pa + 2] = (position[pa + 2] * mass[a] + position[pb + 2] * mass[b]) / m;
+        
+        velocity[pa] = (velocity[pa] * mass[a] + velocity[pb] * mass[b]) / m;
+        velocity[pa + 1] = (velocity[pa + 1] * mass[a] + velocity[pb + 1] * mass[b]) / m;
+        velocity[pa + 2] = (velocity[pa + 2] * mass[a] + velocity[pb + 2] * mass[b]) / m;
+        
+        mass[a] = m;
+        
+        double r1 = radius[a] * radius[a] * radius[a];
+        double r2 = radius[b] * radius[b] * radius[b];
+        double r = (Math.pow(r1 + r2, 1/3d)); //3D radius
+        
+        radius[a] = r;
+        
+        isActive[b] = false;
         
     }
     

@@ -22,7 +22,7 @@ import java.util.Set;
  *
  * @author bowen
  */
-public class CollisionSimulation implements Simulation {
+public class CollisionSimulation {
     
     private static final double THRESHOLD = 1d;
     
@@ -33,12 +33,6 @@ public class CollisionSimulation implements Simulation {
     
     private long ticks = 0;
     
-    @Override
-    public long getTicks() {
-        return ticks;
-    }
-
-    @Override
     public void step(double secondsPerTick) {
         if (!isEnabled) {
             return;
@@ -126,56 +120,4 @@ public class CollisionSimulation implements Simulation {
         return false;
         
     }
-
-    @Override
-    public void step(int ticks, double secondsPerTick) {
-        for (int i=0; i<ticks; i++) {
-            step(secondsPerTick);
-        }
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-    
-    @Override
-    public void enable() {
-        isEnabled = true;
-    }
-
-    @Override
-    public void disable() {
-        isEnabled = false;
-    }
-
-    @Override
-    public void toggle() {
-        isEnabled = !isEnabled;
-    }
-
-    @Override
-    public Set getObjects() {
-        return bodies;
-    }
-
-    @Override
-    public List getObjectsSnapshot() {
-        List<Spatial> list = new LinkedList<>();
-        for (Spatial body : bodies) {
-            list.add(body);
-        }
-        return list;
-    }
-
-    @Override
-    public void setObjects(Set set) {
-        this.bodies = set;
-    }
-
-    @Override
-    public int getObjectsNumber() {
-        return bodies.size();
-    }
-    
 }

@@ -77,7 +77,7 @@ public class BufferedSimulationThread implements Runnable {
     public void step(int ticks) {
         
         for (int i=0; i<ticks; i++) {
-            simulation.step(secondsPerTick);
+            simulation.update();
         }
         buffer.offer(simulation.getObjectsSnapshot());
     }
