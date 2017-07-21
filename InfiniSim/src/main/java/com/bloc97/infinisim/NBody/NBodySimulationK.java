@@ -21,13 +21,22 @@ import java.util.Set;
  *
  * @author bowen
  */
-public class NBodySimulationK implements Simulation {
+public class NBodySimulationK implements Runnable {
     
     
     private final Equations.EquationType equationType;
     private final Optimisers.OptimiserType optimiserType;
-    private final Integrators.IntegratorType integratorType;
     
+    //Runnable
+    private double targetUpdatesPerSecond; //How many "Big steps" per second
+    private double realUpdatesPerSecond = 0; //How many "Big steps" per were executed last time
+    
+    private long targetTime; //Target frame time
+    private long realTime; //Real time that took the thread to run
+    
+    private volatile boolean isRunning = true;
+    
+    //Simulation
     private volatile int ticksPerUpdate; //How many "Small steps" per update
     private volatile double secondsPerTick; //How many "Simulated seconds" per tick
     
@@ -52,10 +61,14 @@ public class NBodySimulationK implements Simulation {
     
     private final NBodyKernel kernel;
     
-    public NBodySimulationK(Equations.EquationType equationType, Optimisers.OptimiserType optimiserType, Integrators.IntegratorType integratorType, Collection<Spatial> list, int initialSize, double secondsPerTick, int ticksPerUpdate, Date date, boolean useOpenCL) {
+    
+    public NBodySimulationK(Equations.EquationType equationType, Optimisers.OptimiserType optimiserType, Collection<Spatial> list, int initialSize, double updatesPerSecond, double secondsPerTick, int ticksPerUpdate, Date date, boolean useOpenCL) {
         this.equationType = equationType;
         this.optimiserType = optimiserType;
-        this.integratorType = integratorType;
+        
+        this.targetUpdatesPerSecond = updatesPerSecond;
+        targetTime = (long)(1000000000D/targetUpdatesPerSecond);
+        realTime = targetTime;
         
         this.initialTicksPerUpdate = ticksPerUpdate;
         this.initialSecondsPerTick = secondsPerTick;
@@ -108,7 +121,35 @@ public class NBodySimulationK implements Simulation {
         currentSize = i;
     }
     
-    @Override
+    public boolean addObject(double x, double y, double z, double vx, double vy, double vz, double mass, double radius) {
+        for (int i=0; i<this.mass.length; i++) {
+            if (!isActive[i]) {
+                position[i * 3] = x;
+                position[i * 3 + 1] = y;
+                position[i * 3 + 2] = z;
+                velocity[i * 3] = vx;
+                velocity[i * 3 + 1] = vy;
+                velocity[i * 3 + 2] = vz;
+                this.mass[i] = mass;
+                this.radius[i] = radius;
+                collided[i] = i;
+                isActive[i] = true;
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean removeObject(int i) {
+        if (i >= 0 && i < isActive.length) {
+            if (!isActive[i]) {
+                isActive[i] = false;
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public void update() {
         if (!isEnabled || isActive.length <= 0) {
             return;
@@ -129,81 +170,110 @@ public class NBodySimulationK implements Simulation {
         date.setTime(date.getTime() + (long)(t * n * 1000));
     }
 
-    @Override
     public boolean isEnabled() {
         return isEnabled;
     }
-    @Override
+    
     public void enable() {
         isEnabled = true;
     }
-    @Override
+    
     public void disable() {
         isEnabled = false;
     }
-    @Override
+    
     public void toggle() {
         isEnabled = !isEnabled;
     }
     
-    @Override
-    public Set getObjects() {
-        return bodies;
-    }
-
-    @Override
-    public List getObjectsSnapshot() {
-        List<Spatial> list = new LinkedList<>();
-        for (Spatial body : bodies) {
-            list.add(body);
-        }
-        return list;
-    }
     
-    @Override
-    public int getObjectsNumber() {
-        return bodies.size();
-    }
-
-    @Override
-    public long getTicks() {
-        return ticks;
-    }
-
-    @Override
-    public void setObjects(Set set) {
-        bodies = set;
-    }
-
-    @Override
-    public Date getDate() {
-        return date;
-    }
-    
-    @Override
     public int getTicksPerUpdate() {
         return ticksPerUpdate;
     }
-
-    @Override
     public void setTicksPerUpdate(int ticksPerUpdate) {
         this.ticksPerUpdate = ticksPerUpdate;
     }
-
-    @Override
     public double getSimulatedSecondsPerTick() {
         return secondsPerTick;
     }
-
-    @Override
     public void setSimulatedSecondsPerTick(double secondsPerTick) {
         this.secondsPerTick = secondsPerTick;
     }
-
-    @Override
     public void resetInitialSettings() {
         this.ticksPerUpdate = initialTicksPerUpdate;
         this.secondsPerTick = initialSecondsPerTick;
     }
+    
+    
+    public void destroy() {
+        isRunning = false;
+    }
+    
+    @Override
+    public void run() {
+        
+        long startTime;
+        long endTime;
+        long sleepTime;
+        
+        
+        while (isRunning) {
+
+            startTime = System.nanoTime();
+            update();
+            endTime = System.nanoTime();
+
+            realTime = endTime-startTime;
+            targetTime = (long)(1000000000D/targetUpdatesPerSecond);
+            
+            sleepTime = targetTime - realTime;
+
+            if (sleepTime < 0) {
+                //System.out.println("Simulation Thread Overload! Late by: " + -sleepTime/1000000 + " ms.");
+            } else {
+
+                long sleepms = Math.floorDiv(sleepTime, 1000000);
+                int sleepns = (int)Math.floorMod(sleepTime, 1000000);
+                try {
+                    Thread.sleep(sleepms, sleepns);
+                } catch (InterruptedException ex) {
+                    System.out.println("Thread Error");
+                }
+            }
+        }
+    }
+    
+    
+    public double getTargetUPS() {
+        return targetUpdatesPerSecond;
+    }
+    
+    public double getRealUPS() {
+        if (realTime < targetTime) {
+            return targetUpdatesPerSecond;
+        }
+        return 1000000000D/realTime;
+    }
+    
+    public long getTargetTimeInMs() {
+        return targetTime / 1000000;
+    }
+    
+    public long getRealTimeInMs() {
+        return realTime / 1000000;
+    }
+    
+    public void setTargetUPS(double updatesPerSecond) {
+        this.targetUpdatesPerSecond = updatesPerSecond;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 }
