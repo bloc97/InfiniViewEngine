@@ -5,50 +5,39 @@
  */
 package com.bloc97.infiniview.SpaceGame;
 
-import com.aparapi.Kernel;
-import com.bloc97.infinisim.NBody.Equations;
-import com.bloc97.infinisim.NBody.Integrators;
-import com.bloc97.infinisim.NBody.NBodySimulation;
-import com.bloc97.infinisim.NBody.Optimisers;
-import com.bloc97.infinisim.OpenCL.IntegratorOpenCLKernel;
-import com.bloc97.infinisim.Simulation;
-import com.bloc97.infinisim.RealTimeSimulation;
-import com.bloc97.infiniview.World2D.Objects.DisplayObject;
-import com.bloc97.infiniview.World2D.World;
+import com.bloc97.infinisim.NBody.NBodyWorld;
 import com.bloc97.uvector.Vector2;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  *
  * @author bowen
  */
-public class Universe implements World {
+public class Universe {
     
-    LinkedList<DisplayObject> allDisplayObjects = new LinkedList<>();
+    //LinkedList<DisplayObject> allDisplayObjects = new LinkedList<>();
     
-    private final RealTimeSimulation mainRealTimeSimulation;
+    private NBodyWorld world;
     
     public Universe() {
         Date initialDate = new Date(1489636800000l);
         
         Galaxy milkyWay = new Galaxy("Milky Way", new Vector2(0));
         //SolarSystem sol = new SolSystem(milkyWay, new Vector2(2.469e+20, 0), initialDate);
-        //SolarSystem sol = new SolSystem(milkyWay, new Vector2(0, 0), initialDate);
-        SolarSystem sol = new RandomParticles(5000, 10, milkyWay, new Vector2(0, 0), initialDate);
+        SolarSystem sol = new SolSystem(milkyWay, new Vector2(0, 0), initialDate);
+        //SolarSystem sol = new RandomParticles(2000, 100, milkyWay, new Vector2(0, 0), initialDate);
         double ratio = 1685d;
         //SolarSystem sol = new MercuryGRTest(milkyWay, new Vector2(0, 0), initialDate, ratio);
-        sol.pushBodiesToList(allDisplayObjects);
+        //sol.pushBodiesToList(allDisplayObjects);
+        
+        world = new NBodyWorld(sol.getBodies(), 0, initialDate);
         
         //IntegratorOpenCLKernel.INSTANCE.setExecutionModeWithoutFallback(Kernel.EXECUTION_MODE.CPU);
         
         //Simulation nBodySimulation = new NBodySimulation(Equations.EquationType.GR, Optimisers.OptimiserType.BARNES_HUT, Integrators.IntegratorType.SYMPLECTIC4, 1/30d/(ratio*ratio*ratio), 1, sol.getInitialDate());
-        Simulation nBodySimulation = new NBodySimulation(Equations.EquationType.GR, Optimisers.OptimiserType.BARNES_HUT, Integrators.IntegratorType.SYMPLECTIC, 1/30d/(ratio*ratio*ratio), 1, sol.getInitialDate(), true);
-        nBodySimulation.setObjects(sol.getBodies());
+        //mainNBodySimulation = new NBodySimulationK(Equations.EquationType.GR, Optimisers.OptimiserType.BARNES_HUT, sol.getBodies(), 100, 30d, 1/30d/(ratio*ratio*ratio), 1, sol.getInitialDate(), true);
         
-        mainRealTimeSimulation = new RealTimeSimulation(nBodySimulation, 30);
+        //mainRealTimeSimulation = new RealTimeSimulation(nBodySimulation, 30);
         //sol4.pushToArrayList(allDisplayObjects);
         
         
@@ -56,29 +45,13 @@ public class Universe implements World {
         //stress2.pushToArrayList(allDisplayObjects);
         
     }
+    
 
-    public RealTimeSimulation getRealTimeSimulation() {
-        return mainRealTimeSimulation;
+    public NBodyWorld getWorld() {
+        return world;
     }
     
-    @Override
-    public List<DisplayObject> getDisplayObjects() {
-        LinkedList<DisplayObject> displayObjects = new LinkedList<>();
-        
-        //for (Simulation simulation : mainSimulationThread.getSimulations()) {
-            
-            Simulation simulation = mainRealTimeSimulation.getSimulation();
-            
-            for (Object o : simulation.getObjects()) {
-                if (o instanceof DisplayObject) {
-                    displayObjects.add((DisplayObject) o);
-                }
-            }
-        //}
-        
-        return displayObjects;
-    }
-    
+    /*
     public void sortByX() {
         allDisplayObjects.sort(new Comparator<DisplayObject>() {
             @Override
@@ -92,7 +65,7 @@ public class Universe implements World {
                 }
             }
         });
-    }
+    }*/
     
     
     

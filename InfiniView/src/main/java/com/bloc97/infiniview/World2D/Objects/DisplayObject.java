@@ -39,7 +39,7 @@ public interface DisplayObject {
     }
 
     public static double getSy(double y, double offsetY, Camera camera) {
-        return ((y + (offsetY + camera.getyPos())) * -camera.getScale() + camera.getyScrOffset());
+        return ((y + (offsetY + camera.getyPos())) * camera.getScale() + camera.getyScrOffset());
     }
     
     public static double getSr(double radius, Camera camera) {

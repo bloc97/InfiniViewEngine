@@ -209,10 +209,6 @@ public class IntegratorOpenCLKernel extends Kernel {
         }
         this.execute(kernelLength);
     }
-    
-    private int get2() {
-        return 2;
-    }
 
     @Override
     public void run() {

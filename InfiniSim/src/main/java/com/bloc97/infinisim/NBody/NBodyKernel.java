@@ -7,6 +7,7 @@ package com.bloc97.infinisim.NBody;
 
 import com.aparapi.Kernel;
 import static com.bloc97.infinisim.NBody.Equations.G;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -15,10 +16,15 @@ import java.util.concurrent.TimeUnit;
  */
 public class NBodyKernel extends Kernel {
     
+    double[] s4A = new double[] {0.1288461583653841854D, 0.4415830236164665242D, -0.0857820194129736460D, 0.5153528374311229364D, 1};
+    double[] s4B = new double[] {0.3340036032863214255D, 0.7562300005156682911D, -0.2248198030794208058D, 0.1344961992774310892D, 1};
+    
     int itype, otype, etype;
     
     int kernelLength;
     int step;
+    
+    int integratorStep = 4;
     
     int length;
 
@@ -36,17 +42,33 @@ public class NBodyKernel extends Kernel {
     }
 
     public void integrate() {
-        setStep(0);
-        execute();
-        setStep(1);
-        execute();
-        setStep(2);
-        execute();
+        setStep(1).setIntegratorStep(0).execute();
+        setStep(0).execute();
+        setStep(2).execute();
+        
+        setStep(1).setIntegratorStep(1).execute();
+        setStep(0).execute();
+        setStep(2).execute();
+        
+        setStep(1).setIntegratorStep(2).execute();
+        setStep(0).execute();
+        setStep(2).execute();
+        
+        setStep(1).setIntegratorStep(3).execute();
+        setStep(0).execute();
+        setStep(2).execute();
+        
+        setStep(3).execute();
     }
     
     
     public void setTime(double dt) {
         this.dt = dt;
+    }
+    
+    private NBodyKernel setIntegratorStep(int step) {
+        this.integratorStep = step;
+        return this;
     }
     
     public void setArrays(double[] position, double[] velocity, double[] mass, double[] radius, int[] collided, boolean[] isActive) {
@@ -60,7 +82,7 @@ public class NBodyKernel extends Kernel {
         this.collided = collided;
         this.isActive = isActive;
         
-        put(position).put(velocity).put(acceleration).put(mass).put(radius).put(collided).put(isActive);
+        put(this.position).put(this.velocity).put(this.acceleration).put(this.mass).put(this.radius).put(this.collided).put(this.isActive).put(s4A).put(s4B);
     }
 
     public void refreshArrays() {
@@ -106,7 +128,7 @@ public class NBodyKernel extends Kernel {
         this.etype = etype.ordinal();
     }
 
-    private void setStep(int step) {
+    private NBodyKernel setStep(int step) {
         this.step = step;
         switch (step) {
             case 0:
@@ -116,10 +138,13 @@ public class NBodyKernel extends Kernel {
                 kernelLength = length * 3;
                 break;
             case 2:
+                kernelLength = length * 3;
+                break;
+            case 3:
                 kernelLength = length;
                 break;
         }
-
+        return this;
         /*
         0 - Compute Acceleration
         1 - Integrate
@@ -155,9 +180,12 @@ public class NBodyKernel extends Kernel {
         
     }
 
-    private void integrateStep(int i) {
-        position[i] = position[i] + (velocity[i] * dt);
-        velocity[i] = velocity[i] + (acceleration[i] * dt);
+    private void integratePositionStep(int i) {
+        position[i] = position[i] + (velocity[i] * dt * s4A[integratorStep]);
+
+    }
+    private void integrateVelocityStep(int i) {
+        velocity[i] = velocity[i] + (acceleration[i] * dt * s4B[integratorStep]);
 
     }
     
@@ -198,15 +226,26 @@ public class NBodyKernel extends Kernel {
     @Override
     public void run() {
         int i = getGlobalId();
-        if (isActive[i]) {
-            if (step == 0 && step != -1) {
+        
+        if (step == 0 && step != -1) {
+            if (isActive[i]) {
                 computeAccelerationStep(i);
-            } else if (step == 1) {
-                integrateStep(i);
-            } else {
+            }
+        } else if (step == 1) {
+            if (isActive[i/3]) {
+                integratePositionStep(i);
+            }
+        } else if (step == 2) {
+            if (isActive[i/3]) {
+                integrateVelocityStep(i);
+            }
+        }
+        if (step == 3) {
+            if (isActive[i]) {
                 checkCollisionStep(i);
             }
         }
+        
     }
 
     

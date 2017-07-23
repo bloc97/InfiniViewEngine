@@ -15,16 +15,19 @@ public class Camera {
     private Scene currentScene;
     private double xPos;
     private double yPos;
+    private double zPos;
     private double scale;
+    
+    private double rotX, rotY, rotZ;
     
     private int screenOffsetx;
     private int screenOffsety;
 
     Camera(Scene currentScene, int xsize, int ysize) {
-        this(currentScene, xsize/2, ysize/2, 1E-10, xsize, ysize);
+        this(currentScene, xsize/2, ysize/2, 0, 1E-10, xsize, ysize);
     }
     
-    Camera(Scene currenScene, double x, double y, double s, int xsize, int ysize) {
+    Camera(Scene currenScene, double x, double y, double z, double s, int xsize, int ysize) {
         this.currentScene = currenScene;
         xPos = x;
         yPos = y;
@@ -33,6 +36,7 @@ public class Camera {
         screenOffsety = ysize/2;
         //System.out.println(screenOffsetx);
     }
+    
     
     public Scene scene() {
         return currentScene;
@@ -56,6 +60,13 @@ public class Camera {
     }
     public void setyPos(double yPos) {
         this.yPos = yPos;
+    }
+
+    public double getzPos() {
+        return zPos;
+    }
+    public void setzPos(double zPos) {
+        this.zPos = zPos;
     }
     
     public double getScale() {
@@ -134,7 +145,7 @@ public class Camera {
     }
     
     public Camera copy() {
-        return new Camera(currentScene, xPos, yPos, scale, screenOffsetx*2, screenOffsety*2);
+        return new Camera(currentScene, xPos, yPos, zPos, scale, screenOffsetx*2, screenOffsety*2);
     }
     
     /*

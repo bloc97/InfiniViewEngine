@@ -5,6 +5,10 @@
  */
 package com.bloc97.infiniview.SpaceGame.Scenes;
 
+import com.bloc97.infinisim.NBody.Equations;
+import com.bloc97.infinisim.NBody.NBodySimulationK;
+import com.bloc97.infinisim.NBody.Optimisers;
+import com.bloc97.infinisim.Spatial3DView;
 import com.bloc97.infiniview.SpaceGame.Objects.SpaceNatural;
 import com.bloc97.infiniview.SpaceGame.Universe;
 import com.bloc97.infiniview.World2D.Camera;
@@ -13,6 +17,7 @@ import com.bloc97.infiniview.World2D.Scene;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -20,6 +25,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -36,12 +45,14 @@ public class GameView extends Scene {
     
     private ExecutorService executor = Executors.newCachedThreadPool();
     
+    private NBodySimulationK mainNBodySimulation = new NBodySimulationK(Equations.EquationType.NEWTON, Optimisers.OptimiserType.DIRECT, 100, 30d, 1, 1, true);
+    
     private Boolean keyW = false;
     private Boolean keyS = false;
     private Boolean keyA = false;
     private Boolean keyD = false;
     
-    private DisplayObject trackedObject;
+    private Spatial3DView trackedObject;
     private final Universe spaceWorld;
     
     private long msCounter = 1;
@@ -56,9 +67,10 @@ public class GameView extends Scene {
         spaceWorld = new Universe();
         setBackground(Color.getHSBColor(298F/360, 1F/100, 22F/100));
         
-        updateDisplayObjectsCanRenderByScale();
+        //updateDisplayObjectsCanRenderByScale();
         initialiseHandlers();
-        executor.submit(spaceWorld.getRealTimeSimulation());
+        mainNBodySimulation.setSimulatedWorld(spaceWorld.getWorld());
+        executor.submit(mainNBodySimulation);
     }
     
     public final void initialiseHandlers() {
@@ -68,10 +80,11 @@ public class GameView extends Scene {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 int notches = e.getWheelRotation();
                 
-                
+                    camera.addScale(notches);
+                /*
                 if (trackedObject == null) {
                     
-                    DisplayObject object = checkClosestObject(e.getX(), e.getY());
+                    Spatial3DView object = checkClosestObject(e.getX(), e.getY());
                     
                     Camera newCamera = camera.copy();
                     
@@ -98,8 +111,8 @@ public class GameView extends Scene {
                 } else {
                     camera.addScale(notches);
                 }
-                
-                updateDisplayObjectsCanRenderByScale();
+                */
+                //updateDisplayObjectsCanRenderByScale();
             }
             
         });
@@ -126,28 +139,28 @@ public class GameView extends Scene {
                         releaseFocus();
                         break;
                     case KeyEvent.VK_EQUALS :
-                        spaceWorld.getRealTimeSimulation().getSimulation().setSimulatedSecondsPerTick(spaceWorld.getRealTimeSimulation().getSimulation().getSimulatedSecondsPerTick() * 2);
+                        mainNBodySimulation.setSimulatedSecondsPerTick(mainNBodySimulation.getSimulatedSecondsPerTick() * 2);
                         break;
                     case KeyEvent.VK_MINUS :
-                        spaceWorld.getRealTimeSimulation().getSimulation().setSimulatedSecondsPerTick(spaceWorld.getRealTimeSimulation().getSimulation().getSimulatedSecondsPerTick() / 2);
+                        mainNBodySimulation.setSimulatedSecondsPerTick(mainNBodySimulation.getSimulatedSecondsPerTick() / 2);
                         break;
                     case KeyEvent.VK_CLOSE_BRACKET :
-                        if (spaceWorld.getRealTimeSimulation().getSimulation().getTicksPerUpdate() > 1024) {
+                        if (mainNBodySimulation.getTicksPerUpdate() > 1024) {
                             break;
                         }
-                        spaceWorld.getRealTimeSimulation().getSimulation().setTicksPerUpdate(spaceWorld.getRealTimeSimulation().getSimulation().getTicksPerUpdate() * 2);
+                        mainNBodySimulation.setTicksPerUpdate(mainNBodySimulation.getTicksPerUpdate() * 2);
                         break;
                     case KeyEvent.VK_OPEN_BRACKET :
-                        if (spaceWorld.getRealTimeSimulation().getSimulation().getTicksPerUpdate() == 1) {
+                        if (mainNBodySimulation.getTicksPerUpdate() == 1) {
                             break;
                         }
-                        spaceWorld.getRealTimeSimulation().getSimulation().setTicksPerUpdate(spaceWorld.getRealTimeSimulation().getSimulation().getTicksPerUpdate() / 2);
+                        mainNBodySimulation.setTicksPerUpdate(mainNBodySimulation.getTicksPerUpdate() / 2);
                         break;
                     case KeyEvent.VK_SPACE:
                         togglePause();
                         break;
                     case KeyEvent.VK_M:
-                        spaceWorld.getRealTimeSimulation().getSimulation().update();
+                        mainNBodySimulation.update();
                         break;
                     case KeyEvent.VK_F11:
                         ((GameView)e.getComponent()).viewport.toggleFullScreen();
@@ -237,10 +250,20 @@ public class GameView extends Scene {
     }
     
     public void togglePause() {
-        spaceWorld.getRealTimeSimulation().getSimulation().toggle();
+        mainNBodySimulation.toggle();
     }
     
-    public DisplayObject checkClosestObject(int x, int y) {
+    public Spatial3DView checkClosestObject(int x, int y) {
+        
+        for (int i=0; i<spaceWorld.getWorld().size(); i++) {
+            Spatial3DView s = spaceWorld.getWorld().get3DView(i);
+            
+            if (s != null) {
+                
+            }
+            
+        }
+        /*
         for (DisplayObject currentObject : spaceWorld.getDisplayObjects()) {
             //if (tx >= 0 && ty >= 0 && tx <= camera.getxScrOffset()*2 && ty <= camera.getyScrOffset()) {
             if (currentObject.isVisible()) {
@@ -258,13 +281,13 @@ public class GameView extends Scene {
                 }
                 return currentObject;
             }
-        }
+        }*/
         return null;
     }
     
     public boolean checkClickFocus(int x, int y) {
         
-        DisplayObject object = checkClosestObject(x, y);
+        Spatial3DView object = checkClosestObject(x, y);
         
         if (object == null) {
             releaseFocus();
@@ -274,15 +297,9 @@ public class GameView extends Scene {
             return true;
         }
     }
-    public void setFocus(DisplayObject object) {
+    public void setFocus(Spatial3DView object) {
         trackedObject = object;
         focusCamera();
-        if (trackedObject instanceof SpaceNatural) {
-            //mainSimulation.setFocus((SpaceNatural)trackedObject);
-        } else {
-            //mainSimulation.setFocus(null);
-        }
-        //mainSimulation.reCalculateOrbits();
     }
     
     public void releaseFocus() {
@@ -291,9 +308,10 @@ public class GameView extends Scene {
     }
     
     public void focusCamera() {
-        if (trackedObject instanceof DisplayObject) {
-            camera.setxPos(trackedObject.getX());
-            camera.setyPos(-trackedObject.getY());
+        if (trackedObject != null) {
+            camera.setxPos(trackedObject.position().get(0));
+            camera.setyPos(trackedObject.position().get(1));
+            camera.setzPos(trackedObject.position().get(2));
         }
     }
     
@@ -329,7 +347,7 @@ public class GameView extends Scene {
         }
         return seconds + "";
     }
-    
+    /*
     private void updateDisplayObjectsCanRenderByScale() {
         for (DisplayObject object : spaceWorld.getDisplayObjects()) {
             if (object instanceof SpaceNatural) {
@@ -344,12 +362,12 @@ public class GameView extends Scene {
                 ((SpaceNatural)object).registerUpdate(new Date());
             }
         }
-    }
+    }*/
     
     @Override
     protected void beforePaint() {
         checkKeys();
-        updateDisplayObjectsPosition();
+        //updateDisplayObjectsPosition();
     }
     @Override
     protected void prePaint() {
@@ -363,39 +381,67 @@ public class GameView extends Scene {
         g.drawLine(0, 0, 1920, 0);
         g.drawLine(1920, 0, 1920, 1080);
         g.drawLine(0, 1080, 1920, 1080);*/
-        
-        g.drawString(spaceWorld.getRealTimeSimulation().getSimulation().getDate().toGMTString(), 10, 20);
-        g.drawString("Target Speed: " + secondsToText(spaceWorld.getRealTimeSimulation().getRealUPS() * spaceWorld.getRealTimeSimulation().getSimulation().getSimulatedSecondsPerUpdate()), 10, 40);
-        g.drawString("Time Per Tick: " + secondsToText(spaceWorld.getRealTimeSimulation().getSimulation().getSimulatedSecondsPerTick()), 10, 60);
+        if (mainNBodySimulation.getSimulatedWorld() != null) {
+            g.drawString(mainNBodySimulation.getSimulatedWorld().getDate().toGMTString(), 10, 20);
+        }
+        g.drawString("Target Speed: " + secondsToText(mainNBodySimulation.getRealUPS() * mainNBodySimulation.getSimulatedSecondsPerUpdate()), 10, 40);
+        g.drawString("Time Per Tick: " + secondsToText(mainNBodySimulation.getSimulatedSecondsPerTick()), 10, 60);
         g.drawString("Current Scale: " + camera.getScale(), 10, 80);
         g.drawString("FPS: " + fpsCounter, 10, 100);
-        g.drawString("UPS: " + spaceWorld.getRealTimeSimulation().getRealUPS(), 10, 120);
+        g.drawString("UPS: " + mainNBodySimulation.getRealUPS(), 10, 120);
         
+        if (xsize == 0) {
+            xsize = 1;
+            ysize = 1;
+        }
+        
+        BufferedImage image = new BufferedImage(xsize, ysize, BufferedImage.TYPE_INT_RGB);
+        
+        Graphics2D ig2 = image.createGraphics();
         
         Graphics2D g2 = (Graphics2D)g;
-        /*
-        AffineTransform originalTransform = g2.getTransform();
-        AffineTransform transform = new AffineTransform();
-        double scale = camera.getScale();
-        transform.scale(scale, -scale);
-        transform.translate(-camera.getxPos(), camera.getyPos());
-        g2.translate(camera.getxScrOffset(), camera.getyScrOffset());
-        g2.transform(transform);
-        for (int i=0; i<displayObjects.length; i++) {
-        displayObjects[i].renderTransform(g2, camera);
-        }
-        g2.setTransform(originalTransform);
-         */
-        for (DisplayObject displayObject : spaceWorld.getDisplayObjects()) {
-            if (displayObject == trackedObject) {;// || trackedObject != null) {
-                focusCamera();
+        
+        focusCamera();
+        
+        for (int i=0; i<spaceWorld.getWorld().size(); i++) {
+            Spatial3DView s = spaceWorld.getWorld().get3DView(i);
+            if (s != null) {
+                
+                //int x = (int)((s.position().get(0)-camera.getxPos())*camera.getScale());
+                //int y = (int)((s.position().get(1)-camera.getyPos())*camera.getScale());
+                
+                double x = ((s.position().get(0) - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
+                double y = ((s.position().get(1) - camera.getyPos()) * camera.getScale() + camera.getyScrOffset());
+                
+                double r = (s.getRadius()*camera.getScale());
+                
+                Shape shape = null;
+                
+                if (r < 1) {
+                    shape = new Rectangle2D.Double(x-r, y-r, 1, 1);
+                } else if (r < 2) {
+                    shape = new Rectangle2D.Double(x-r, y-r, r*2, r*2);
+                } else if (r < 4) {
+                    shape = new Rectangle2D.Double(x-(r/2), y-r, r, r*2);
+                    g2.fill(new Rectangle2D.Double(x-r, y-(r/2), r*2, r));
+                } else if (x > -xsize && x < xsize*2 && y > -ysize && y < ysize*2) {
+                    shape = new Ellipse2D.Double(x-r, y-r, r*2, r*2);
+                }
+                
+                if (shape != null) {
+                    g2.fill(shape);
+                }
+                //g2.drawString("Planet", (float)(x+r+4), (float)(y+5));
+                
+                //ig2.fillOval(x, y, r, r);
+                
+                //g2.fillOval(x, y, r, r);
+                
             }
-            /*
-            if (displayObjects[i] instanceof FuturePath) {
-            ((FuturePath)displayObjects[i]).setOrbitReferencePath(trackedObject.paths);
-            }*/
-            displayObject.renderNoTransform(g2, camera);
+            
         }
+        //g2.drawImage(image, null, 0, 0);
+        
         
     }
     @Override
