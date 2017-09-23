@@ -5,7 +5,7 @@
  */
 package com.bloc97.infinisim;
 
-import com.bloc97.infinisim.NBody.NBodySimulationK;
+import com.bloc97.infinisim.NBody.NBodySimulation;
 import com.bloc97.infinisim.NBody.NBodyWorld;
 import com.bloc97.infinisim.Spatial;
 import com.bloc97.uvector.Vector3;

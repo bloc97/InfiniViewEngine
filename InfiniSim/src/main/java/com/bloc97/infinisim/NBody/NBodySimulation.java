@@ -5,29 +5,31 @@
  */
 package com.bloc97.infinisim.NBody;
 
-import com.bloc97.infinisim.OpenCL.OpenCLIntegrators;
 import com.bloc97.infinisim.Spatial;
-import com.bloc97.infinisim.Simulation;
-import java.util.AbstractSet;
+import com.bloc97.uvector.Vector3;
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 /**
  *
  * @author bowen
  */
-public class NBodySimulation implements Simulation {
+public class NBodySimulation implements Runnable {
     
-    private Set<Spatial> bodies = new LinkedHashSet<>();
     
     private final Equations.EquationType equationType;
     private final Optimisers.OptimiserType optimiserType;
-    private final Integrators.IntegratorType integratorType;
     
+    //Runnable
+    private double targetUpdatesPerSecond; //How many "Big steps" per second
+    private double realUpdatesPerSecond = 0; //How many "Big steps" per were executed last time
+    
+    private long targetTime; //Target frame time
+    private long realTime; //Real time that took the thread to run
+    
+    private volatile boolean isRunning = true;
+    
+    //Simulation
     private volatile int ticksPerUpdate; //How many "Small steps" per update
     private volatile double secondsPerTick; //How many "Simulated seconds" per tick
     
@@ -36,19 +38,23 @@ public class NBodySimulation implements Simulation {
     
     
     private volatile long ticks = 0;
-    private final Date date;
     
     private volatile boolean isEnabled = true;
     
     private volatile boolean useOpenCL;
     
     
-    public NBodySimulation(Equations.EquationType equationType, Optimisers.OptimiserType optimiserType, Integrators.IntegratorType integratorType, double secondsPerTick, int ticksPerUpdate, Date date, boolean useOpenCL) {
-        this.bodies = bodies = new LinkedHashSet<>();
-        
+    private final NBodyKernel kernel;
+
+    private NBodyWorld simulatedWorld;
+    
+    public NBodySimulation(Equations.EquationType equationType, Optimisers.OptimiserType optimiserType, int initialSize, double updatesPerSecond, double secondsPerTick, int ticksPerUpdate, boolean useOpenCL) {
         this.equationType = equationType;
         this.optimiserType = optimiserType;
-        this.integratorType = integratorType;
+        
+        this.targetUpdatesPerSecond = updatesPerSecond;
+        targetTime = (long)(1000000000D/targetUpdatesPerSecond);
+        realTime = targetTime;
         
         this.initialTicksPerUpdate = ticksPerUpdate;
         this.initialSecondsPerTick = secondsPerTick;
@@ -56,98 +62,155 @@ public class NBodySimulation implements Simulation {
         this.ticksPerUpdate = ticksPerUpdate;
         this.secondsPerTick = secondsPerTick;
         
-        this.date = date;
-        
         this.useOpenCL = useOpenCL;
         
+        this.kernel = new NBodyKernel();
     }
     
-    @Override
+    public void setSimulatedWorld(NBodyWorld world) {
+        this.simulatedWorld = world;
+        if (world != null) {
+            kernel.setArrays(world.getPosition(), world.getVelocity(), world.getMass(), world.getRadius(), world.getCollided(), world.getIsActive());
+        }
+    }
+
+    public NBodyWorld getSimulatedWorld() {
+        return simulatedWorld;
+    }
+
+    public NBodyKernel getKernel() {
+        return kernel;
+    }
+    
     public void update() {
-        if (!isEnabled || bodies.isEmpty()) {
+        if (!isEnabled || simulatedWorld == null) {
             return;
         }
         final double t = secondsPerTick;
         final int n = ticksPerUpdate;
-        Integrators.integrate(integratorType, optimiserType, equationType, bodies, t, n, useOpenCL);
-        date.setTime(date.getTime() + (long)(t * n * 1000));
+        
+        kernel.setTime(secondsPerTick);
+        kernel.setTypes(optimiserType, equationType);
+        
+        for (int i=0; i<ticksPerUpdate; i++) {
+            kernel.integrate();
+            //kernel.resolveCollisions();
+        }
+        kernel.resolveCollisions();
+        //kernel.refreshArrays();
+        
+        //Integrators.integrate(integratorType, optimiserType, equationType, bodies, t, n, useOpenCL);
+        simulatedWorld.getDate().setTime(simulatedWorld.getDate().getTime() + (long)(t * n * 1000));
     }
 
-    @Override
     public boolean isEnabled() {
         return isEnabled;
     }
-    @Override
+    
     public void enable() {
         isEnabled = true;
     }
-    @Override
+    
     public void disable() {
         isEnabled = false;
     }
-    @Override
+    
     public void toggle() {
         isEnabled = !isEnabled;
     }
     
-    @Override
-    public Set getObjects() {
-        return bodies;
-    }
-
-    @Override
-    public List getObjectsSnapshot() {
-        List<Spatial> list = new LinkedList<>();
-        for (Spatial body : bodies) {
-            list.add(body);
-        }
-        return list;
-    }
     
-    @Override
-    public int getObjectsNumber() {
-        return bodies.size();
-    }
-
-    @Override
-    public long getTicks() {
-        return ticks;
-    }
-
-    @Override
-    public void setObjects(Set set) {
-        bodies = set;
-    }
-
-    @Override
-    public Date getDate() {
-        return date;
-    }
-    
-    @Override
     public int getTicksPerUpdate() {
         return ticksPerUpdate;
     }
-
-    @Override
     public void setTicksPerUpdate(int ticksPerUpdate) {
         this.ticksPerUpdate = ticksPerUpdate;
     }
-
-    @Override
     public double getSimulatedSecondsPerTick() {
         return secondsPerTick;
     }
-
-    @Override
     public void setSimulatedSecondsPerTick(double secondsPerTick) {
         this.secondsPerTick = secondsPerTick;
     }
-
-    @Override
+    public double getSimulatedSecondsPerUpdate() {
+        return getTicksPerUpdate() * getSimulatedSecondsPerTick();
+    }
     public void resetInitialSettings() {
         this.ticksPerUpdate = initialTicksPerUpdate;
         this.secondsPerTick = initialSecondsPerTick;
     }
+    
+    
+    public void destroy() {
+        isRunning = false;
+    }
+    
+    @Override
+    public void run() {
+        
+        long startTime;
+        long endTime;
+        long sleepTime;
+        
+        
+        while (isRunning) {
+
+            startTime = System.nanoTime();
+            update();
+            endTime = System.nanoTime();
+
+            realTime = endTime-startTime;
+            targetTime = (long)(1000000000D/targetUpdatesPerSecond);
+            
+            sleepTime = targetTime - realTime;
+
+            if (sleepTime < 0) {
+                //System.out.println("Simulation Thread Overload! Late by: " + -sleepTime/1000000 + " ms.");
+            } else {
+
+                long sleepms = Math.floorDiv(sleepTime, 1000000);
+                int sleepns = (int)Math.floorMod(sleepTime, 1000000);
+                try {
+                    Thread.sleep(sleepms, sleepns);
+                } catch (InterruptedException ex) {
+                    System.out.println("Thread Error");
+                }
+            }
+        }
+        kernel.dispose();
+    }
+    
+    
+    public double getTargetUPS() {
+        return targetUpdatesPerSecond;
+    }
+    
+    public double getRealUPS() {
+        if (realTime < targetTime) {
+            return targetUpdatesPerSecond;
+        }
+        return 1000000000D/realTime;
+    }
+    
+    public long getTargetTimeInMs() {
+        return targetTime / 1000000;
+    }
+    
+    public long getRealTimeInMs() {
+        return realTime / 1000000;
+    }
+    
+    public void setTargetUPS(double updatesPerSecond) {
+        this.targetUpdatesPerSecond = updatesPerSecond;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 }

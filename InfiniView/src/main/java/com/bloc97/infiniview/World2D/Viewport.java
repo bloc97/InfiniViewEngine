@@ -17,10 +17,6 @@ public class Viewport extends JFrame {
     private boolean fullScreen = false;
     private int lastX, lastY, lastW, lastH;
     
-    /*
-    public Viewport(int xsize, int ysize, World world) {
-        this(xsize, ysize, new Scene(xsize, ysize, world));
-    }*/
     public Viewport(int xsize, int ysize) {
         this.setTitle("Space!");
         this.setSize(xsize, ysize);

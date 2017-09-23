@@ -5,7 +5,6 @@
  */
 package com.bloc97.infiniview.World2D;
 
-import com.bloc97.infinisim.Simulation;
 import com.bloc97.infiniview.World2D.Objects.DisplayObject;
 import java.util.List;
 

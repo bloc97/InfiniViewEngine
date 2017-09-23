@@ -236,7 +236,6 @@ public class SpaceNatural extends Body2D implements DisplayObject {
             g2.drawString(name, (float)(sx+r+4), (float)(sy+5));
         }
         
-        
         Ellipse2D.Double circle = new Ellipse2D.Double(sx-r, sy-r, r*2, r*2);
         g2.fill(circle);
         //g2.fillOval((int)(sx-r), (int)(sy-r), (int)(r*2), (int)(r*2));
@@ -247,7 +246,6 @@ public class SpaceNatural extends Body2D implements DisplayObject {
         if (future == null) {
             return;
         }
-        
         
         Stroke originalStroke = g2.getStroke();
         Path2D.Double orbit = new Path2D.Double();
@@ -314,7 +312,6 @@ public class SpaceNatural extends Body2D implements DisplayObject {
         return r;
     }
     
-
     @Override
     public boolean isVisible(double scale) {
         return SpaceRender.canRenderNaturalObjectByScale(type, scale);
@@ -333,6 +330,7 @@ public class SpaceNatural extends Body2D implements DisplayObject {
     public FutureContainer getFutureContainer() {
         return future;
     }
+    
     public void setOrbitPath(Vector2[] paths, Vector2[] vels, long[] timeStamps) {
         if (future == null) {
             future = new FutureContainer(paths, vels, timeStamps);

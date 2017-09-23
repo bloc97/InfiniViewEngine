@@ -6,7 +6,7 @@
 package com.bloc97.infiniview.SpaceGame.Scenes;
 
 import com.bloc97.infinisim.NBody.Equations;
-import com.bloc97.infinisim.NBody.NBodySimulationK;
+import com.bloc97.infinisim.NBody.NBodySimulation;
 import com.bloc97.infinisim.NBody.Optimisers;
 import com.bloc97.infinisim.Spatial3DView;
 import com.bloc97.infiniview.SpaceGame.Objects.SpaceNatural;
@@ -45,7 +45,7 @@ public class GameView extends Scene {
     
     private ExecutorService executor = Executors.newCachedThreadPool();
     
-    private NBodySimulationK mainNBodySimulation = new NBodySimulationK(Equations.EquationType.NEWTON, Optimisers.OptimiserType.DIRECT, 100, 30d, 1, 1, true);
+    private NBodySimulation mainNBodySimulation = new NBodySimulation(Equations.EquationType.NEWTON, Optimisers.OptimiserType.DIRECT, 100, 30d, 1, 1, true);
     
     private Boolean keyW = false;
     private Boolean keyS = false;
@@ -254,12 +254,26 @@ public class GameView extends Scene {
     }
     
     public Spatial3DView checkClosestObject(int x, int y) {
-        
         for (int i=0; i<spaceWorld.getWorld().size(); i++) {
             Spatial3DView s = spaceWorld.getWorld().get3DView(i);
             
             if (s != null) {
-                
+                if (s.isActive()) {
+                    double tr = camera.getScreenR(s.getRadius());
+                    if (tr < 10) tr = 10;
+                    //System.out.println("checking " + x + " " + y + " " + tr);
+                    
+                    double tx = camera.getScreenX(s.position().get(0));
+                    if (!(x > tx-tr && x < tx+tr)) {
+                        continue;
+                    }
+                    
+                    double ty = camera.getScreenY(s.position().get(1));
+                    if (!(y > ty-tr && y < ty+tr)) {
+                        continue;
+                    }
+                    return s;
+                }
             }
             
         }
@@ -410,10 +424,10 @@ public class GameView extends Scene {
                 //int x = (int)((s.position().get(0)-camera.getxPos())*camera.getScale());
                 //int y = (int)((s.position().get(1)-camera.getyPos())*camera.getScale());
                 
-                double x = ((s.position().get(0) - camera.getxPos()) * camera.getScale() + camera.getxScrOffset());
-                double y = ((s.position().get(1) - camera.getyPos()) * camera.getScale() + camera.getyScrOffset());
+                double x = camera.getScreenX(s.position().get(0));
+                double y = camera.getScreenY(s.position().get(1));
                 
-                double r = (s.getRadius()*camera.getScale());
+                double r = camera.getScreenR(s.getRadius());
                 
                 Shape shape = null;
                 
@@ -431,7 +445,7 @@ public class GameView extends Scene {
                 if (shape != null) {
                     g2.fill(shape);
                 }
-                //g2.drawString("Planet", (float)(x+r+4), (float)(y+5));
+                g2.drawString("Planet", (float)(x+r+4), (float)(y+5));
                 
                 //ig2.fillOval(x, y, r, r);
                 

@@ -6,16 +6,10 @@
 package com.bloc97.infinisim.Collision;
 
 import com.bloc97.infinisim.Spatial;
-import com.bloc97.infinisim.Simulation;
 import com.bloc97.uvector.Vector;
 import com.bloc97.uvector.Vectors;
-import java.util.AbstractMap;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**

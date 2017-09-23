@@ -148,6 +148,16 @@ public class Camera {
         return new Camera(currentScene, xPos, yPos, zPos, scale, screenOffsetx*2, screenOffsety*2);
     }
     
+    public double getScreenX(double x) {
+        return ((x - getxPos()) * getScale() + getxScrOffset());
+    }
+    public double getScreenY(double y) {
+        return ((y - getyPos()) * getScale() + getyScrOffset());
+    }
+    public double getScreenR(double radius) {
+        return (radius * getScale());
+    }
+    
     /*
     private boolean enoughPrecisionToSee() {
         if (xPos + (1*(0.5/scale)) == xPos || xPos - (1*(0.5/scale)) == xPos) {

@@ -5,7 +5,6 @@
  */
 package com.bloc97.infinisim.NBody;
 
-import com.bloc97.infinisim.OpenCL.IntegratorOpenCLKernel;
 import com.bloc97.infinisim.Spatial;
 import com.bloc97.uvector.Vector;
 import com.bloc97.uvector.Vectors;
@@ -39,36 +38,33 @@ public abstract class Integrators {
         NONE, EULER, SYMPLECTIC, LEAPFROG, SYMPLECTIC2, SYMPLECTIC4
     }
     
-    public static void integrate(final IntegratorType itype, final Optimisers.OptimiserType otype, final Equations.EquationType etype, final Set<Spatial> list, final double dt, final int ticks, final boolean useOpenCL) {
+    public static void integrate(final IntegratorType itype, final Optimisers.OptimiserType otype, final Equations.EquationType etype, final Set<Spatial> list, final double dt, final int ticks) {
         
-        if (useOpenCL) {
-            IntegratorOpenCLKernel.INSTANCE.integrate(itype, otype, etype, list, dt, ticks);
-        } else {
-            for (int i=0; i<ticks; i++) {
-                switch (itype) {
-                    case NONE:
-                        integrateVel(list, dt);
-                        break;
-                    case EULER:
-                        integrateEuler(otype, etype, list, dt);
-                        break;
-                    case SYMPLECTIC:
-                        integrateSymplectic(otype, etype, list, dt);
-                        break;
-                    case LEAPFROG:
-                        integrateLeapfrog(otype, etype, list, dt);
-                        break;
-                    case SYMPLECTIC2:
-                        integrateSymplectic2(otype, etype, list, dt);
-                        break;
-                    case SYMPLECTIC4:
-                        integrateSymplectic4(otype, etype, list, dt);
-                        break;
-                    default:
-                        integrateEuler(otype, etype, list, dt);
-                }
+        for (int i=0; i<ticks; i++) {
+            switch (itype) {
+                case NONE:
+                    integrateVel(list, dt);
+                    break;
+                case EULER:
+                    integrateEuler(otype, etype, list, dt);
+                    break;
+                case SYMPLECTIC:
+                    integrateSymplectic(otype, etype, list, dt);
+                    break;
+                case LEAPFROG:
+                    integrateLeapfrog(otype, etype, list, dt);
+                    break;
+                case SYMPLECTIC2:
+                    integrateSymplectic2(otype, etype, list, dt);
+                    break;
+                case SYMPLECTIC4:
+                    integrateSymplectic4(otype, etype, list, dt);
+                    break;
+                default:
+                    integrateEuler(otype, etype, list, dt);
             }
         }
+        
     }
     
     public static void integrateVel(Set<Spatial> set, double dt) {

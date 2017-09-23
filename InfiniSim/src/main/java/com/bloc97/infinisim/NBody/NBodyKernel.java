@@ -19,6 +19,9 @@ public class NBodyKernel extends Kernel {
     double[] s4A = new double[] {0.1288461583653841854D, 0.4415830236164665242D, -0.0857820194129736460D, 0.5153528374311229364D, 1};
     double[] s4B = new double[] {0.3340036032863214255D, 0.7562300005156682911D, -0.2248198030794208058D, 0.1344961992774310892D, 1};
     
+    double[] fr = new double[] {0.6756035959798288D, 1.3512071919597D, -0.1756035959799D, -1.70241438392D};
+    double[] pefrl = new double[] {0.1786178958448091D, 0.7123418310626054D, -0.06626458266981849D, -0.2123418310626054D, 0.77529337365001878D};
+    
     int itype, otype, etype;
     
     int kernelLength;
@@ -42,6 +45,7 @@ public class NBodyKernel extends Kernel {
     }
 
     public void integrate() {
+        /*
         setStep(1).setIntegratorStep(0).execute();
         setStep(0).execute();
         setStep(2).execute();
@@ -57,6 +61,41 @@ public class NBodyKernel extends Kernel {
         setStep(1).setIntegratorStep(3).execute();
         setStep(0).execute();
         setStep(2).execute();
+        */
+        
+        /*
+        setStep(1).setIntegratorStep(0).execute();
+        setStep(0).execute();
+        setStep(2).setIntegratorStep(1).execute();
+        
+        setStep(1).setIntegratorStep(2).execute();
+        setStep(0).execute();
+        setStep(2).setIntegratorStep(3).execute();
+        
+        setStep(1).setIntegratorStep(2).execute();
+        setStep(0).execute();
+        setStep(2).setIntegratorStep(1).execute();
+        
+        setStep(1).setIntegratorStep(0).execute();
+        */
+        
+        setStep(1).setIntegratorStep(0).execute();
+        setStep(0).execute();
+        setStep(2).setIntegratorStep(1).execute();
+        
+        setStep(1).setIntegratorStep(2).execute();
+        setStep(0).execute();
+        setStep(2).setIntegratorStep(3).execute();
+        
+        setStep(1).setIntegratorStep(4).execute();
+        setStep(0).execute();
+        setStep(2).setIntegratorStep(3).execute();
+        
+        setStep(1).setIntegratorStep(2).execute();
+        setStep(0).execute();
+        setStep(2).setIntegratorStep(1).execute();
+        
+        setStep(1).setIntegratorStep(0).execute();
         
         setStep(3).execute();
     }
@@ -179,13 +218,21 @@ public class NBodyKernel extends Kernel {
         acceleration[i * 3 + 2] *= G;
         
     }
-
+    /*
     private void integratePositionStep(int i) {
         position[i] = position[i] + (velocity[i] * dt * s4A[integratorStep]);
 
     }
     private void integrateVelocityStep(int i) {
         velocity[i] = velocity[i] + (acceleration[i] * dt * s4B[integratorStep]);
+
+    }*/
+    private void integratePositionStep(int i) {
+        position[i] = position[i] + (velocity[i] * dt * pefrl[integratorStep]);
+
+    }
+    private void integrateVelocityStep(int i) {
+        velocity[i] = velocity[i] + (acceleration[i] * dt * pefrl[integratorStep]);
 
     }
     
