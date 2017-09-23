@@ -68,6 +68,9 @@ public abstract class Scene extends JPanel implements Runnable {
     
     public void setViewport(Viewport viewport) {
         this.viewport = viewport;
+        if (!this.equals(viewport.getScene())) {
+            viewport.setScene(this);
+        }
     }
     
     public void start() {

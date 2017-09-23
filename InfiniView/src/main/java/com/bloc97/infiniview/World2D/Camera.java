@@ -5,13 +5,16 @@
  */
 package com.bloc97.infiniview.World2D;
 
-import java.math.BigDecimal;
-
 /**
  *
  * @author bowen
  */
 public class Camera {
+    
+    private static double ZOOM_FACTOR = 2;
+    private static double MINIMUM_SCALE = 1E-21;
+    private static double MAXIMUM_SCALE = 1;
+    
     private Scene currentScene;
     private double xPos;
     private double yPos;
@@ -24,7 +27,7 @@ public class Camera {
     private int screenOffsety;
 
     Camera(Scene currentScene, int xsize, int ysize) {
-        this(currentScene, xsize/2, ysize/2, 0, 1E-10, xsize, ysize);
+        this(currentScene, xsize/2, ysize/2, 0, 1, xsize, ysize);
     }
     
     Camera(Scene currenScene, double x, double y, double z, double s, int xsize, int ysize) {
@@ -121,19 +124,19 @@ public class Camera {
         }
     }
     private void multiplyScale() {
-        if (scale < 1 && enoughPrecisionToZoom()) {
-            scale *= 2;
+        if (scale < MAXIMUM_SCALE && enoughPrecisionToZoom()) {
+            scale *= ZOOM_FACTOR;
         }
-        if (scale > 1) {
-            scale = 1;
+        if (scale > MAXIMUM_SCALE) {
+            scale = MAXIMUM_SCALE;
         }
     }
     private void divideScale() {
-        if (scale > 1E-21) {
-            scale /= 2;
+        if (scale > MINIMUM_SCALE) {
+            scale /= ZOOM_FACTOR;
         }
-        if (scale < 1E-21) {
-            scale = 1E-21;
+        if (scale < MINIMUM_SCALE) {
+            scale = MINIMUM_SCALE;
         }
     }
     private boolean enoughPrecisionToZoom() {
