@@ -11,16 +11,37 @@ package com.bloc97.uvector;
  */
 public abstract class Vectors {
     
+    /**
+     * Performs element-wise addition of two vectors of same size
+     * @param <T> Type of vector
+     * @param vector First vector
+     * @param vector2 Second vector
+     * @return A new vector with its elements equal to vector + vector2
+     */
     public static <T extends Vector<T>> T add(T vector, T vector2) {
         if (vector.size() == vector2.size()) {
             return vector.copy().add(vector2);
         }
         throw new IllegalArgumentException("Different vector sizes.");
     }
+    /**
+     * Performs element-wise addition of a vector with a value
+     * @param <T> Type of vector
+     * @param vector Vector
+     * @param d Value
+     * @return A new vector with its elements equal to vector + d
+     */
     public static <T extends Vector<T>> T add(T vector, double d) {
         return vector.copy().add(d);
     }
     
+    /**
+     * Performs element-wise subtraction of two vectors of same size
+     * @param <T> Type of vector
+     * @param vector First vector
+     * @param vector2 Second vector
+     * @return A new vector with its elements equal to vector - vector2
+     */
     public static <T extends Vector<T>> T sub(T vector, T vector2) {
         if (vector.size() == vector2.size()) {
             return vector.copy().sub(vector2);
@@ -31,6 +52,13 @@ public abstract class Vectors {
         return vector.copy().sub(d);
     }
     
+    /**
+     * Performs element-wise multiplication of two vectors of same size
+     * @param <T> Type of vector
+     * @param vector First vector
+     * @param vector2 Second vector
+     * @return A new vector with its elements equal to vector * vector2
+     */
     public static <T extends Vector<T>> T mulElem(T vector, T vector2) {
         if (vector.size() == vector2.size()) {
             return vector.copy().mulElem(vector2);
@@ -41,6 +69,13 @@ public abstract class Vectors {
         return vector.copy().mulElem(d);
     }
     
+    /**
+     * Performs element-wise division of two vectors of same size
+     * @param <T> Type of vector
+     * @param vector First vector
+     * @param vector2 Second vector
+     * @return A new vector with its elements equal to vector / vector2
+     */
     public static <T extends Vector<T>> T div(T vector, T vector2) {
         if (vector.size() == vector2.size()) {
             return vector.copy().div(vector2);
@@ -51,7 +86,14 @@ public abstract class Vectors {
         return vector.copy().div(d);
     }
     
-    public static double dot(Vector vector, Vector vector2) {
+    /**
+     * Performs the dot-product of two vectors of same size
+     * @param <T> Type of vector
+     * @param vector First vector
+     * @param vector2 Second vector
+     * @return A new vector with its elements equal to vector (dot) vector2
+     */
+    public static <T extends Vector<T>> double dot(T vector, T vector2) {
         if (vector.size() == vector2.size()) {
             double ans = 0;
             for (int i=0; i<vector.size(); i++) {
@@ -61,10 +103,25 @@ public abstract class Vectors {
         }
         throw new IllegalArgumentException("Different vector sizes.");
     }
-    public static double scalar(Vector vector, Vector vector2) {
+    
+    /**
+     * Performs the scalar-product of two vectors of same size
+     * @param <T> Type of vector
+     * @param vector First vector
+     * @param vector2 Second vector
+     * @return A new vector with its elements equal to ( vector (dot) vector2 ) / norm of vector2
+     */
+    public static <T extends Vector<T>> double scalar(T vector, T vector2) {
         return dot(vector, vector2)/vector2.norm();
     }
     
+    /**
+     * Performs the projection of a vector into another vector of same size
+     * @param <T> Type of vector
+     * @param vector First vector
+     * @param vector2 Second vector
+     * @return A new vector with its elements equal to vector (proj) vector2
+     */
     public static <T extends Vector<T>> T proj(T vector, T vector2) {
         double denom = Vectors.dot(vector2, vector2);
         if (denom != 0) {
@@ -73,6 +130,14 @@ public abstract class Vectors {
         }
         return vector;
     }
+    
+    /**
+     * Performs the rejection of a vector into another vector of same size
+     * @param <T> Type of vector
+     * @param vector First vector
+     * @param vector2 Second vector
+     * @return A new vector with its elements equal to vector (rej) vector2
+     */
     public static <T extends Vector<T>> T rej(T vector, T vector2) {
         double denom = Vectors.dot(vector2, vector2);
         if (denom != 0) {
@@ -82,6 +147,12 @@ public abstract class Vectors {
         return vector;
     }
     
+    /**
+     * Performs the cross product of two 3-vectors
+     * @param vector First vector
+     * @param vector2 Second vector
+     * @return A new 3-vector with its elements equal to vector (cross) vector2
+     */
     public static Vector3 cross(Vector3 vector, Vector3 vector2) {
         double s0 = vector.get(1)*vector2.get(2) - vector.get(2)*vector2.get(1);
         double s1 = vector.get(2)*vector2.get(0) - vector.get(0)*vector2.get(2);
@@ -89,6 +160,13 @@ public abstract class Vectors {
         return new Vector3(s0, s1, s2);
     }
     
+    /**
+     * Performs a double cross product of two vectors
+     * The vectors must be of size 2 or 3
+     * @param a First vector
+     * @param b Second vector
+     * @return A new vector with its elements equal to a (cross) b (cross) b
+     */
     public static Vector cross_AxBxB(Vector a, Vector b) {
         if (a instanceof Vector2 && b instanceof Vector2) {
             return cross_AxBxB((Vector2) a, (Vector2) b);
@@ -98,6 +176,12 @@ public abstract class Vectors {
         throw new IllegalArgumentException("Cannot perform the cross product on a vector of this size");
     }
     
+    /**
+     * Performs a double cross product of two 2-vectors
+     * @param a First vector
+     * @param b Second vector
+     * @return A new 2-vector with its elements equal to a (cross) b (cross) b
+     */
     public static Vector2 cross_AxBxB(Vector2 a, Vector2 b) {
         double AxB_k = (a.get(0) * b.get(1) - a.get(1) * b.get(0));
         double AxBxB_i = -b.get(1) * AxB_k;
@@ -105,10 +189,23 @@ public abstract class Vectors {
         return new Vector2(AxBxB_i, AxBxB_j);
     }
     
+    /**
+     * Performs a double cross product of two 3-vectors
+     * @param a First vector
+     * @param b Second vector
+     * @return A new 3-vector with its elements equal to a (cross) b (cross) b
+     */
     public static Vector3 cross_AxBxB(Vector3 a, Vector3 b) {
         return cross(cross(a, b), b);
     }
     
+    /**
+     * Performs a double cross product of two vectors
+     * The vectors must be of size 2 or 3
+     * @param a First vector
+     * @param b Second vector
+     * @return A new vector with its elements equal to a (cross) b (cross) a
+     */
     public static Vector cross_AxBxA(Vector a, Vector b) {
         if (a instanceof Vector2 && b instanceof Vector2) {
             return cross_AxBxA((Vector2) a, (Vector2) b);
@@ -118,6 +215,12 @@ public abstract class Vectors {
         throw new IllegalArgumentException("Cannot perform the cross product on a vector of this size");
     }
     
+    /**
+     * Performs a double cross product of two 2-vectors
+     * @param a First vector
+     * @param b Second vector
+     * @return A new 2-vector with its elements equal to a (cross) b (cross) a
+     */
     public static Vector cross_AxBxA(Vector2 a, Vector2 b) {
         double AxB_k = (a.get(0) * b.get(1) - a.get(1) * b.get(0));
         double AxBxA_i = -a.get(1) * AxB_k;
@@ -125,6 +228,12 @@ public abstract class Vectors {
         return new Vector2(AxBxA_i, AxBxA_j);
     }
     
+    /**
+     * Performs a double cross product of two 3-vectors
+     * @param a First vector
+     * @param b Second vector
+     * @return A new 3-vector with its elements equal to a (cross) b (cross) a
+     */
     public static Vector cross_AxBxA(Vector3 a, Vector3 b) {
         return cross(cross(a, b), a);
     }

@@ -15,12 +15,26 @@ public class Vector2 implements Vector<Vector2> {
     
     private final double[] content;
     
+    /**
+     * Creates a new 2-vector with all its elements set to 0
+     */
     public Vector2() {
         content = new double[2];
     }
+
+    /**
+     * Creates a new 2-vector with all its elements set to a value
+     * @param fill Value to fill the vector
+     */
     public Vector2(double fill) {
         content = new double[] {fill, fill};
     }
+    
+    /**
+     * Creates a new 2-vector with specific values
+     * @param a Value of i
+     * @param b Value of j
+     */
     public Vector2(double a, double b) {
         content = new double[] {a, b};
     }
@@ -57,15 +71,31 @@ public class Vector2 implements Vector<Vector2> {
         return 0;
     }
     
+    /**
+     * @return Element at index 0 of the vector, same as {@link #get(0)}
+     */
     public double getX() {
         return get(0);
     }
+    /**
+     * @return Element at index 1 of the vector, same as {@link #get(1)}
+     */
     public double getY() {
         return get(1);
     }
+    /**
+     * Sets the element at index 0 to a value, sale as {@link #set(0, d)}
+     * @param d
+     * @return The same vector for method chaining
+     */
     public Vector2 setX(double d) {
         return set(0, d);
     }
+    /**
+     * Sets the element at index 1 to a value, sale as {@link #set(1, d)}
+     * @param d
+     * @return The same vector for method chaining
+     */
     public Vector2 setY(double d) {
         return set(1, d);
     }
