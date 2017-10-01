@@ -56,6 +56,25 @@ public class Vector2 implements Vector<Vector2> {
         }
         return 0;
     }
+    
+    public double getX() {
+        return get(0);
+    }
+    public double getY() {
+        return get(1);
+    }
+    public Vector2 setX(double d) {
+        return set(0, d);
+    }
+    public Vector2 setY(double d) {
+        return set(1, d);
+    }
+    
+    public Vector2 rotate(double angle) {
+        double s = Math.sin(angle);
+        double c = Math.cos(angle);
+        return set(getX() * c + getY() * s, getX() * s + getY() * c);
+    }
 
     @Override
     public Vector2 zero() {

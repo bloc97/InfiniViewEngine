@@ -125,6 +125,26 @@ public class Vector3 implements Vector<Vector3> {
         }
         return this;
     }
+    
+    
+    public double getX() {
+        return get(0);
+    }
+    public double getY() {
+        return get(1);
+    }
+    public double getZ() {
+        return get(2);
+    }
+    public Vector3 setX(double d) {
+        return set(0, d);
+    }
+    public Vector3 setY(double d) {
+        return set(1, d);
+    }
+    public Vector3 setZ(double d) {
+        return set(2, d);
+    }
 
     @Override
     public Vector3 add(Vector3 vector) {
