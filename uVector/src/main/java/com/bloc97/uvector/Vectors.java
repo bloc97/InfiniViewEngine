@@ -239,7 +239,7 @@ public abstract class Vectors {
      * @param b Second vector
      * @return A new 2-vector with its elements equal to a (cross) b (cross) a
      */
-    public static Vector cross_AxBxA(Vector2 a, Vector2 b) {
+    public static Vector2 cross_AxBxA(Vector2 a, Vector2 b) {
         double AxB_k = (a.get(0) * b.get(1) - a.get(1) * b.get(0));
         double AxBxA_i = -a.get(1) * AxB_k;
         double AxBxA_j = a.get(0) * AxB_k;
@@ -252,7 +252,7 @@ public abstract class Vectors {
      * @param b Second vector
      * @return A new 3-vector with its elements equal to a (cross) b (cross) a
      */
-    public static Vector cross_AxBxA(Vector3 a, Vector3 b) {
+    public static Vector3 cross_AxBxA(Vector3 a, Vector3 b) {
         return cross(cross(a, b), a);
     }
     
