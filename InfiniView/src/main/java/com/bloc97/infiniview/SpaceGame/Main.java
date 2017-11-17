@@ -23,8 +23,8 @@ public class Main {
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int width = gd.getDisplayMode().getWidth();
         int height = gd.getDisplayMode().getHeight();
-        int defaultW = width*3/4;
-        int defaultH = height*3/4;
+        int defaultW = width/2;
+        int defaultH = height/2;
         //System.setProperty("sun.java2d.opengl","True");
         Scene scene = new GameView();
         

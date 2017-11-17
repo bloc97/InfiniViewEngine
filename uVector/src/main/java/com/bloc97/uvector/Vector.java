@@ -284,6 +284,7 @@ public interface Vector<T extends Vector<T>> {
     }
     
     /**
+     * @param p power of the N-norm
      * @return N-norm of this vector
      */
     default double norm(double p) { //n-norm as vector norm
